@@ -17,16 +17,16 @@ export default function Payslips() {
   useEffect(() => { loadData(); }, []);
 
   const loadData = () => {
-    api.get('/payslips/my').then(r => setPayslips(r.data)).catch(() => {});
+    api.get('/salary/my-payslips').then(r => setPayslips(r.data)).catch(() => {});
     if (isAdmin) {
-      api.get('/payslips/salary-structures').then(r => setSalaryStructures(r.data)).catch(() => {});
+      api.get('/salary/all-structures').then(r => setSalaryStructures(r.data)).catch(() => {});
     }
   };
 
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      const res = await api.post('/payslips/generate', { month: genMonth, year: genYear });
+      const res = await api.post('/salary/generate-payslips', { month: genMonth, year: genYear });
       toast.success(res.data?.message || 'Payslips generated successfully!');
       loadData();
     } catch (err) {
@@ -151,7 +151,7 @@ export default function Payslips() {
                       </h4>
                       <div className="space-y-3">
                         {[
-                          { label: 'Basic Salary', value: p.basic },
+                          { label: 'Basic Salary', value: p.basicSalary },
                           { label: 'HRA', value: p.hra },
                           { label: 'Transport Allowance', value: p.transportAllowance },
                           { label: 'Medical Allowance', value: p.medicalAllowance },
@@ -176,7 +176,7 @@ export default function Payslips() {
                       </h4>
                       <div className="space-y-3">
                         {[
-                          { label: 'Provident Fund (PF)', value: p.pf },
+                          { label: 'Provident Fund (PF)', value: p.providentFund },
                           { label: 'Professional Tax (PT)', value: p.professionalTax },
                           { label: 'Income Tax (IT)', value: p.incomeTax },
                         ].map((item) => (
@@ -273,21 +273,21 @@ export default function Payslips() {
                 </thead>
                 <tbody className="divide-y dark:divide-gray-700">
                   {salaryStructures.map(s => {
-                    const gross = (s.basic || 0) + (s.hra || 0) + (s.transportAllowance || 0) + (s.medicalAllowance || 0) + (s.specialAllowance || 0);
-                    const deductions = (s.pf || 0) + (s.professionalTax || 0) + (s.incomeTax || 0);
+                    const gross = (s.basicSalary || 0) + (s.hra || 0) + (s.transportAllowance || 0) + (s.medicalAllowance || 0) + (s.specialAllowance || 0);
+                    const deductions = (s.providentFund || 0) + (s.professionalTax || 0) + (s.incomeTax || 0);
                     return (
                       <tr key={s.id}>
                         <td className="px-4 py-3">
-                          <p className="text-sm font-medium dark:text-white">{s.employeeName}</p>
+                          <p className="text-sm font-medium dark:text-white">{s.name}</p>
                           <p className="text-xs text-gray-400">{s.department}</p>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatCurrency(s.basic)}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatCurrency(s.basicSalary)}</td>
                         <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatCurrency(s.hra)}</td>
                         <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">{formatCurrency(s.transportAllowance)}</td>
                         <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">{formatCurrency(s.medicalAllowance)}</td>
                         <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden md:table-cell">{formatCurrency(s.specialAllowance)}</td>
                         <td className="px-4 py-3 text-sm font-semibold text-gray-800 dark:text-gray-200">{formatCurrency(gross)}</td>
-                        <td className="px-4 py-3 text-sm text-red-500 hidden md:table-cell">{formatCurrency(s.pf)}</td>
+                        <td className="px-4 py-3 text-sm text-red-500 hidden md:table-cell">{formatCurrency(s.providentFund)}</td>
                         <td className="px-4 py-3 text-sm text-red-500 hidden md:table-cell">{formatCurrency(s.professionalTax)}</td>
                         <td className="px-4 py-3 text-sm text-red-500 hidden lg:table-cell">{formatCurrency(s.incomeTax)}</td>
                         <td className="px-4 py-3 text-sm font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(gross - deductions)}</td>

@@ -40,6 +40,18 @@ router.get('/company', (req, res) => {
   res.json(docs);
 });
 
+// Get all documents (admin)
+router.get('/all', adminOnly, (req, res) => {
+  const docs = db.prepare(`
+    SELECT d.*, u.name as uploadedByName, e.name as employeeName FROM documents d
+    LEFT JOIN employees u ON d.uploadedBy = u.id
+    LEFT JOIN employees e ON d.employeeId = e.id
+    WHERE d.isCompanyDoc = 0
+    ORDER BY d.createdAt DESC
+  `).all();
+  res.json(docs);
+});
+
 // Get documents for employee (admin)
 router.get('/employee/:employeeId', adminOnly, (req, res) => {
   const docs = db.prepare(`

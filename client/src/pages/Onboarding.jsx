@@ -39,14 +39,14 @@ export default function Onboarding() {
   const loadData = () => {
     setLoading(true);
     if (isAdmin) {
-      api.get('/onboarding/employees').then(r => setEmployees(r.data)).catch(() => setEmployees([]));
+      api.get('/onboarding/all').then(r => setEmployees(r.data)).catch(() => setEmployees([]));
     }
-    api.get('/onboarding/my-tasks').then(r => setMyTasks(r.data)).catch(() => setMyTasks([]));
+    api.get(`/onboarding/progress/${user.id}`).then(r => setMyTasks(r.data)).catch(() => setMyTasks([]));
     setLoading(false);
   };
 
   const loadEmployeeTasks = (empId) => {
-    api.get(`/onboarding/tasks/${empId}`).then(r => {
+    api.get(`/onboarding/progress/${empId}`).then(r => {
       setTasks(r.data);
       const emp = employees.find(e => e.id === empId);
       setSelectedEmployee(emp || { id: empId });
@@ -55,13 +55,13 @@ export default function Onboarding() {
 
   const handleUpdateStatus = async (taskId, status, empId) => {
     try {
-      await api.put(`/onboarding/tasks/${taskId}`, { status });
+      await api.put(`/onboarding/progress/${empId || user.id}/${taskId}`, { status });
       toast.success(`Task marked as ${statusLabels[status].toLowerCase()}`);
       if (empId) loadEmployeeTasks(empId);
       else {
-        api.get('/onboarding/my-tasks').then(r => setMyTasks(r.data));
+        api.get(`/onboarding/progress/${user.id}`).then(r => setMyTasks(r.data));
       }
-      if (isAdmin) api.get('/onboarding/employees').then(r => setEmployees(r.data));
+      if (isAdmin) api.get('/onboarding/all').then(r => setEmployees(r.data));
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to update');
     }
@@ -70,12 +70,12 @@ export default function Onboarding() {
   const handleAddNote = async () => {
     if (!showNoteModal || !note.trim()) return;
     try {
-      await api.put(`/onboarding/tasks/${showNoteModal.taskId}`, { notes: note });
+      await api.put(`/onboarding/progress/${selectedEmployee?.id || user.id}/${showNoteModal.taskId}`, { notes: note });
       toast.success('Note added');
       setShowNoteModal(null);
       setNote('');
       if (selectedEmployee) loadEmployeeTasks(selectedEmployee.id);
-      else api.get('/onboarding/my-tasks').then(r => setMyTasks(r.data));
+      else api.get(`/onboarding/progress/${user.id}`).then(r => setMyTasks(r.data));
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed');
     }
@@ -83,7 +83,7 @@ export default function Onboarding() {
 
   const getProgress = (taskList) => {
     if (!taskList || taskList.length === 0) return 0;
-    const completed = taskList.filter(t => t.status === 'completed').length;
+    const completed = taskList.filter(t => t.progressStatus === 'completed').length;
     return Math.round((completed / taskList.length) * 100);
   };
 
@@ -111,17 +111,17 @@ export default function Onboarding() {
           <div className="flex items-start gap-3">
             <button
               onClick={() => {
-                const nextStatus = task.status === 'pending' ? 'in_progress' : task.status === 'in_progress' ? 'completed' : 'pending';
+                const nextStatus = task.progressStatus === 'pending' ? 'in_progress' : task.progressStatus === 'in_progress' ? 'completed' : 'pending';
                 handleUpdateStatus(task.id, nextStatus, empId);
               }}
               className="mt-0.5 shrink-0 hover:scale-110 transition-transform"
               title={`Click to change status`}
             >
-              {statusIcons[task.status]}
+              {statusIcons[task.progressStatus]}
             </button>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h4 className={`text-sm font-semibold ${task.status === 'completed' ? 'text-gray-400 line-through' : 'text-gray-800 dark:text-white'}`}>
+                <h4 className={`text-sm font-semibold ${task.progressStatus === 'completed' ? 'text-gray-400 line-through' : 'text-gray-800 dark:text-white'}`}>
                   {task.title}
                 </h4>
                 <span className={`badge ${getCatColor(task.category).bg}`}>{task.category}</span>
@@ -135,8 +135,8 @@ export default function Onboarding() {
                     <User size={12} /> {task.assignTo}
                   </span>
                 )}
-                <span className={`text-xs font-medium ${task.status === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : task.status === 'in_progress' ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
-                  {statusLabels[task.status]}
+                <span className={`text-xs font-medium ${task.progressStatus === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : task.progressStatus === 'in_progress' ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
+                  {statusLabels[task.progressStatus]}
                 </span>
               </div>
               {task.notes && (
@@ -187,7 +187,7 @@ export default function Onboarding() {
         {/* Employee List */}
         <div className="space-y-4">
           {employees.map((emp, i) => {
-            const progress = emp.progress || 0;
+            const progress = emp.totalTasks > 0 ? Math.round((emp.completedTasks / emp.totalTasks) * 100) : 0;
             return (
               <div key={emp.id} className="card hover:shadow-md transition-all duration-300 cursor-pointer animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}
                 onClick={() => loadEmployeeTasks(emp.id)}>
