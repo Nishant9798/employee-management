@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { LayoutDashboard, Users, CalendarCheck, CalendarDays, TreePine, UserCircle, LogOut, X, Building2, BarChart3, Megaphone, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarCheck, CalendarDays, TreePine, UserCircle, LogOut, X, Building2, BarChart3, Megaphone, Sun, Moon, Receipt, Wallet, Award, GraduationCap, Clock, ClipboardList, DoorOpen, MessageSquare, FileText, Settings } from 'lucide-react';
 
 const links = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
@@ -9,10 +9,22 @@ const links = [
   { to: '/attendance', icon: CalendarCheck, label: 'Attendance' },
   { to: '/leaves', icon: CalendarDays, label: 'Leaves' },
   { to: '/holidays', icon: Building2, label: 'Holidays' },
+  { to: '/expenses', icon: Receipt, label: 'Expenses' },
+  { to: '/payslips', icon: Wallet, label: 'Payslips' },
+  { to: '/performance', icon: Award, label: 'Performance' },
+  { to: '/training', icon: GraduationCap, label: 'Training' },
+  { to: '/shifts', icon: Clock, label: 'Shifts' },
+  { to: '/documents', icon: FileText, label: 'Documents' },
+  { to: '/messages', icon: MessageSquare, label: 'Messages' },
   { to: '/hierarchy', icon: TreePine, label: 'Org Hierarchy' },
   { to: '/reports', icon: BarChart3, label: 'Reports' },
   { to: '/announcements', icon: Megaphone, label: 'Announcements' },
-  { to: '/profile', icon: UserCircle, label: 'My Profile' },
+];
+
+const adminLinks = [
+  { to: '/onboarding', icon: ClipboardList, label: 'Onboarding' },
+  { to: '/exit', icon: DoorOpen, label: 'Exit Management' },
+  { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export default function Sidebar({ onClose }) {
@@ -57,7 +69,7 @@ export default function Sidebar({ onClose }) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
         {links.map(link => (
           <NavLink
             key={link.to}
@@ -70,6 +82,34 @@ export default function Sidebar({ onClose }) {
             {link.label}
           </NavLink>
         ))}
+
+        {isAdmin && (
+          <>
+            <div className="pt-3 pb-1 px-4">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Admin</p>
+            </div>
+            {adminLinks.map(link => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) => `sidebar-link ${isActive ? 'active' : 'text-gray-600 dark:text-gray-400'}`}
+                onClick={onClose}
+              >
+                <link.icon size={18} />
+                {link.label}
+              </NavLink>
+            ))}
+          </>
+        )}
+
+        <NavLink
+          to="/profile"
+          className={({ isActive }) => `sidebar-link ${isActive ? 'active' : 'text-gray-600 dark:text-gray-400'}`}
+          onClick={onClose}
+        >
+          <UserCircle size={18} />
+          My Profile
+        </NavLink>
       </nav>
 
       {/* Theme toggle + Logout */}

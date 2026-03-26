@@ -11,6 +11,16 @@ import Hierarchy from './pages/Hierarchy';
 import MyProfile from './pages/MyProfile';
 import Reports from './pages/Reports';
 import Announcements from './pages/Announcements';
+import Expenses from './pages/Expenses';
+import Payslips from './pages/Payslips';
+import Performance from './pages/Performance';
+import Training from './pages/Training';
+import Documents from './pages/Documents';
+import Shifts from './pages/Shifts';
+import Messages from './pages/Messages';
+import Onboarding from './pages/Onboarding';
+import ExitManagement from './pages/ExitManagement';
+import Settings from './pages/Settings';
 
 function ProtectedRoute({ children }) {
   const { token, loading } = useAuth();
@@ -35,9 +45,19 @@ export default function App() {
         <Route path="attendance" element={<Attendance />} />
         <Route path="leaves" element={<Leaves />} />
         <Route path="holidays" element={<Holidays />} />
+        <Route path="expenses" element={<Expenses />} />
+        <Route path="payslips" element={<Payslips />} />
+        <Route path="performance" element={<Performance />} />
+        <Route path="training" element={<Training />} />
+        <Route path="shifts" element={<Shifts />} />
+        <Route path="documents" element={<Documents />} />
+        <Route path="messages" element={<Messages />} />
         <Route path="hierarchy" element={<Hierarchy />} />
         <Route path="reports" element={<Reports />} />
         <Route path="announcements" element={<Announcements />} />
+        <Route path="onboarding" element={<Onboarding />} />
+        <Route path="exit" element={<ExitManagement />} />
+        <Route path="settings" element={<Settings />} />
         <Route path="profile" element={<MyProfile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />

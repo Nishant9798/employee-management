@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('../db');
-const { authMiddleware, managerOrAdmin } = require('../middleware/auth');
+const { authMiddleware, managerOrAdmin, adminOnly } = require('../middleware/auth');
 
 const router = express.Router();
 router.use(authMiddleware);
@@ -34,10 +34,12 @@ router.get('/balance/:employeeId', (req, res) => {
 // Get my leave applications
 router.get('/my-applications', (req, res) => {
   const apps = db.prepare(`
-    SELECT la.*, lt.name as leaveType, e.name as approvedByName
+    SELECT la.*, lt.name as leaveType,
+           m.name as managerApprovedByName, h.name as hrApprovedByName
     FROM leave_applications la
     JOIN leave_types lt ON la.leaveTypeId = lt.id
-    LEFT JOIN employees e ON la.approvedBy = e.id
+    LEFT JOIN employees m ON la.managerApprovedBy = m.id
+    LEFT JOIN employees h ON la.hrApprovedBy = h.id
     WHERE la.employeeId = ?
     ORDER BY la.appliedOn DESC
   `).all(req.user.id);
@@ -48,14 +50,16 @@ router.get('/my-applications', (req, res) => {
 router.get('/all-applications', (req, res) => {
   let query = `
     SELECT la.*, lt.name as leaveType, e.name as employeeName, e.employeeId as empCode,
-           e.department, a.name as approvedByName
+           e.department, m.name as managerApprovedByName, h.name as hrApprovedByName
     FROM leave_applications la
     JOIN leave_types lt ON la.leaveTypeId = lt.id
     JOIN employees e ON la.employeeId = e.id
-    LEFT JOIN employees a ON la.approvedBy = a.id
+    LEFT JOIN employees m ON la.managerApprovedBy = m.id
+    LEFT JOIN employees h ON la.hrApprovedBy = h.id
   `;
 
   if (req.user.role === 'manager') {
+    // Managers see only their subordinates' leave requests
     query += ` WHERE la.employeeId IN (SELECT id FROM employees WHERE managerId = ${req.user.id})`;
   }
 
@@ -77,16 +81,17 @@ router.post('/apply', (req, res) => {
     return res.status(400).json({ error: 'Insufficient leave balance' });
   }
 
+  // Status starts as pending_manager
   const result = db.prepare(`
-    INSERT INTO leave_applications (employeeId, leaveTypeId, fromDate, toDate, days, reason)
-    VALUES (?, ?, ?, ?, ?, ?)
+    INSERT INTO leave_applications (employeeId, leaveTypeId, fromDate, toDate, days, reason, status)
+    VALUES (?, ?, ?, ?, ?, ?, 'pending_manager')
   `).run(req.user.id, leaveTypeId, fromDate, toDate, days, reason);
 
-  res.status(201).json({ id: result.lastInsertRowid, message: 'Leave applied successfully' });
+  res.status(201).json({ id: result.lastInsertRowid, message: 'Leave applied successfully. Sent to manager for approval.' });
 });
 
-// Approve/reject leave (admin/manager)
-router.put('/action/:id', managerOrAdmin, (req, res) => {
+// Manager approves/rejects leave (first level)
+router.put('/manager-action/:id', managerOrAdmin, (req, res) => {
   const { status, remarks } = req.body;
   if (!['approved', 'rejected'].includes(status)) {
     return res.status(400).json({ error: 'Status must be approved or rejected' });
@@ -94,17 +99,54 @@ router.put('/action/:id', managerOrAdmin, (req, res) => {
 
   const app = db.prepare('SELECT * FROM leave_applications WHERE id = ?').get(req.params.id);
   if (!app) return res.status(404).json({ error: 'Application not found' });
-  if (app.status !== 'pending') return res.status(400).json({ error: 'Already processed' });
+  if (app.status !== 'pending_manager') return res.status(400).json({ error: 'This leave is not pending manager approval' });
 
-  db.prepare('UPDATE leave_applications SET status = ?, approvedBy = ?, remarks = ? WHERE id = ?')
-    .run(status, req.user.id, remarks || null, req.params.id);
-
-  if (status === 'approved') {
-    db.prepare('UPDATE leave_balances SET used = used + ? WHERE employeeId = ? AND leaveTypeId = ?')
-      .run(app.days, app.employeeId, app.leaveTypeId);
+  // Verify this manager is the employee's manager (unless admin)
+  if (req.user.role === 'manager') {
+    const employee = db.prepare('SELECT managerId FROM employees WHERE id = ?').get(app.employeeId);
+    if (!employee || employee.managerId !== req.user.id) {
+      return res.status(403).json({ error: 'You can only approve leaves for your team members' });
+    }
   }
 
-  res.json({ message: `Leave ${status}` });
+  if (status === 'rejected') {
+    // Manager rejects - final rejection
+    db.prepare(`UPDATE leave_applications SET status = 'rejected', managerApprovedBy = ?, managerRemarks = ?, managerActionDate = datetime('now') WHERE id = ?`)
+      .run(req.user.id, remarks || null, req.params.id);
+    res.json({ message: 'Leave rejected by manager' });
+  } else {
+    // Manager approves - move to HR for second level approval
+    db.prepare(`UPDATE leave_applications SET status = 'pending_hr', managerApprovedBy = ?, managerRemarks = ?, managerActionDate = datetime('now') WHERE id = ?`)
+      .run(req.user.id, remarks || null, req.params.id);
+    res.json({ message: 'Leave approved by manager. Sent to HR for final approval.' });
+  }
+});
+
+// HR (admin) approves/rejects leave (second level)
+router.put('/hr-action/:id', adminOnly, (req, res) => {
+  const { status, remarks } = req.body;
+  if (!['approved', 'rejected'].includes(status)) {
+    return res.status(400).json({ error: 'Status must be approved or rejected' });
+  }
+
+  const app = db.prepare('SELECT * FROM leave_applications WHERE id = ?').get(req.params.id);
+  if (!app) return res.status(404).json({ error: 'Application not found' });
+  if (app.status !== 'pending_hr') return res.status(400).json({ error: 'This leave is not pending HR approval' });
+
+  if (status === 'rejected') {
+    db.prepare(`UPDATE leave_applications SET status = 'rejected', hrApprovedBy = ?, hrRemarks = ?, hrActionDate = datetime('now') WHERE id = ?`)
+      .run(req.user.id, remarks || null, req.params.id);
+    res.json({ message: 'Leave rejected by HR' });
+  } else {
+    // HR approves - final approval, deduct leave balance
+    db.prepare(`UPDATE leave_applications SET status = 'approved', hrApprovedBy = ?, hrRemarks = ?, hrActionDate = datetime('now') WHERE id = ?`)
+      .run(req.user.id, remarks || null, req.params.id);
+
+    db.prepare('UPDATE leave_balances SET used = used + ? WHERE employeeId = ? AND leaveTypeId = ?')
+      .run(app.days, app.employeeId, app.leaveTypeId);
+
+    res.json({ message: 'Leave approved by HR' });
+  }
 });
 
 module.exports = router;

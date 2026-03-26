@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
-import { BarChart3, PieChart, TrendingUp, Award } from 'lucide-react';
+import { BarChart3, PieChart, TrendingUp, Award, Users } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart as RPieChart, Pie, Cell, LineChart, Line, Legend } from 'recharts';
 
 const COLORS = ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
@@ -75,6 +75,36 @@ export default function Reports() {
           </div>
         </div>
 
+        {/* Gender Distribution */}
+        <div className="card animate-slide-up" style={{ animationDelay: '50ms' }}>
+          <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <Users size={18} className="text-indigo-600 dark:text-indigo-400" /> Gender Distribution
+          </h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <RPieChart>
+                <Pie
+                  data={analytics.genderWise}
+                  dataKey="count"
+                  nameKey="gender"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={90}
+                  innerRadius={50}
+                  paddingAngle={2}
+                  label={({ gender, count }) => `${gender} (${count})`}
+                  labelLine={false}
+                >
+                  {analytics.genderWise?.map((_, i) => (
+                    <Cell key={i} fill={['#4f46e5', '#ec4899', '#9ca3af'][i % 3]} />
+                  ))}
+                </Pie>
+                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+              </RPieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
         {/* Role Distribution */}
         <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
           <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
@@ -133,6 +163,26 @@ export default function Reports() {
             </ResponsiveContainer>
           </div>
         </div>
+
+        {/* Expense by Category */}
+        {analytics.expenseByCategory?.length > 0 && (
+          <div className="card animate-slide-up" style={{ animationDelay: '350ms' }}>
+            <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+              <BarChart3 size={18} className="text-indigo-600 dark:text-indigo-400" /> Expenses by Category
+            </h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={analytics.expenseByCategory} barSize={30}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis dataKey="category" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 12 }} tickFormatter={v => `₹${(v/1000).toFixed(0)}k`} />
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} formatter={v => `₹${v.toLocaleString('en-IN')}`} />
+                  <Bar dataKey="total" fill="#8b5cf6" radius={[8, 8, 0, 0]} name="Total (₹)" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Top Attendance */}

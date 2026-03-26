@@ -1,20 +1,24 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
-import { Search, Edit2, Trash2, X, UserPlus, Download, Users } from 'lucide-react';
+import { Search, Edit2, Trash2, X, UserPlus, Download, Users, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const DEPARTMENTS = ['Management', 'Engineering', 'HR', 'Finance', 'Marketing', 'Operations', 'Sales'];
 const ROLES = ['employee', 'manager', 'admin'];
+const BLOOD_GROUPS = ['A+','A-','B+','B-','AB+','AB-','O+','O-'];
 
 export default function Employees() {
   const { isAdmin } = useAuth();
   const [employees, setEmployees] = useState([]);
   const [search, setSearch] = useState('');
   const [deptFilter, setDeptFilter] = useState('');
+  const [roleFilter, setRoleFilter] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ employeeId: '', name: '', email: '', password: '', phone: '', department: '', designation: '', joiningDate: '', managerId: '', role: 'employee' });
+  const [form, setForm] = useState({ employeeId: '', name: '', email: '', password: '', phone: '', department: '', designation: '', joiningDate: '', managerId: '', role: 'employee', dateOfBirth: '', bloodGroup: '', gender: '', address: '', emergencyContactName: '', emergencyContactPhone: '' });
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => { loadEmployees(); }, []);
 
@@ -23,18 +27,22 @@ export default function Employees() {
   const filtered = employees.filter(e => {
     const matchSearch = !search || e.name.toLowerCase().includes(search.toLowerCase()) || e.employeeId.toLowerCase().includes(search.toLowerCase()) || e.email.toLowerCase().includes(search.toLowerCase());
     const matchDept = !deptFilter || e.department === deptFilter;
-    return matchSearch && matchDept && e.status === 'active';
+    const matchRole = !roleFilter || e.role === roleFilter;
+    return matchSearch && matchDept && matchRole && e.status === 'active';
   });
+
+  const totalPages = Math.ceil(filtered.length / pageSize);
+  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   const openAdd = () => {
     setEditing(null);
-    setForm({ employeeId: '', name: '', email: '', password: '', phone: '', department: '', designation: '', joiningDate: '', managerId: '', role: 'employee' });
+    setForm({ employeeId: '', name: '', email: '', password: '', phone: '', department: '', designation: '', joiningDate: '', managerId: '', role: 'employee', dateOfBirth: '', bloodGroup: '', gender: '', address: '', emergencyContactName: '', emergencyContactPhone: '' });
     setShowModal(true);
   };
 
   const openEdit = (emp) => {
     setEditing(emp);
-    setForm({ ...emp, password: '', managerId: emp.managerId || '' });
+    setForm({ ...emp, password: '', managerId: emp.managerId || '', dateOfBirth: emp.dateOfBirth || '', bloodGroup: emp.bloodGroup || '', gender: emp.gender || '', address: emp.address || '', emergencyContactName: emp.emergencyContactName || '', emergencyContactPhone: emp.emergencyContactPhone || '' });
     setShowModal(true);
   };
 
@@ -98,11 +106,15 @@ export default function Employees() {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3 top-2.5 text-gray-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name, ID, or email..." className="input pl-9" />
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search by name, ID, or email..." className="input pl-9" />
         </div>
-        <select value={deptFilter} onChange={e => setDeptFilter(e.target.value)} className="input w-auto">
+        <select value={deptFilter} onChange={e => { setDeptFilter(e.target.value); setPage(1); }} className="input w-auto">
           <option value="">All Departments</option>
           {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+        </select>
+        <select value={roleFilter} onChange={e => { setRoleFilter(e.target.value); setPage(1); }} className="input w-auto">
+          <option value="">All Roles</option>
+          {ROLES.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
         </select>
       </div>
 
@@ -116,61 +128,80 @@ export default function Employees() {
           </div>
         </div>
       ) : (
-        <div className="card p-0 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Employee</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Department</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Designation</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase hidden sm:table-cell">Phone</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Role</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase hidden md:table-cell">Manager</th>
-                  {isAdmin && <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Actions</th>}
-                </tr>
-              </thead>
-              <tbody className="divide-y dark:divide-gray-700">
-                {filtered.map((emp, i) => (
-                  <tr key={emp.id} className="animate-fade-in" style={{ animationDelay: `${i * 30}ms` }}>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-xs shrink-0 shadow-sm">
-                          {emp.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-800 dark:text-white">{emp.name}</p>
-                          <p className="text-xs text-gray-400">{emp.employeeId} &middot; {emp.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{emp.department}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{emp.designation}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">{emp.phone}</td>
-                    <td className="px-4 py-3">
-                      <span className={`badge ${emp.role === 'admin' ? 'badge-danger' : emp.role === 'manager' ? 'badge-info' : 'badge-gray'}`}>
-                        {emp.role}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 hidden md:table-cell">{emp.managerName || '-'}</td>
-                    {isAdmin && (
+        <>
+          <div className="card p-0 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Employee</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Department</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Designation</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase hidden sm:table-cell">Phone</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Role</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase hidden md:table-cell">Manager</th>
+                    {isAdmin && <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Actions</th>}
+                  </tr>
+                </thead>
+                <tbody className="divide-y dark:divide-gray-700">
+                  {paginated.map((emp, i) => (
+                    <tr key={emp.id} className="animate-fade-in" style={{ animationDelay: `${i * 30}ms` }}>
                       <td className="px-4 py-3">
-                        <div className="flex gap-1">
-                          <button onClick={() => openEdit(emp)} className="p-1.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition">
-                            <Edit2 size={15} />
-                          </button>
-                          <button onClick={() => handleDelete(emp.id)} className="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition">
-                            <Trash2 size={15} />
-                          </button>
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-xs shrink-0 shadow-sm">
+                            {emp.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-800 dark:text-white">{emp.name}</p>
+                            <p className="text-xs text-gray-400">{emp.employeeId} &middot; {emp.email}</p>
+                          </div>
                         </div>
                       </td>
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{emp.department}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{emp.designation}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">{emp.phone}</td>
+                      <td className="px-4 py-3">
+                        <span className={`badge ${emp.role === 'admin' ? 'badge-danger' : emp.role === 'manager' ? 'badge-info' : 'badge-gray'}`}>
+                          {emp.role}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 hidden md:table-cell">{emp.managerName || '-'}</td>
+                      {isAdmin && (
+                        <td className="px-4 py-3">
+                          <div className="flex gap-1">
+                            <button onClick={() => openEdit(emp)} className="p-1.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition">
+                              <Edit2 size={15} />
+                            </button>
+                            <button onClick={() => handleDelete(emp.id)} className="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition">
+                              <Trash2 size={15} />
+                            </button>
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Showing {(page - 1) * pageSize + 1}-{Math.min(page * pageSize, filtered.length)} of {filtered.length}
+              </p>
+              <div className="flex gap-1">
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button key={i} onClick={() => setPage(i + 1)}
+                    className={`w-8 h-8 rounded-lg text-sm font-medium transition ${page === i + 1 ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'}`}>
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Slide Panel Modal */}
@@ -240,6 +271,49 @@ export default function Employees() {
                   <option value="">None</option>
                   {managers.map(m => <option key={m.id} value={m.id}>{m.name} ({m.designation})</option>)}
                 </select>
+              </div>
+
+              {/* Additional fields */}
+              <div className="pt-2 border-t dark:border-gray-700">
+                <p className="text-xs font-semibold text-gray-400 uppercase mb-3">Personal Details</p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Gender</label>
+                  <select value={form.gender} onChange={e => setForm({...form, gender: e.target.value})} className="input mt-1">
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Date of Birth</label>
+                  <input type="date" value={form.dateOfBirth} onChange={e => setForm({...form, dateOfBirth: e.target.value})} className="input mt-1" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Blood Group</label>
+                  <select value={form.bloodGroup} onChange={e => setForm({...form, bloodGroup: e.target.value})} className="input mt-1">
+                    <option value="">Select</option>
+                    {BLOOD_GROUPS.map(bg => <option key={bg} value={bg}>{bg}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Address</label>
+                <textarea value={form.address} onChange={e => setForm({...form, address: e.target.value})} rows={2} className="input mt-1" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Emergency Contact Name</label>
+                  <input value={form.emergencyContactName} onChange={e => setForm({...form, emergencyContactName: e.target.value})} className="input mt-1" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Emergency Contact Phone</label>
+                  <input value={form.emergencyContactPhone} onChange={e => setForm({...form, emergencyContactPhone: e.target.value})} className="input mt-1" />
+                </div>
               </div>
             </div>
             <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">

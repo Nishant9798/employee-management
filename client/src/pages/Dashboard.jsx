@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
-import { Users, CalendarCheck, CalendarX, Clock, TrendingUp, Megaphone, PartyPopper, ChevronRight } from 'lucide-react';
+import { Users, CalendarCheck, CalendarX, Clock, TrendingUp, Megaphone, PartyPopper, ChevronRight, Receipt, DoorOpen, Cake, UserMinus, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 function AnimatedNumber({ value, duration = 1000 }) {
   const [display, setDisplay] = useState(0);
-  const ref = useRef(null);
 
   useEffect(() => {
     let start = 0;
@@ -25,12 +24,12 @@ function AnimatedNumber({ value, duration = 1000 }) {
 }
 
 export default function Dashboard() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, isManager } = useAuth();
   const [stats, setStats] = useState({});
   const [myAttendance, setMyAttendance] = useState(null);
   const [recentLeaves, setRecentLeaves] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
-  const [celebrations, setCelebrations] = useState({ anniversaries: [] });
+  const [celebrations, setCelebrations] = useState({ anniversaries: [], birthdays: [] });
 
   useEffect(() => {
     if (isAdmin) {
@@ -55,6 +54,8 @@ export default function Dashboard() {
     { label: 'Present Today', value: stats.presentToday || 0, icon: CalendarCheck, gradient: 'stat-card-emerald', iconColor: 'text-emerald-600 dark:text-emerald-400' },
     { label: 'On Leave', value: stats.onLeaveToday || 0, icon: CalendarX, gradient: 'stat-card-amber', iconColor: 'text-amber-600 dark:text-amber-400' },
     { label: 'Pending Leaves', value: stats.pendingLeaves || 0, icon: Clock, gradient: 'stat-card-purple', iconColor: 'text-purple-600 dark:text-purple-400' },
+    { label: 'Pending Expenses', value: stats.pendingExpenses || 0, icon: Receipt, gradient: 'stat-card-blue', iconColor: 'text-blue-600 dark:text-blue-400' },
+    { label: 'Pending Exits', value: stats.pendingExits || 0, icon: DoorOpen, gradient: 'stat-card-amber', iconColor: 'text-amber-600 dark:text-amber-400' },
   ] : [];
 
   const handleCheckIn = async () => {
@@ -97,24 +98,56 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: 'Apply Leave', to: '/leaves', icon: CalendarX, color: 'from-indigo-500 to-purple-500' },
+          { label: 'Submit Expense', to: '/expenses', icon: Receipt, color: 'from-emerald-500 to-teal-500' },
+          { label: 'My Payslips', to: '/payslips', icon: Zap, color: 'from-amber-500 to-orange-500' },
+          { label: 'Messages', to: '/messages', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
+        ].map((a, i) => (
+          <Link key={a.label} to={a.to} className={`flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r ${a.color} text-white hover:shadow-lg transition-all duration-300 animate-slide-up`} style={{ animationDelay: `${i * 50}ms` }}>
+            <a.icon size={20} />
+            <span className="text-sm font-medium">{a.label}</span>
+          </Link>
+        ))}
+      </div>
+
       {/* Admin Stats */}
       {isAdmin && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {statCards.map((s, i) => (
-            <div key={s.label} className={`${s.gradient} rounded-xl p-5 border border-white/50 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 animate-slide-up`} style={{ animationDelay: `${i * 100}ms` }}>
+            <div key={s.label} className={`${s.gradient} rounded-xl p-5 border border-white/50 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 animate-slide-up`} style={{ animationDelay: `${i * 80}ms` }}>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-3xl font-bold text-gray-800 dark:text-white animate-count-up">
+                  <p className="text-2xl font-bold text-gray-800 dark:text-white">
                     <AnimatedNumber value={s.value} />
                   </p>
-                  <p className="text-xs font-medium text-gray-600 dark:text-gray-300 mt-1">{s.label}</p>
+                  <p className="text-[10px] font-medium text-gray-600 dark:text-gray-300 mt-1">{s.label}</p>
                 </div>
-                <div className="p-3 rounded-xl bg-white/60 dark:bg-gray-800/60">
-                  <s.icon size={24} className={s.iconColor} />
+                <div className="p-2 rounded-lg bg-white/60 dark:bg-gray-800/60">
+                  <s.icon size={20} className={s.iconColor} />
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Who's on leave today */}
+      {isAdmin && stats.onLeaveNames?.length > 0 && (
+        <div className="card bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-100 dark:border-amber-800/30 animate-slide-up">
+          <div className="flex items-center gap-2 mb-3">
+            <UserMinus size={18} className="text-amber-600 dark:text-amber-400" />
+            <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300">On Leave Today</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {stats.onLeaveNames.map((e, i) => (
+              <span key={i} className="px-3 py-1 bg-white/60 dark:bg-gray-800/40 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300">
+                {e.name} <span className="text-gray-400">· {e.department}</span>
+              </span>
+            ))}
+          </div>
         </div>
       )}
 
@@ -179,8 +212,8 @@ export default function Dashboard() {
                     {isAdmin && <p className="text-sm font-medium text-gray-800 dark:text-white">{l.employeeName}</p>}
                     <p className="text-xs text-gray-500 dark:text-gray-400">{l.leaveType} &middot; {l.fromDate} to {l.toDate}</p>
                   </div>
-                  <span className={`badge ${l.status === 'approved' ? 'badge-success' : l.status === 'rejected' ? 'badge-danger' : 'badge-warning'}`}>
-                    {l.status}
+                  <span className={`badge ${l.status === 'approved' ? 'badge-success' : l.status === 'rejected' ? 'badge-danger' : l.status === 'pending_hr' ? 'badge-info' : 'badge-warning'}`}>
+                    {l.status === 'pending_manager' ? 'Pending Manager' : l.status === 'pending_hr' ? 'Pending HR' : l.status}
                   </span>
                 </div>
               ))}
@@ -219,6 +252,30 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      {/* Birthdays */}
+      {celebrations.birthdays?.length > 0 && (
+        <div className="card animate-slide-up bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 border-pink-100 dark:border-pink-800/30">
+          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <Cake size={20} className="text-pink-500" /> Birthdays This Month
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {celebrations.birthdays.map((b, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/40 rounded-lg">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-bold text-sm">
+                  {b.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-800 dark:text-white">{b.name}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {new Date(b.dateOfBirth).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} &middot; {b.department}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Celebrations */}
       {celebrations.anniversaries?.length > 0 && (

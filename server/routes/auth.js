@@ -18,17 +18,24 @@ router.post('/login', (req, res) => {
   }
 
   const token = jwt.sign(
-    { id: user.id, employeeId: user.employeeId, name: user.name, email: user.email, role: user.role, department: user.department },
+    { id: user.id, employeeId: user.employeeId, name: user.name, email: user.email, role: user.role, department: user.department, designation: user.designation },
     SECRET,
     { expiresIn: '24h' }
   );
+
+  // Log activity
+  db.prepare('INSERT INTO activity_log (userId, action, target, details) VALUES (?,?,?,?)').run(user.id, 'Login', 'Auth', `${user.name} logged in`);
 
   const { password: _, ...userData } = user;
   res.json({ token, user: userData });
 });
 
 router.get('/me', authMiddleware, (req, res) => {
-  const user = db.prepare('SELECT id, employeeId, name, email, phone, department, designation, joiningDate, managerId, role, avatar, status FROM employees WHERE id = ?').get(req.user.id);
+  const user = db.prepare(`
+    SELECT id, employeeId, name, email, phone, department, designation, joiningDate, managerId, role, avatar, status,
+           dateOfBirth, bloodGroup, gender, address, emergencyContactName, emergencyContactPhone
+    FROM employees WHERE id = ?
+  `).get(req.user.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
   res.json(user);
 });

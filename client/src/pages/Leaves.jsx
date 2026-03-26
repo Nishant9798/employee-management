@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
-import { CalendarDays, Plus, Check, X as XIcon } from 'lucide-react';
+import { CalendarDays, Plus, Check, X as XIcon, Clock, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Leaves() {
@@ -13,6 +13,8 @@ export default function Leaves() {
   const [leaveTypes, setLeaveTypes] = useState([]);
   const [showApply, setShowApply] = useState(false);
   const [form, setForm] = useState({ leaveTypeId: '', fromDate: '', toDate: '', days: '', reason: '' });
+  const [remarkModal, setRemarkModal] = useState(null);
+  const [remark, setRemark] = useState('');
 
   useEffect(() => {
     api.get('/leaves/balance').then(r => setBalances(r.data));
@@ -41,7 +43,7 @@ export default function Leaves() {
   const handleApply = async () => {
     try {
       await api.post('/leaves/apply', { ...form, days: Number(form.days) });
-      toast.success('Leave applied!');
+      toast.success('Leave applied! Sent to manager for approval.');
       setShowApply(false);
       setForm({ leaveTypeId: '', fromDate: '', toDate: '', days: '', reason: '' });
       api.get('/leaves/my-applications').then(r => setMyApps(r.data));
@@ -51,20 +53,74 @@ export default function Leaves() {
     }
   };
 
-  const handleAction = async (id, status) => {
+  // Manager action (first level)
+  const handleManagerAction = async (id, status) => {
     try {
-      await api.put(`/leaves/action/${id}`, { status });
-      toast.success(`Leave ${status}`);
+      await api.put(`/leaves/manager-action/${id}`, { status, remarks: remark || undefined });
+      toast.success(status === 'approved' ? 'Approved! Sent to HR for final approval.' : 'Leave rejected');
+      setRemarkModal(null);
+      setRemark('');
       api.get('/leaves/all-applications').then(r => setAllApps(r.data));
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed');
     }
   };
 
+  // HR action (second level)
+  const handleHrAction = async (id, status) => {
+    try {
+      await api.put(`/leaves/hr-action/${id}`, { status, remarks: remark || undefined });
+      toast.success(status === 'approved' ? 'Leave approved by HR' : 'Leave rejected by HR');
+      setRemarkModal(null);
+      setRemark('');
+      api.get('/leaves/all-applications').then(r => setAllApps(r.data));
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed');
+    }
+  };
+
+  const openRemarkModal = (app, action, level) => {
+    setRemarkModal({ app, action, level });
+    setRemark('');
+  };
+
+  const submitRemarkAction = () => {
+    if (!remarkModal) return;
+    const { app, action, level } = remarkModal;
+    if (level === 'manager') {
+      handleManagerAction(app.id, action);
+    } else {
+      handleHrAction(app.id, action);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'pending_manager':
+        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"><Clock size={12} /> Pending Manager</span>;
+      case 'pending_hr':
+        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"><Clock size={12} /> Pending HR</span>;
+      case 'approved':
+        return <span className="badge badge-success">Approved</span>;
+      case 'rejected':
+        return <span className="badge badge-danger">Rejected</span>;
+      default:
+        return <span className="badge badge-warning">{status}</span>;
+    }
+  };
+
+  // Filter applications by role and approval level
+  const managerPendingApps = allApps.filter(a => a.status === 'pending_manager');
+  const hrPendingApps = allApps.filter(a => a.status === 'pending_hr');
+
   const tabs = [
     { id: 'balance', label: 'Leave Balance' },
     { id: 'my', label: 'My Applications' },
-    ...(isManager ? [{ id: 'team', label: 'Team Requests' }] : []),
+    ...(isManager && !isAdmin ? [{ id: 'team', label: `Manager Approvals${managerPendingApps.length ? ` (${managerPendingApps.length})` : ''}` }] : []),
+    ...(isAdmin ? [
+      { id: 'team', label: `Manager Approvals${managerPendingApps.length ? ` (${managerPendingApps.length})` : ''}` },
+      { id: 'hr', label: `HR Approvals${hrPendingApps.length ? ` (${hrPendingApps.length})` : ''}` },
+    ] : []),
   ];
 
   const leaveColors = ['from-blue-500 to-cyan-500', 'from-emerald-500 to-teal-500', 'from-purple-500 to-pink-500', 'from-amber-500 to-orange-500', 'from-indigo-500 to-violet-500', 'from-rose-500 to-red-500'];
@@ -87,8 +143,24 @@ export default function Leaves() {
         </div>
       </div>
 
+      {/* Approval Flow Info */}
+      <div className="card bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border border-indigo-100 dark:border-indigo-800">
+        <div className="flex items-center gap-3 text-sm">
+          <span className="font-medium text-indigo-700 dark:text-indigo-400">Approval Flow:</span>
+          <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+            <span className="px-2 py-0.5 bg-white dark:bg-gray-800 rounded text-xs font-medium">Employee Applies</span>
+            <ArrowRight size={14} />
+            <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 rounded text-xs font-medium text-amber-700 dark:text-amber-400">Manager Approval</span>
+            <ArrowRight size={14} />
+            <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 rounded text-xs font-medium text-blue-700 dark:text-blue-400">HR Approval</span>
+            <ArrowRight size={14} />
+            <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 rounded text-xs font-medium text-emerald-700 dark:text-emerald-400">Approved</span>
+          </div>
+        </div>
+      </div>
+
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit">
+      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit flex-wrap">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
             className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'}`}>
@@ -145,6 +217,7 @@ export default function Leaves() {
                 <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Days</th>
                 <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
                 <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">Approval Details</th>
               </tr>
             </thead>
             <tbody className="divide-y dark:divide-gray-700">
@@ -155,58 +228,190 @@ export default function Leaves() {
                   <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.toDate}</td>
                   <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.days}</td>
                   <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 hidden sm:table-cell">{a.reason}</td>
-                  <td className="px-4 py-3">
-                    <span className={`badge ${a.status === 'approved' ? 'badge-success' : a.status === 'rejected' ? 'badge-danger' : 'badge-warning'}`}>{a.status}</span>
+                  <td className="px-4 py-3">{getStatusBadge(a.status)}</td>
+                  <td className="px-4 py-3 hidden md:table-cell">
+                    <div className="text-xs space-y-1">
+                      {a.managerApprovedByName && (
+                        <p className="text-gray-500 dark:text-gray-400">
+                          <span className="font-medium">Manager:</span> {a.managerApprovedByName}
+                          {a.managerRemarks && <span className="text-gray-400"> - {a.managerRemarks}</span>}
+                        </p>
+                      )}
+                      {a.hrApprovedByName && (
+                        <p className="text-gray-500 dark:text-gray-400">
+                          <span className="font-medium">HR:</span> {a.hrApprovedByName}
+                          {a.hrRemarks && <span className="text-gray-400"> - {a.hrRemarks}</span>}
+                        </p>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
-              {myApps.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-gray-400 text-sm">No applications yet</td></tr>}
+              {myApps.length === 0 && <tr><td colSpan={7} className="text-center py-8 text-gray-400 text-sm">No applications yet</td></tr>}
             </tbody>
           </table>
         </div>
       )}
 
-      {/* Team Requests */}
+      {/* Manager Approval Tab - Team Requests pending manager approval */}
       {tab === 'team' && isManager && (
-        <div className="card p-0 overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Type</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Dates</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Days</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y dark:divide-gray-700">
-              {allApps.map(a => (
-                <tr key={a.id}>
-                  <td className="px-4 py-3">
-                    <p className="text-sm font-medium dark:text-white">{a.employeeName}</p>
-                    <p className="text-xs text-gray-400">{a.department}</p>
-                  </td>
-                  <td className="px-4 py-3 text-sm dark:text-gray-300">{a.leaveType}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.fromDate} - {a.toDate}</td>
-                  <td className="px-4 py-3 text-sm dark:text-gray-300">{a.days}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{a.reason}</td>
-                  <td className="px-4 py-3">
-                    <span className={`badge ${a.status === 'approved' ? 'badge-success' : a.status === 'rejected' ? 'badge-danger' : 'badge-warning'}`}>{a.status}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    {a.status === 'pending' && (
-                      <div className="flex gap-1">
-                        <button onClick={() => handleAction(a.id, 'approved')} className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded transition" title="Approve"><Check size={16} /></button>
-                        <button onClick={() => handleAction(a.id, 'rejected')} className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition" title="Reject"><XIcon size={16} /></button>
-                      </div>
-                    )}
-                  </td>
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold dark:text-white">Pending Manager Approval</h3>
+          <div className="card p-0 overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Type</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Dates</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Days</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y dark:divide-gray-700">
+                {managerPendingApps.map(a => (
+                  <tr key={a.id}>
+                    <td className="px-4 py-3">
+                      <p className="text-sm font-medium dark:text-white">{a.employeeName}</p>
+                      <p className="text-xs text-gray-400">{a.department}</p>
+                    </td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{a.leaveType}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.fromDate} - {a.toDate}</td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{a.days}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{a.reason}</td>
+                    <td className="px-4 py-3">{getStatusBadge(a.status)}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-1">
+                        <button onClick={() => openRemarkModal(a, 'approved', 'manager')} className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded transition" title="Approve"><Check size={16} /></button>
+                        <button onClick={() => openRemarkModal(a, 'rejected', 'manager')} className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition" title="Reject"><XIcon size={16} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {managerPendingApps.length === 0 && (
+                  <tr><td colSpan={7} className="text-center py-8 text-gray-400 text-sm">No pending requests for manager approval</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Also show all team applications history */}
+          <h3 className="text-lg font-semibold dark:text-white mt-6">All Team Applications</h3>
+          <div className="card p-0 overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Type</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Dates</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Days</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y dark:divide-gray-700">
+                {allApps.filter(a => a.status !== 'pending_manager').map(a => (
+                  <tr key={a.id}>
+                    <td className="px-4 py-3">
+                      <p className="text-sm font-medium dark:text-white">{a.employeeName}</p>
+                      <p className="text-xs text-gray-400">{a.department}</p>
+                    </td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{a.leaveType}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.fromDate} - {a.toDate}</td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{a.days}</td>
+                    <td className="px-4 py-3">{getStatusBadge(a.status)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* HR Approval Tab - Admin only, pending HR approval */}
+      {tab === 'hr' && isAdmin && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold dark:text-white">Pending HR Approval</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">These leave requests have been approved by the manager and need your final approval.</p>
+          <div className="card p-0 overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Type</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Dates</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Days</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">Manager Approved By</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y dark:divide-gray-700">
+                {hrPendingApps.map(a => (
+                  <tr key={a.id}>
+                    <td className="px-4 py-3">
+                      <p className="text-sm font-medium dark:text-white">{a.employeeName}</p>
+                      <p className="text-xs text-gray-400">{a.department}</p>
+                    </td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{a.leaveType}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.fromDate} - {a.toDate}</td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{a.days}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{a.reason}</td>
+                    <td className="px-4 py-3 hidden md:table-cell">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{a.managerApprovedByName}</p>
+                      {a.managerRemarks && <p className="text-xs text-gray-400">{a.managerRemarks}</p>}
+                    </td>
+                    <td className="px-4 py-3">{getStatusBadge(a.status)}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-1">
+                        <button onClick={() => openRemarkModal(a, 'approved', 'hr')} className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded transition" title="Approve"><Check size={16} /></button>
+                        <button onClick={() => openRemarkModal(a, 'rejected', 'hr')} className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition" title="Reject"><XIcon size={16} /></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {hrPendingApps.length === 0 && (
+                  <tr><td colSpan={8} className="text-center py-8 text-gray-400 text-sm">No pending requests for HR approval</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* All applications history for admin */}
+          <h3 className="text-lg font-semibold dark:text-white mt-6">All Leave Applications</h3>
+          <div className="card p-0 overflow-hidden">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Type</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Dates</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Days</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">Manager</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">HR</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y dark:divide-gray-700">
+                {allApps.filter(a => a.status !== 'pending_hr').map(a => (
+                  <tr key={a.id}>
+                    <td className="px-4 py-3">
+                      <p className="text-sm font-medium dark:text-white">{a.employeeName}</p>
+                      <p className="text-xs text-gray-400">{a.department}</p>
+                    </td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{a.leaveType}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.fromDate} - {a.toDate}</td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{a.days}</td>
+                    <td className="px-4 py-3">{getStatusBadge(a.status)}</td>
+                    <td className="px-4 py-3 hidden md:table-cell text-xs text-gray-500 dark:text-gray-400">{a.managerApprovedByName || '-'}</td>
+                    <td className="px-4 py-3 hidden md:table-cell text-xs text-gray-500 dark:text-gray-400">{a.hrApprovedByName || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
@@ -246,10 +451,39 @@ export default function Leaves() {
                 <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Reason</label>
                 <textarea value={form.reason} onChange={e => setForm({...form, reason: e.target.value})} rows={3} className="input mt-1" placeholder="Why do you need leave?" />
               </div>
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                <p className="text-xs text-amber-700 dark:text-amber-400">Your leave request will first go to your manager for approval, then to HR for final approval.</p>
+              </div>
             </div>
             <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
               <button onClick={() => setShowApply(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleApply} className="btn-primary" disabled={!form.leaveTypeId || !form.fromDate || !form.toDate}>Apply</button>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Remark Modal for Approve/Reject */}
+      {remarkModal && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => { setRemarkModal(null); setRemark(''); }} />
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold dark:text-white mb-1">
+              {remarkModal.action === 'approved' ? 'Approve' : 'Reject'} Leave Request
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              {remarkModal.app.employeeName} - {remarkModal.app.leaveType} ({remarkModal.app.days} days)
+            </p>
+            <div>
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Remarks (optional)</label>
+              <textarea value={remark} onChange={e => setRemark(e.target.value)} rows={3} className="input mt-1" placeholder="Add your remarks..." />
+            </div>
+            <div className="flex justify-end gap-3 mt-4">
+              <button onClick={() => { setRemarkModal(null); setRemark(''); }} className="btn-secondary">Cancel</button>
+              <button onClick={submitRemarkAction}
+                className={`px-4 py-2 rounded-lg text-sm font-medium text-white transition ${remarkModal.action === 'approved' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`}>
+                {remarkModal.action === 'approved' ? 'Approve' : 'Reject'}
+              </button>
             </div>
           </div>
         </>
