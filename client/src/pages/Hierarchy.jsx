@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
-import { ChevronRight, ChevronDown, User, Users } from 'lucide-react';
+import { ChevronRight, ChevronDown, Users, TreePine, Network } from 'lucide-react';
 
 export default function Hierarchy() {
   const [employees, setEmployees] = useState([]);
@@ -9,11 +9,9 @@ export default function Hierarchy() {
     api.get('/employees/org/hierarchy').then(r => setEmployees(r.data));
   }, []);
 
-  // Build tree structure
   const buildTree = (list) => {
     const map = {};
     const roots = [];
-
     list.forEach(e => { map[e.id] = { ...e, children: [] }; });
     list.forEach(e => {
       if (e.managerId && map[e.managerId]) {
@@ -22,7 +20,6 @@ export default function Hierarchy() {
         roots.push(map[e.id]);
       }
     });
-
     return roots;
   };
 
@@ -30,16 +27,25 @@ export default function Hierarchy() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800">Organization Hierarchy</h1>
-        <p className="text-sm text-gray-500">Company reporting structure</p>
+      {/* Page Header */}
+      <div className="page-header">
+        <div className="relative z-10">
+          <h1>Organization Hierarchy</h1>
+          <p>Company reporting structure</p>
+        </div>
+        <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-10">
+          <Network size={100} className="text-white" />
+        </div>
       </div>
 
       <div className="card">
         {tree.length === 0 ? (
-          <p className="text-gray-400 text-center py-8">Loading...</p>
+          <div className="empty-state">
+            <TreePine size={64} />
+            <p className="text-lg font-medium mt-2">Loading hierarchy...</p>
+          </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-1">
             {tree.map(node => <TreeNode key={node.id} node={node} level={0} />)}
           </div>
         )}
@@ -52,57 +58,53 @@ function TreeNode({ node, level }) {
   const [open, setOpen] = useState(level < 2);
   const hasChildren = node.children.length > 0;
 
-  const roleColor = node.role === 'admin' ? 'bg-red-100 text-red-700 border-red-200' :
-    node.role === 'manager' ? 'bg-blue-100 text-blue-700 border-blue-200' :
-    'bg-gray-100 text-gray-700 border-gray-200';
+  const avatarGradient = node.role === 'admin' ? 'from-red-500 to-pink-500' :
+    node.role === 'manager' ? 'from-blue-500 to-cyan-500' :
+    'from-indigo-500 to-purple-500';
 
-  const avatarColor = node.role === 'admin' ? 'bg-red-100 text-red-700' :
-    node.role === 'manager' ? 'bg-blue-100 text-blue-700' :
-    'bg-indigo-100 text-indigo-700';
+  const roleColor = node.role === 'admin' ? 'badge-danger' :
+    node.role === 'manager' ? 'badge-info' : 'badge-gray';
 
   return (
-    <div style={{ marginLeft: level * 24 }}>
+    <div style={{ marginLeft: level * 24 }} className="animate-fade-in">
       <div
-        className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition hover:bg-gray-50 ${hasChildren ? '' : ''}`}
+        className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 ${hasChildren ? '' : ''}`}
         onClick={() => hasChildren && setOpen(!open)}
       >
-        {/* Expand/collapse icon */}
         <div className="w-5 flex items-center justify-center shrink-0">
           {hasChildren ? (
-            open ? <ChevronDown size={16} className="text-gray-400" /> : <ChevronRight size={16} className="text-gray-400" />
+            <div className={`transition-transform duration-200 ${open ? 'rotate-0' : '-rotate-90'}`}>
+              <ChevronDown size={16} className="text-gray-400" />
+            </div>
           ) : (
-            <div className="w-1.5 h-1.5 rounded-full bg-gray-300" />
+            <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600" />
           )}
         </div>
 
-        {/* Avatar */}
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${avatarColor}`}>
+        <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${avatarGradient} flex items-center justify-center font-bold text-sm text-white shrink-0 shadow-sm`}>
           {node.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
         </div>
 
-        {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-gray-800 text-sm">{node.name}</span>
-            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border ${roleColor}`}>
-              {node.role.toUpperCase()}
+            <span className="font-semibold text-gray-800 dark:text-white text-sm">{node.name}</span>
+            <span className={`badge ${roleColor}`}>
+              {node.role}
             </span>
           </div>
-          <p className="text-xs text-gray-500">{node.designation} &middot; {node.department}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{node.designation} &middot; {node.department}</p>
         </div>
 
-        {/* Team count */}
         {hasChildren && (
-          <div className="flex items-center gap-1 text-xs text-gray-400 shrink-0">
-            <Users size={14} />
+          <div className="flex items-center gap-1 text-xs text-gray-400 shrink-0 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+            <Users size={12} />
             {node.children.length}
           </div>
         )}
       </div>
 
-      {/* Children */}
       {open && hasChildren && (
-        <div className="border-l-2 border-gray-100 ml-5">
+        <div className="border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-5">
           {node.children.map(child => (
             <TreeNode key={child.id} node={child} level={level + 1} />
           ))}

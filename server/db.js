@@ -1,8 +1,20 @@
 const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const fs = require('fs');
 
-const db = new Database(path.join(__dirname, '..', 'employee.db'));
+// On Netlify, copy bundled DB to writable /tmp; locally use project root
+let dbPath = path.join(__dirname, '..', 'employee.db');
+if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  const tmpDb = '/tmp/employee.db';
+  const srcDb = path.join(__dirname, '..', 'employee.db');
+  if (!fs.existsSync(tmpDb) && fs.existsSync(srcDb)) {
+    fs.copyFileSync(srcDb, tmpDb);
+  }
+  dbPath = tmpDb;
+}
+
+const db = new Database(dbPath);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
@@ -71,6 +83,24 @@ db.exec(`
     name TEXT NOT NULL,
     date TEXT NOT NULL,
     type TEXT DEFAULT 'national' CHECK(type IN ('national','optional','restricted'))
+  );
+
+  CREATE TABLE IF NOT EXISTS announcements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    priority TEXT DEFAULT 'normal' CHECK(priority IN ('low','normal','high','urgent')),
+    createdBy INTEGER REFERENCES employees(id),
+    createdAt TEXT DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS activity_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    userId INTEGER REFERENCES employees(id),
+    action TEXT NOT NULL,
+    target TEXT,
+    details TEXT,
+    createdAt TEXT DEFAULT (datetime('now'))
   );
 `);
 
@@ -201,6 +231,16 @@ function seed() {
 
   const insertLA = db.prepare('INSERT INTO leave_applications (employeeId, leaveTypeId, fromDate, toDate, days, reason, status, approvedBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
   leaveApps.forEach(la => insertLA.run(...la));
+
+  // Sample announcements
+  const announcements = [
+    ['Welcome to the new Employee Management System!', 'We are excited to launch our new EMS platform. Please explore all the features and let us know your feedback.', 'high', 1],
+    ['Annual Performance Review Cycle', 'The annual performance review cycle for FY 2025-26 will begin from April 1st. Please ensure all self-assessments are completed by March 31st.', 'urgent', 1],
+    ['Office Timings Update', 'Starting April 2026, office hours will be 9:30 AM to 6:30 PM. Flexible timing of 30 minutes is allowed.', 'normal', 1],
+    ['Team Outing Planned', 'A team outing is being planned for the last week of April. Department heads will share the details soon.', 'low', 1],
+  ];
+  const insertAnn = db.prepare('INSERT INTO announcements (title, content, priority, createdBy) VALUES (?, ?, ?, ?)');
+  announcements.forEach(a => insertAnn.run(...a));
 
   console.log('Database seeded successfully!');
 }

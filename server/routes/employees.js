@@ -100,4 +100,100 @@ router.get('/stats/dashboard', (req, res) => {
   res.json({ totalEmployees, departments, presentToday, pendingLeaves, onLeaveToday });
 });
 
+
+// Analytics data
+router.get('/stats/analytics', (req, res) => {
+  // Department wise employee count
+  const deptWise = db.prepare(`
+    SELECT department, COUNT(*) as count
+    FROM employees WHERE status='active' AND department IS NOT NULL
+    GROUP BY department ORDER BY count DESC
+  `).all();
+
+  // Role distribution
+  const roleWise = db.prepare(`
+    SELECT role, COUNT(*) as count
+    FROM employees WHERE status='active'
+    GROUP BY role
+  `).all();
+
+  // Monthly joining trend (last 12 months)
+  const joiningTrend = db.prepare(`
+    SELECT strftime('%Y-%m', joiningDate) as month, COUNT(*) as count
+    FROM employees WHERE status='active' AND joiningDate IS NOT NULL
+    GROUP BY month ORDER BY month DESC LIMIT 12
+  `).all().reverse();
+
+  // Attendance trend for current month (daily present count)
+  const now = new Date();
+  const startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-01`;
+  const endDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-31`;
+
+  const attendanceTrend = db.prepare(`
+    SELECT date,
+      SUM(CASE WHEN status IN ('present','late') THEN 1 ELSE 0 END) as present,
+      SUM(CASE WHEN status = 'absent' THEN 1 ELSE 0 END) as absent,
+      SUM(CASE WHEN status = 'late' THEN 1 ELSE 0 END) as late
+    FROM attendance WHERE date BETWEEN ? AND ?
+    GROUP BY date ORDER BY date
+  `).all(startDate, endDate);
+
+  // Leave type usage
+  const leaveUsage = db.prepare(`
+    SELECT lt.name, SUM(lb.used) as used, SUM(lb.total) as total
+    FROM leave_balances lb JOIN leave_types lt ON lb.leaveTypeId = lt.id
+    GROUP BY lt.id
+  `).all();
+
+  // Top 5 employees by attendance
+  const topAttendance = db.prepare(`
+    SELECT e.name, e.department,
+      SUM(CASE WHEN a.status IN ('present','late') THEN 1 ELSE 0 END) as presentDays
+    FROM employees e JOIN attendance a ON e.id = a.employeeId
+    WHERE e.status='active' AND a.date BETWEEN ? AND ?
+    GROUP BY e.id ORDER BY presentDays DESC LIMIT 5
+  `).all(startDate, endDate);
+
+  res.json({ deptWise, roleWise, joiningTrend, attendanceTrend, leaveUsage, topAttendance });
+});
+
+// Upcoming birthdays and work anniversaries
+router.get('/stats/celebrations', (req, res) => {
+  const today = new Date();
+  const currentMonth = today.getMonth() + 1;
+  const currentDay = today.getDate();
+
+  // Work anniversaries this month (based on joiningDate month)
+  const anniversaries = db.prepare(`
+    SELECT name, department, designation, joiningDate, employeeId,
+      (strftime('%Y', 'now') - strftime('%Y', joiningDate)) as years
+    FROM employees
+    WHERE status='active' AND joiningDate IS NOT NULL
+    AND CAST(strftime('%m', joiningDate) AS INTEGER) = ?
+    ORDER BY CAST(strftime('%d', joiningDate) AS INTEGER)
+  `).all(currentMonth);
+
+  res.json({ anniversaries });
+});
+
+// Export employees CSV
+router.get('/export/csv', adminOnly, (req, res) => {
+  const employees = db.prepare(`
+    SELECT e.employeeId, e.name, e.email, e.phone, e.department, e.designation,
+           e.joiningDate, e.role, e.status, m.name as managerName
+    FROM employees e LEFT JOIN employees m ON e.managerId = m.id
+    WHERE e.status = 'active'
+    ORDER BY e.id
+  `).all();
+
+  const headers = 'Employee ID,Name,Email,Phone,Department,Designation,Joining Date,Role,Status,Manager\n';
+  const csv = headers + employees.map(e =>
+    `${e.employeeId},${e.name},${e.email},${e.phone || ''},${e.department || ''},${e.designation || ''},${e.joiningDate || ''},${e.role},${e.status},${e.managerName || ''}`
+  ).join('\n');
+
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename=employees.csv');
+  res.send(csv);
+});
+
 module.exports = router;

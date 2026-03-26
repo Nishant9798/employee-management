@@ -132,4 +132,58 @@ router.get('/summary', (req, res) => {
   res.json(summary);
 });
 
+
+// Bulk mark attendance (admin)
+router.post('/bulk-mark', adminOnly, (req, res) => {
+  const { date, records } = req.body;
+  if (!date || !records || !Array.isArray(records)) {
+    return res.status(400).json({ error: 'Date and records array required' });
+  }
+
+  const stmt = db.prepare(`
+    INSERT INTO attendance (employeeId, date, checkIn, checkOut, status)
+    VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(employeeId, date) DO UPDATE SET checkIn=?, checkOut=?, status=?
+  `);
+
+  const transaction = db.transaction((recs) => {
+    for (const rec of recs) {
+      stmt.run(rec.employeeId, date, rec.checkIn || null, rec.checkOut || null, rec.status,
+               rec.checkIn || null, rec.checkOut || null, rec.status);
+    }
+  });
+
+  try {
+    transaction(records);
+    res.json({ message: `Attendance marked for ${records.length} employees` });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Export attendance CSV
+router.get('/export/csv', adminOnly, (req, res) => {
+  const { month, year } = req.query;
+  const m = month || (new Date().getMonth() + 1);
+  const y = year || new Date().getFullYear();
+  const startDate = `${y}-${String(m).padStart(2, '0')}-01`;
+  const endDate = `${y}-${String(m).padStart(2, '0')}-31`;
+
+  const records = db.prepare(`
+    SELECT e.employeeId, e.name, e.department, a.date, a.checkIn, a.checkOut, a.status, a.workHours
+    FROM attendance a JOIN employees e ON a.employeeId = e.id
+    WHERE a.date BETWEEN ? AND ? AND e.status = 'active'
+    ORDER BY e.name, a.date
+  `).all(startDate, endDate);
+
+  const headers = 'Employee ID,Name,Department,Date,Check In,Check Out,Status,Work Hours\n';
+  const csv = headers + records.map(r =>
+    `${r.employeeId},${r.name},${r.department || ''},${r.date},${r.checkIn || ''},${r.checkOut || ''},${r.status},${r.workHours || ''}`
+  ).join('\n');
+
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename=attendance-${y}-${m}.csv`);
+  res.send(csv);
+});
+
 module.exports = router;

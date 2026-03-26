@@ -9,10 +9,19 @@ import Attendance from './pages/Attendance';
 import Holidays from './pages/Holidays';
 import Hierarchy from './pages/Hierarchy';
 import MyProfile from './pages/MyProfile';
+import Reports from './pages/Reports';
+import Announcements from './pages/Announcements';
 
 function ProtectedRoute({ children }) {
   const { token, loading } = useAuth();
-  if (loading) return <div className="flex items-center justify-center h-screen"><div className="animate-spin h-8 w-8 border-4 border-indigo-600 border-t-transparent rounded-full" /></div>;
+  if (loading) return (
+    <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="flex flex-col items-center gap-3">
+        <div className="animate-spin h-10 w-10 border-4 border-indigo-600 border-t-transparent rounded-full" />
+        <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+      </div>
+    </div>
+  );
   return token ? children : <Navigate to="/login" />;
 }
 
@@ -27,6 +36,8 @@ export default function App() {
         <Route path="leaves" element={<Leaves />} />
         <Route path="holidays" element={<Holidays />} />
         <Route path="hierarchy" element={<Hierarchy />} />
+        <Route path="reports" element={<Reports />} />
+        <Route path="announcements" element={<Announcements />} />
         <Route path="profile" element={<MyProfile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />

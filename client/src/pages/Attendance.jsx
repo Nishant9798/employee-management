@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
-import { Clock, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clock, ChevronLeft, ChevronRight, Download, CalendarCheck } from 'lucide-react';
 
 export default function Attendance() {
   const { isAdmin } = useAuth();
@@ -12,10 +12,9 @@ export default function Attendance() {
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
+  const [viewMode, setViewMode] = useState('table');
 
-  useEffect(() => {
-    loadData();
-  }, [month, year, tab]);
+  useEffect(() => { loadData(); }, [month, year, tab]);
 
   const loadData = () => {
     api.get('/attendance/my', { params: { month, year } }).then(r => setMyRecords(r.data));
@@ -46,6 +45,18 @@ export default function Attendance() {
     }
   };
 
+  const calStatusColor = (s) => {
+    switch (s) {
+      case 'present': return 'bg-emerald-500';
+      case 'late': return 'bg-amber-500';
+      case 'absent': return 'bg-red-500';
+      case 'halfday': return 'bg-blue-500';
+      case 'weekend': return 'bg-gray-300 dark:bg-gray-600';
+      case 'holiday': return 'bg-purple-500';
+      default: return 'bg-gray-200 dark:bg-gray-700';
+    }
+  };
+
   const tabs = [
     { id: 'my', label: 'My Attendance' },
     ...(isAdmin ? [
@@ -61,26 +72,71 @@ export default function Attendance() {
     halfday: myRecords.filter(r => r.status === 'halfday').length,
   };
 
+  // Calendar grid data
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const calendarDays = [];
+  for (let i = 0; i < firstDay; i++) calendarDays.push(null);
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const record = myRecords.find(r => r.date === dateStr);
+    const dayOfWeek = new Date(year, month - 1, d).getDay();
+    calendarDays.push({
+      day: d,
+      date: dateStr,
+      record,
+      isWeekend: dayOfWeek === 0 || dayOfWeek === 6,
+    });
+  }
+
+  const handleExport = () => {
+    window.open(`/api/attendance/export/csv?month=${month}&year=${year}`, '_blank');
+  };
+
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">Attendance</h1>
+      {/* Page Header */}
+      <div className="page-header">
+        <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1>Attendance</h1>
+            <p>Track and manage attendance records</p>
+          </div>
+          {isAdmin && (
+            <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition backdrop-blur-sm">
+              <Download size={16} /> Export CSV
+            </button>
+          )}
+        </div>
+        <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-10">
+          <CalendarCheck size={100} className="text-white" />
+        </div>
+      </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
-        {tabs.map(t => (
-          <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-600'}`}>
-            {t.label}
-          </button>
-        ))}
+      <div className="flex flex-col sm:flex-row justify-between gap-3">
+        <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit">
+          {tabs.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+        {tab === 'my' && (
+          <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit">
+            <button onClick={() => setViewMode('table')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${viewMode === 'table' ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}>Table</button>
+            <button onClick={() => setViewMode('calendar')} className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${viewMode === 'calendar' ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}>Calendar</button>
+          </div>
+        )}
       </div>
 
       {/* Month nav */}
       {tab !== 'today' && (
         <div className="flex items-center gap-4">
-          <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100"><ChevronLeft size={20} /></button>
-          <span className="text-sm font-semibold text-gray-700 min-w-[150px] text-center">{monthName}</span>
-          <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100"><ChevronRight size={20} /></button>
+          <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"><ChevronLeft size={20} className="dark:text-gray-400" /></button>
+          <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 min-w-[150px] text-center">{monthName}</span>
+          <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"><ChevronRight size={20} className="dark:text-gray-400" /></button>
         </div>
       )}
 
@@ -88,47 +144,83 @@ export default function Attendance() {
       {tab === 'my' && (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="card text-center">
-              <p className="text-2xl font-bold text-emerald-600">{myStats.present}</p>
-              <p className="text-xs text-gray-500">Present</p>
-            </div>
-            <div className="card text-center">
-              <p className="text-2xl font-bold text-amber-600">{myStats.late}</p>
-              <p className="text-xs text-gray-500">Late</p>
-            </div>
-            <div className="card text-center">
-              <p className="text-2xl font-bold text-red-600">{myStats.absent}</p>
-              <p className="text-xs text-gray-500">Absent</p>
-            </div>
-            <div className="card text-center">
-              <p className="text-2xl font-bold text-blue-600">{myStats.halfday}</p>
-              <p className="text-xs text-gray-500">Half Day</p>
-            </div>
+            {[
+              { label: 'Present', value: myStats.present, color: 'stat-card-emerald', textColor: 'text-emerald-600 dark:text-emerald-400' },
+              { label: 'Late', value: myStats.late, color: 'stat-card-amber', textColor: 'text-amber-600 dark:text-amber-400' },
+              { label: 'Absent', value: myStats.absent, color: 'stat-card-blue', textColor: 'text-red-600 dark:text-red-400' },
+              { label: 'Half Day', value: myStats.halfday, color: 'stat-card-purple', textColor: 'text-blue-600 dark:text-blue-400' },
+            ].map(s => (
+              <div key={s.label} className={`${s.color} rounded-xl p-4 text-center border border-white/50 dark:border-gray-700`}>
+                <p className={`text-2xl font-bold ${s.textColor}`}>{s.value}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{s.label}</p>
+              </div>
+            ))}
           </div>
 
-          <div className="card p-0 overflow-hidden">
-            <table className="w-full">
-              <thead><tr className="bg-gray-50 border-b text-left">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Check In</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Check Out</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Hours</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Status</th>
-              </tr></thead>
-              <tbody className="divide-y">
-                {myRecords.map(r => (
-                  <tr key={r.id} className="hover:bg-gray-50/50">
-                    <td className="px-4 py-3 text-sm font-medium">{new Date(r.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{r.checkIn || '-'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{r.checkOut || '-'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600">{r.workHours ? `${r.workHours}h` : '-'}</td>
-                    <td className="px-4 py-3"><span className={`badge ${statusColor(r.status)}`}>{r.status}</span></td>
-                  </tr>
+          {viewMode === 'calendar' ? (
+            <div className="card">
+              {/* Calendar legend */}
+              <div className="flex flex-wrap gap-3 mb-4">
+                {[
+                  { label: 'Present', color: 'bg-emerald-500' },
+                  { label: 'Late', color: 'bg-amber-500' },
+                  { label: 'Absent', color: 'bg-red-500' },
+                  { label: 'Half Day', color: 'bg-blue-500' },
+                  { label: 'Weekend', color: 'bg-gray-300 dark:bg-gray-600' },
+                ].map(l => (
+                  <div key={l.label} className="flex items-center gap-1.5">
+                    <div className={`w-3 h-3 rounded-full ${l.color}`} />
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{l.label}</span>
+                  </div>
                 ))}
-                {myRecords.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-gray-400 text-sm">No records</td></tr>}
-              </tbody>
-            </table>
-          </div>
+              </div>
+              {/* Calendar grid */}
+              <div className="grid grid-cols-7 gap-1">
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
+                  <div key={d} className="text-center text-xs font-semibold text-gray-500 dark:text-gray-400 py-2">{d}</div>
+                ))}
+                {calendarDays.map((cd, i) => (
+                  <div key={i} className={`aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-all ${cd ? 'hover:ring-2 hover:ring-indigo-300 dark:hover:ring-indigo-600 cursor-default' : ''} ${cd?.isWeekend && !cd?.record ? 'bg-gray-50 dark:bg-gray-800' : ''}`}>
+                    {cd && (
+                      <>
+                        <span className={`font-medium ${cd.isWeekend ? 'text-gray-400' : 'text-gray-700 dark:text-gray-300'}`}>{cd.day}</span>
+                        {cd.record && (
+                          <div className={`w-2.5 h-2.5 rounded-full mt-1 ${calStatusColor(cd.record.status)}`} title={cd.record.status} />
+                        )}
+                        {cd.isWeekend && !cd.record && (
+                          <div className={`w-2.5 h-2.5 rounded-full mt-1 ${calStatusColor('weekend')}`} />
+                        )}
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="card p-0 overflow-hidden">
+              <table className="w-full">
+                <thead><tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Check In</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Check Out</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Hours</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                </tr></thead>
+                <tbody className="divide-y dark:divide-gray-700">
+                  {myRecords.map(r => (
+                    <tr key={r.id}>
+                      <td className="px-4 py-3 text-sm font-medium dark:text-white">{new Date(r.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{r.checkIn || '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{r.checkOut || '-'}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{r.workHours ? `${r.workHours}h` : '-'}</td>
+                      <td className="px-4 py-3"><span className={`badge ${statusColor(r.status)}`}>{r.status}</span></td>
+                    </tr>
+                  ))}
+                  {myRecords.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-gray-400 text-sm">No records</td></tr>}
+                </tbody>
+              </table>
+            </div>
+          )}
         </>
       )}
 
@@ -136,23 +228,23 @@ export default function Attendance() {
       {tab === 'today' && isAdmin && (
         <div className="card p-0 overflow-hidden">
           <table className="w-full">
-            <thead><tr className="bg-gray-50 border-b text-left">
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500">Employee</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500">Department</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500">Check In</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500">Check Out</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500">Status</th>
+            <thead><tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Department</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Check In</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Check Out</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
             </tr></thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y dark:divide-gray-700">
               {todayAll.map((r, i) => (
-                <tr key={i} className="hover:bg-gray-50/50">
+                <tr key={i}>
                   <td className="px-4 py-3">
-                    <p className="text-sm font-medium">{r.name}</p>
+                    <p className="text-sm font-medium dark:text-white">{r.name}</p>
                     <p className="text-xs text-gray-400">{r.empCode}</p>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{r.department}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{r.checkIn || '-'}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{r.checkOut || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{r.department}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{r.checkIn || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{r.checkOut || '-'}</td>
                   <td className="px-4 py-3"><span className={`badge ${statusColor(r.status)}`}>{r.status}</span></td>
                 </tr>
               ))}
@@ -165,25 +257,25 @@ export default function Attendance() {
       {tab === 'summary' && isAdmin && (
         <div className="card p-0 overflow-hidden">
           <table className="w-full">
-            <thead><tr className="bg-gray-50 border-b text-left">
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500">Employee</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500">Department</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500 text-center">Present</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500 text-center">Late</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500 text-center">Absent</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500 text-center">Half Day</th>
-              <th className="px-4 py-3 text-xs font-semibold text-gray-500 text-center">Avg Hours</th>
+            <thead><tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Department</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 text-center">Present</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 text-center">Late</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 text-center">Absent</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 text-center">Half Day</th>
+              <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 text-center">Avg Hours</th>
             </tr></thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y dark:divide-gray-700">
               {summary.map(s => (
-                <tr key={s.id} className="hover:bg-gray-50/50">
-                  <td className="px-4 py-3"><p className="text-sm font-medium">{s.name}</p><p className="text-xs text-gray-400">{s.empCode}</p></td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{s.department}</td>
-                  <td className="px-4 py-3 text-sm text-center font-medium text-emerald-600">{s.present || 0}</td>
-                  <td className="px-4 py-3 text-sm text-center font-medium text-amber-600">{s.late || 0}</td>
-                  <td className="px-4 py-3 text-sm text-center font-medium text-red-600">{s.absent || 0}</td>
-                  <td className="px-4 py-3 text-sm text-center font-medium text-blue-600">{s.halfday || 0}</td>
-                  <td className="px-4 py-3 text-sm text-center text-gray-600">{s.avgHours || '-'}h</td>
+                <tr key={s.id}>
+                  <td className="px-4 py-3"><p className="text-sm font-medium dark:text-white">{s.name}</p><p className="text-xs text-gray-400">{s.empCode}</p></td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{s.department}</td>
+                  <td className="px-4 py-3 text-sm text-center font-medium text-emerald-600 dark:text-emerald-400">{s.present || 0}</td>
+                  <td className="px-4 py-3 text-sm text-center font-medium text-amber-600 dark:text-amber-400">{s.late || 0}</td>
+                  <td className="px-4 py-3 text-sm text-center font-medium text-red-600 dark:text-red-400">{s.absent || 0}</td>
+                  <td className="px-4 py-3 text-sm text-center font-medium text-blue-600 dark:text-blue-400">{s.halfday || 0}</td>
+                  <td className="px-4 py-3 text-sm text-center text-gray-600 dark:text-gray-400">{s.avgHours || '-'}h</td>
                 </tr>
               ))}
             </tbody>

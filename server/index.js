@@ -14,6 +14,7 @@ app.use('/api/employees', require('./routes/employees'));
 app.use('/api/leaves', require('./routes/leaves'));
 app.use('/api/attendance', require('./routes/attendance'));
 app.use('/api/holidays', require('./routes/holidays'));
+app.use('/api/announcements', require('./routes/announcements'));
 
 // Serve React build in production
 if (process.env.NODE_ENV === 'production') {

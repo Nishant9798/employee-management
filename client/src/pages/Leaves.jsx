@@ -67,20 +67,31 @@ export default function Leaves() {
     ...(isManager ? [{ id: 'team', label: 'Team Requests' }] : []),
   ];
 
+  const leaveColors = ['from-blue-500 to-cyan-500', 'from-emerald-500 to-teal-500', 'from-purple-500 to-pink-500', 'from-amber-500 to-orange-500', 'from-indigo-500 to-violet-500', 'from-rose-500 to-red-500'];
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold text-gray-800">Leave Management</h1>
-        <button onClick={() => setShowApply(true)} className="btn-primary flex items-center gap-2">
-          <Plus size={16} /> Apply Leave
-        </button>
+      {/* Page Header */}
+      <div className="page-header">
+        <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1>Leave Management</h1>
+            <p>Apply and manage your leaves</p>
+          </div>
+          <button onClick={() => setShowApply(true)} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+            <Plus size={16} /> Apply Leave
+          </button>
+        </div>
+        <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-10">
+          <CalendarDays size={100} className="text-white" />
+        </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-lg w-fit">
+      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white text-indigo-700 shadow-sm' : 'text-gray-600 hover:text-gray-800'}`}>
+            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'}`}>
             {t.label}
           </button>
         ))}
@@ -89,31 +100,33 @@ export default function Leaves() {
       {/* Balance */}
       {tab === 'balance' && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {balances.map(b => (
-            <div key={b.id} className="card">
-              <div className="flex justify-between items-start mb-3">
+          {balances.map((b, i) => (
+            <div key={b.id} className="card hover:shadow-md transition-all duration-300 animate-slide-up" style={{ animationDelay: `${i * 80}ms` }}>
+              <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="font-semibold text-gray-800">{b.leaveType}</h3>
+                  <h3 className="font-semibold text-gray-800 dark:text-white">{b.leaveType}</h3>
                   <p className="text-xs text-gray-400">{b.description}</p>
                 </div>
-                <CalendarDays size={20} className="text-indigo-400" />
+                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${leaveColors[i % leaveColors.length]} flex items-center justify-center shadow-sm`}>
+                  <CalendarDays size={18} className="text-white" />
+                </div>
               </div>
-              <div className="flex gap-6">
+              <div className="flex gap-6 mb-3">
                 <div>
-                  <p className="text-2xl font-bold text-indigo-600">{b.total - b.used}</p>
+                  <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{b.total - b.used}</p>
                   <p className="text-xs text-gray-400">Available</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-gray-300">{b.used}</p>
+                  <p className="text-2xl font-bold text-gray-300 dark:text-gray-600">{b.used}</p>
                   <p className="text-xs text-gray-400">Used</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-gray-300">{b.total}</p>
+                  <p className="text-2xl font-bold text-gray-300 dark:text-gray-600">{b.total}</p>
                   <p className="text-xs text-gray-400">Total</p>
                 </div>
               </div>
-              <div className="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${(b.used / b.total) * 100}%` }} />
+              <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div className={`h-full bg-gradient-to-r ${leaveColors[i % leaveColors.length]} rounded-full transition-all duration-500`} style={{ width: `${(b.used / b.total) * 100}%` }} />
               </div>
             </div>
           ))}
@@ -125,23 +138,23 @@ export default function Leaves() {
         <div className="card p-0 overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 border-b text-left">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Type</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">From</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">To</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Days</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Reason</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Status</th>
+              <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Type</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">From</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">To</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Days</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y dark:divide-gray-700">
               {myApps.map(a => (
-                <tr key={a.id} className="hover:bg-gray-50/50">
-                  <td className="px-4 py-3 text-sm font-medium">{a.leaveType}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{a.fromDate}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{a.toDate}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{a.days}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{a.reason}</td>
+                <tr key={a.id}>
+                  <td className="px-4 py-3 text-sm font-medium dark:text-white">{a.leaveType}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.fromDate}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.toDate}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.days}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 hidden sm:table-cell">{a.reason}</td>
                   <td className="px-4 py-3">
                     <span className={`badge ${a.status === 'approved' ? 'badge-success' : a.status === 'rejected' ? 'badge-danger' : 'badge-warning'}`}>{a.status}</span>
                   </td>
@@ -158,35 +171,35 @@ export default function Leaves() {
         <div className="card p-0 overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 border-b text-left">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Employee</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Type</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Dates</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Days</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Reason</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Status</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500">Action</th>
+              <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Type</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Dates</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Days</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y">
+            <tbody className="divide-y dark:divide-gray-700">
               {allApps.map(a => (
-                <tr key={a.id} className="hover:bg-gray-50/50">
+                <tr key={a.id}>
                   <td className="px-4 py-3">
-                    <p className="text-sm font-medium">{a.employeeName}</p>
+                    <p className="text-sm font-medium dark:text-white">{a.employeeName}</p>
                     <p className="text-xs text-gray-400">{a.department}</p>
                   </td>
-                  <td className="px-4 py-3 text-sm">{a.leaveType}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{a.fromDate} - {a.toDate}</td>
-                  <td className="px-4 py-3 text-sm">{a.days}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500 max-w-[200px] truncate">{a.reason}</td>
+                  <td className="px-4 py-3 text-sm dark:text-gray-300">{a.leaveType}</td>
+                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{a.fromDate} - {a.toDate}</td>
+                  <td className="px-4 py-3 text-sm dark:text-gray-300">{a.days}</td>
+                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{a.reason}</td>
                   <td className="px-4 py-3">
                     <span className={`badge ${a.status === 'approved' ? 'badge-success' : a.status === 'rejected' ? 'badge-danger' : 'badge-warning'}`}>{a.status}</span>
                   </td>
                   <td className="px-4 py-3">
                     {a.status === 'pending' && (
                       <div className="flex gap-1">
-                        <button onClick={() => handleAction(a.id, 'approved')} className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded" title="Approve"><Check size={16} /></button>
-                        <button onClick={() => handleAction(a.id, 'rejected')} className="p-1.5 text-red-600 hover:bg-red-50 rounded" title="Reject"><XIcon size={16} /></button>
+                        <button onClick={() => handleAction(a.id, 'approved')} className="p-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded transition" title="Approve"><Check size={16} /></button>
+                        <button onClick={() => handleAction(a.id, 'rejected')} className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition" title="Reject"><XIcon size={16} /></button>
                       </div>
                     )}
                   </td>
@@ -197,17 +210,18 @@ export default function Leaves() {
         </div>
       )}
 
-      {/* Apply Modal */}
+      {/* Slide Panel for Apply Leave */}
       {showApply && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
-            <div className="flex justify-between items-center p-5 border-b">
-              <h2 className="text-lg font-semibold">Apply for Leave</h2>
+        <>
+          <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowApply(false)} />
+          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+              <h2 className="text-lg font-semibold dark:text-white">Apply for Leave</h2>
               <button onClick={() => setShowApply(false)}><XIcon size={20} className="text-gray-400" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600">Leave Type</label>
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Leave Type</label>
                 <select value={form.leaveTypeId} onChange={e => setForm({...form, leaveTypeId: e.target.value})} className="input mt-1">
                   <option value="">Select type</option>
                   {leaveTypes.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
@@ -215,28 +229,30 @@ export default function Leaves() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600">From Date</label>
+                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">From Date</label>
                   <input type="date" value={form.fromDate} onChange={e => handleFromTo('fromDate', e.target.value)} className="input mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">To Date</label>
+                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">To Date</label>
                   <input type="date" value={form.toDate} onChange={e => handleFromTo('toDate', e.target.value)} className="input mt-1" />
                 </div>
               </div>
               {form.days > 0 && (
-                <p className="text-sm text-indigo-600 font-medium">{form.days} working day(s)</p>
+                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg">
+                  <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">{form.days} working day(s)</p>
+                </div>
               )}
               <div>
-                <label className="text-xs font-medium text-gray-600">Reason</label>
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Reason</label>
                 <textarea value={form.reason} onChange={e => setForm({...form, reason: e.target.value})} rows={3} className="input mt-1" placeholder="Why do you need leave?" />
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
               <button onClick={() => setShowApply(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleApply} className="btn-primary" disabled={!form.leaveTypeId || !form.fromDate || !form.toDate}>Apply</button>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
