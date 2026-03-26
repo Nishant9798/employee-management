@@ -1,0 +1,30 @@
+const express = require('express');
+const cors = require('cors');
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(express.json());
+
+// API routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/employees', require('./routes/employees'));
+app.use('/api/leaves', require('./routes/leaves'));
+app.use('/api/attendance', require('./routes/attendance'));
+app.use('/api/holidays', require('./routes/holidays'));
+
+// Serve React build in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
+  });
+}
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+  console.log('Default admin login: admin@company.com / admin123');
+  console.log('Default employee login: rahul@company.com / emp123');
+});
