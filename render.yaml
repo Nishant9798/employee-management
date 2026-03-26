@@ -2,7 +2,7 @@ services:
   - type: web
     name: employee-management
     runtime: node
-    buildCommand: npm install && cd client && npm install && npm run build
+    buildCommand: npm install && cd client && npm install --include=dev && npm run build
     startCommand: npm start
     envVars:
       - key: NODE_ENV
