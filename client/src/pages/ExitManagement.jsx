@@ -37,7 +37,8 @@ export default function ExitManagement() {
 
   const handleAction = async (id, status) => {
     try {
-      await api.put(`/exit/${id}/status`, { status });
+      const endpoint = status === 'completed' ? `/exit/complete/${id}` : `/exit/action/${id}`;
+      await api.put(endpoint, { status });
       toast.success(status === 'approved' ? 'Exit request approved' : status === 'rejected' ? 'Exit request rejected' : 'Exit completed');
       setSelectedExit(null);
       loadData();
@@ -48,7 +49,12 @@ export default function ExitManagement() {
 
   const handleUpdateChecklist = async (id) => {
     try {
-      await api.put(`/exit/${id}/checklist`, checklistForm);
+      await api.put(`/exit/checklist/${id}`, {
+        exitInterviewDone: checklistForm.exitInterview,
+        exitInterviewNotes: checklistForm.notes,
+        assetsReturned: checklistForm.assetsReturned,
+        assetsNotes: checklistForm.notes,
+      });
       toast.success('Checklist updated');
       loadData();
       // Refresh selected exit
@@ -62,9 +68,9 @@ export default function ExitManagement() {
   const openExitDetail = (exit) => {
     setSelectedExit(exit);
     setChecklistForm({
-      exitInterview: exit.exitInterview || false,
-      assetsReturned: exit.assetsReturned || false,
-      notes: exit.notes || '',
+      exitInterview: exit.exitInterviewDone === 1 || false,
+      assetsReturned: exit.assetsReturned === 1 || false,
+      notes: exit.exitInterviewNotes || '',
     });
   };
 

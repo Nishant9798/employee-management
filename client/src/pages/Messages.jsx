@@ -48,7 +48,7 @@ export default function Messages() {
   };
 
   const loadMessages = (conv) => {
-    const endpoint = conv.type === 'channel' ? `/messages/channel/${conv.id}` : `/messages/conversation/${conv.id}`;
+    const endpoint = conv.type === 'channel' ? `/messages/channel/${conv.id}` : `/messages/direct/${conv.id}`;
     api.get(endpoint).then(r => setMessages(r.data)).catch(() => setMessages([]));
   };
 
@@ -57,10 +57,9 @@ export default function Messages() {
     try {
       const payload = { content: messageInput };
       if (activeConversation.type === 'channel') {
-        payload.channelId = activeConversation.id;
+        payload.channel = activeConversation.channel || activeConversation.id;
       } else {
-        payload.recipientId = activeConversation.recipientId || activeConversation.id;
-        payload.conversationId = activeConversation.conversationId || activeConversation.id;
+        payload.receiverId = activeConversation.recipientId || activeConversation.id;
       }
       await api.post('/messages/send', payload);
       setMessageInput('');
@@ -78,20 +77,10 @@ export default function Messages() {
     }
   };
 
-  const startConversation = async (contact) => {
-    try {
-      const res = await api.post('/messages/conversation', { recipientId: contact.id });
-      const conv = res.data;
-      setActiveConversation({ ...conv, name: contact.name, type: 'direct', recipientId: contact.id });
-      setShowNewChat(false);
-      setMobileShowChat(true);
-      loadConversations();
-    } catch (err) {
-      // If conversation already exists, just open it
-      setActiveConversation({ id: contact.id, name: contact.name, type: 'direct', recipientId: contact.id });
-      setShowNewChat(false);
-      setMobileShowChat(true);
-    }
+  const startConversation = (contact) => {
+    setActiveConversation({ id: contact.id, name: contact.name, type: 'direct', recipientId: contact.id });
+    setShowNewChat(false);
+    setMobileShowChat(true);
   };
 
   const openConversation = (conv) => {
@@ -195,15 +184,15 @@ export default function Messages() {
               ))}
 
               {tab === 'channels' && channels.map(channel => (
-                <div key={channel.id}
-                  onClick={() => openChannel(channel)}
-                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition hover:bg-gray-50 dark:hover:bg-gray-700/50 ${activeConversation?.id === channel.id && activeConversation?.type === 'channel' ? 'bg-indigo-50 dark:bg-indigo-900/20 border-r-2 border-indigo-600' : ''}`}>
+                <div key={channel.channel}
+                  onClick={() => openChannel({ id: channel.channel, name: channel.channel, type: 'channel', channel: channel.channel })}
+                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition hover:bg-gray-50 dark:hover:bg-gray-700/50 ${activeConversation?.id === channel.channel && activeConversation?.type === 'channel' ? 'bg-indigo-50 dark:bg-indigo-900/20 border-r-2 border-indigo-600' : ''}`}>
                   <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white shrink-0">
                     <Hash size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 dark:text-white truncate">{channel.name}</p>
-                    <p className="text-xs text-gray-400 truncate">{channel.description || `${channel.memberCount || 0} members`}</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white truncate">#{channel.channel}</p>
+                    <p className="text-xs text-gray-400 truncate">{channel.messageCount || 0} messages</p>
                   </div>
                   <ChevronRight size={14} className="text-gray-400 shrink-0" />
                 </div>

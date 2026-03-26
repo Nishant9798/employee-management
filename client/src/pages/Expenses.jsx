@@ -4,11 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { Receipt, Plus, Check, X as XIcon, Clock, ArrowRight, IndianRupee, TrendingUp, AlertCircle, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const CATEGORIES = [
-  'Travel', 'Meals & Entertainment', 'Office Supplies', 'Software & Tools',
-  'Training & Education', 'Communication', 'Transportation', 'Accommodation',
-  'Client Meeting', 'Miscellaneous'
-];
+// Categories loaded from API
 
 export default function Expenses() {
   const { user, isAdmin, isManager } = useAuth();
@@ -21,18 +17,20 @@ export default function Expenses() {
   const [remarkModal, setRemarkModal] = useState(null);
   const [remark, setRemark] = useState('');
   const [filterCategory, setFilterCategory] = useState('');
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => { loadData(); }, []);
 
   const loadData = () => {
+    api.get('/expenses/categories').then(r => setCategories(r.data)).catch(() => {});
     api.get('/expenses/my').then(r => setMyExpenses(r.data)).catch(() => {});
-    if (isManager) api.get('/expenses/team').then(r => setTeamExpenses(r.data)).catch(() => {});
+    if (isManager) api.get('/expenses/all').then(r => setTeamExpenses(r.data)).catch(() => {});
     if (isAdmin) api.get('/expenses/all').then(r => setAllExpenses(r.data)).catch(() => {});
   };
 
   const handleSubmit = async () => {
     try {
-      await api.post('/expenses', { ...form, amount: Number(form.amount) });
+      await api.post('/expenses/submit', { categoryId: form.category, amount: Number(form.amount), description: form.description, expenseDate: form.date });
       toast.success('Expense submitted! Sent to manager for approval.');
       setShowSubmit(false);
       setForm({ category: '', amount: '', description: '', date: '' });
@@ -121,7 +119,7 @@ export default function Expenses() {
     ] : []),
   ];
 
-  const filteredMyExpenses = filterCategory ? myExpenses.filter(e => e.category === filterCategory) : myExpenses;
+  const filteredMyExpenses = filterCategory ? myExpenses.filter(e => e.categoryName === filterCategory) : myExpenses;
 
   return (
     <div className="space-y-6">
@@ -214,7 +212,7 @@ export default function Expenses() {
               <Filter size={14} className="text-gray-400" />
               <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="input w-auto text-sm">
                 <option value="">All Categories</option>
-                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
             </div>
           </div>
@@ -233,10 +231,10 @@ export default function Expenses() {
               <tbody className="divide-y dark:divide-gray-700">
                 {filteredMyExpenses.map(e => (
                   <tr key={e.id}>
-                    <td className="px-4 py-3 text-sm font-medium dark:text-white">{e.category}</td>
+                    <td className="px-4 py-3 text-sm font-medium dark:text-white">{e.categoryName || e.category}</td>
                     <td className="px-4 py-3 text-sm font-semibold text-gray-800 dark:text-gray-200">{formatCurrency(e.amount)}</td>
                     <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{e.description}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.date}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
                     <td className="px-4 py-3">{getStatusBadge(e.status)}</td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       <div className="text-xs space-y-1">
@@ -277,9 +275,9 @@ export default function Expenses() {
                       <p className="text-sm font-medium dark:text-white">{e.employeeName}</p>
                       <p className="text-xs text-gray-400">{e.department}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.category}</td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.categoryName || e.category}</td>
                     <td className="px-4 py-3 text-sm font-semibold dark:text-gray-200">{formatCurrency(e.amount)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.date}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
                     <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{e.description}</td>
                     <td className="px-4 py-3">{getStatusBadge(e.status)}</td>
                     <td className="px-4 py-3">
@@ -314,9 +312,9 @@ export default function Expenses() {
                       <p className="text-sm font-medium dark:text-white">{e.employeeName}</p>
                       <p className="text-xs text-gray-400">{e.department}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.category}</td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.categoryName || e.category}</td>
                     <td className="px-4 py-3 text-sm font-semibold dark:text-gray-200">{formatCurrency(e.amount)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.date}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
                     <td className="px-4 py-3">{getStatusBadge(e.status)}</td>
                   </tr>
                 ))}
@@ -352,9 +350,9 @@ export default function Expenses() {
                       <p className="text-sm font-medium dark:text-white">{e.employeeName}</p>
                       <p className="text-xs text-gray-400">{e.department}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.category}</td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.categoryName || e.category}</td>
                     <td className="px-4 py-3 text-sm font-semibold dark:text-gray-200">{formatCurrency(e.amount)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.date}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
                     <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{e.description}</td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       <p className="text-sm text-gray-600 dark:text-gray-400">{e.managerApprovedByName}</p>
@@ -395,9 +393,9 @@ export default function Expenses() {
                       <p className="text-sm font-medium dark:text-white">{e.employeeName}</p>
                       <p className="text-xs text-gray-400">{e.department}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.category}</td>
+                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.categoryName || e.category}</td>
                     <td className="px-4 py-3 text-sm font-semibold dark:text-gray-200">{formatCurrency(e.amount)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.date}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
                     <td className="px-4 py-3">{getStatusBadge(e.status)}</td>
                     <td className="px-4 py-3 hidden md:table-cell text-xs text-gray-500 dark:text-gray-400">{e.managerApprovedByName || '-'}</td>
                     <td className="px-4 py-3 hidden md:table-cell text-xs text-gray-500 dark:text-gray-400">{e.financeApprovedByName || '-'}</td>
@@ -423,7 +421,7 @@ export default function Expenses() {
                 <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Category</label>
                 <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className="input mt-1">
                   <option value="">Select category</option>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>

@@ -50,7 +50,7 @@ export default function Performance() {
 
   const handleManagerReview = async () => {
     try {
-      await api.put(`/performance/manager-review/${managerReviewModal.id}`, managerForm);
+      await api.put(`/performance/complete-review/${managerReviewModal.id}`, managerForm);
       toast.success('Review submitted successfully!');
       setManagerReviewModal(null);
       setManagerForm({ rating: 3, strengths: '', improvements: '', goals: '', comments: '' });
@@ -189,7 +189,7 @@ export default function Performance() {
                     )}
                   </div>
                 </div>
-                {r.status === 'pending_self' && (
+                {r.status === 'pending' && (
                   <button onClick={() => { setSelfReviewModal(r); setSelfForm({ selfRating: r.selfRating || 3, selfComments: r.selfComments || '' }); }}
                     className="btn-primary flex items-center gap-2 text-sm">
                     <Edit3 size={14} /> Self Review
@@ -317,7 +317,7 @@ export default function Performance() {
                     )}
                   </div>
                 </div>
-                {(!r.rating || r.status === 'pending_manager') && (
+                {(!r.rating && (r.status === 'manager_review' || r.status === 'self_review' || r.status === 'pending')) && (
                   <button onClick={() => {
                     setManagerReviewModal(r);
                     setManagerForm({ rating: r.rating || 3, strengths: r.strengths || '', improvements: r.improvements || '', goals: r.goals || '', comments: r.comments || '' });
