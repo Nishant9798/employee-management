@@ -199,6 +199,7 @@ db.exec(`
     workingDays INTEGER,
     presentDays INTEGER,
     leaveDays INTEGER,
+    pdfPath TEXT,
     status TEXT DEFAULT 'generated' CHECK(status IN ('generated','paid')),
     generatedOn TEXT DEFAULT (datetime('now')),
     UNIQUE(employeeId, month, year)
