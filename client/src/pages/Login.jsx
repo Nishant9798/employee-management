@@ -57,7 +57,7 @@ export default function Login() {
               <Mail size={18} className="absolute left-3 top-2.5 text-purple-300" />
               <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent"
-                placeholder="admin@company.com" required />
+                placeholder="Enter your email" required />
             </div>
           </div>
           <div>
@@ -83,14 +83,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Demo credentials */}
-        <div className="mt-6 backdrop-blur-xl bg-white/5 border border-white/10 rounded-xl p-4">
-          <p className="text-xs font-semibold text-purple-200 mb-2">Demo Credentials</p>
-          <div className="space-y-1 text-xs text-purple-300">
-            <p><span className="font-medium text-white">Admin:</span> admin@company.com / admin123</p>
-            <p><span className="font-medium text-white">Employee:</span> rahul@company.com / emp123</p>
-          </div>
-        </div>
       </div>
     </div>
   );
