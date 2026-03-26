@@ -18,7 +18,8 @@ app.use('/api/holidays', require('./routes/holidays'));
 // Serve React build in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
-  app.get('*', (req, res) => {
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
     res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
   });
 }
