@@ -81,8 +81,20 @@ export default function Documents() {
     }
   };
 
-  const handleDownload = (doc) => {
-    window.open(`/api/documents/download/${doc.id}`, '_blank');
+  const handleDownload = async (doc) => {
+    try {
+      const res = await api.get(`/documents/download/${doc.id}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', doc.name || `document-${doc.id}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error('Failed to download document');
+    }
   };
 
   const handleDelete = async (id) => {

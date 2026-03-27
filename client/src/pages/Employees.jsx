@@ -9,7 +9,7 @@ const ROLES = ['employee', 'manager', 'admin'];
 const BLOOD_GROUPS = ['A+','A-','B+','B-','AB+','AB-','O+','O-'];
 
 export default function Employees() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const [employees, setEmployees] = useState([]);
   const [search, setSearch] = useState('');
   const [deptFilter, setDeptFilter] = useState('');
@@ -69,8 +69,20 @@ export default function Employees() {
     loadEmployees();
   };
 
-  const handleExportCSV = () => {
-    window.open('/api/employees/export/csv', '_blank');
+  const handleExportCSV = async () => {
+    try {
+      const res = await api.get('/employees/export/csv', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'employees.csv');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error('Failed to export CSV');
+    }
   };
 
   const managers = employees.filter(e => e.role === 'admin' || e.role === 'manager');
@@ -159,7 +171,9 @@ export default function Employees() {
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{emp.department}</td>
                       <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{emp.designation}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">{emp.phone}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">
+                        {isAdmin || emp.id === user?.id ? (emp.phone || '-') : '••••••••••'}
+                      </td>
                       <td className="px-4 py-3">
                         <span className={`badge ${emp.role === 'admin' ? 'badge-danger' : emp.role === 'manager' ? 'badge-info' : 'badge-gray'}`}>
                           {emp.role}

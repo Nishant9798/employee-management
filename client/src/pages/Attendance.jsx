@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { Clock, ChevronLeft, ChevronRight, Download, CalendarCheck } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function Attendance() {
   const { isAdmin } = useAuth();
@@ -89,8 +90,20 @@ export default function Attendance() {
     });
   }
 
-  const handleExport = () => {
-    window.open(`/api/attendance/export/csv?month=${month}&year=${year}`, '_blank');
+  const handleExport = async () => {
+    try {
+      const res = await api.get(`/attendance/export/csv?month=${month}&year=${year}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `attendance-${year}-${month}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error('Failed to export CSV');
+    }
   };
 
   return (

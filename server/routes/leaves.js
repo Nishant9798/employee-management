@@ -23,7 +23,7 @@ router.get('/balance', (req, res) => {
 });
 
 // Get leave balance for any employee (admin/manager)
-router.get('/balance/:employeeId', (req, res) => {
+router.get('/balance/:employeeId', managerOrAdmin, (req, res) => {
   const balances = db.prepare(`
     SELECT lb.*, lt.name as leaveType, lt.description
     FROM leave_balances lb JOIN leave_types lt ON lb.leaveTypeId = lt.id
@@ -48,7 +48,7 @@ router.get('/my-applications', (req, res) => {
 });
 
 // Get all leave applications (admin/manager view)
-router.get('/all-applications', (req, res) => {
+router.get('/all-applications', managerOrAdmin, (req, res) => {
   let query = `
     SELECT la.*, lt.name as leaveType, e.name as employeeName, e.employeeId as empCode,
            e.department, m.name as managerApprovedByName, h.name as hrApprovedByName

@@ -15,6 +15,16 @@ router.get('/', (req, res) => {
     FROM employees e LEFT JOIN employees m ON e.managerId = m.id
     ORDER BY e.id
   `).all();
+
+  // Non-admin users can only see their own phone number
+  if (req.user.role !== 'admin') {
+    employees.forEach(emp => {
+      if (emp.id !== req.user.id) {
+        emp.phone = null;
+      }
+    });
+  }
+
   res.json(employees);
 });
 
@@ -29,6 +39,12 @@ router.get('/:id', (req, res) => {
     WHERE e.id = ?
   `).get(req.params.id);
   if (!emp) return res.status(404).json({ error: 'Employee not found' });
+
+  // Non-admin users can only see their own phone number
+  if (req.user.role !== 'admin' && emp.id !== req.user.id) {
+    emp.phone = null;
+  }
+
   res.json(emp);
 });
 

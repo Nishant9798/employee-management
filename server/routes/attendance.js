@@ -21,7 +21,7 @@ router.get('/my', (req, res) => {
 });
 
 // Get attendance for an employee (admin/manager)
-router.get('/employee/:id', (req, res) => {
+router.get('/employee/:id', adminOnly, (req, res) => {
   const { month, year } = req.query;
   const m = month || (new Date().getMonth() + 1);
   const y = year || new Date().getFullYear();
@@ -36,7 +36,7 @@ router.get('/employee/:id', (req, res) => {
 });
 
 // Get today's attendance for all employees (admin)
-router.get('/today', (req, res) => {
+router.get('/today', adminOnly, (req, res) => {
   const today = req.query.date || new Date().toISOString().split('T')[0];
   const records = db.prepare(`
     SELECT a.*, e.name, e.employeeId as empCode, e.department, e.designation
@@ -107,8 +107,8 @@ router.post('/mark', adminOnly, (req, res) => {
   }
 });
 
-// Attendance summary for a month
-router.get('/summary', (req, res) => {
+// Attendance summary for a month (admin only)
+router.get('/summary', adminOnly, (req, res) => {
   const { month, year } = req.query;
   const m = month || (new Date().getMonth() + 1);
   const y = year || new Date().getFullYear();

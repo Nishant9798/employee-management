@@ -87,8 +87,20 @@ export default function Payslips() {
     }
   };
 
-  const handleDownloadPdf = (payslipId) => {
-    window.open(`/api/salary/download-payslip/${payslipId}`, '_blank');
+  const handleDownloadPdf = async (payslipId) => {
+    try {
+      const res = await api.get(`/salary/download-payslip/${payslipId}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `payslip-${payslipId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error('Failed to download payslip');
+    }
   };
 
   const formatCurrency = (amount) => {

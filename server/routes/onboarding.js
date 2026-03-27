@@ -41,8 +41,12 @@ router.post('/initialize/:employeeId', adminOnly, (req, res) => {
   res.json({ message: 'Onboarding initialized' });
 });
 
-// Update task progress
+// Update task progress (own or admin)
 router.put('/progress/:employeeId/:taskId', (req, res) => {
+  // Only allow updating own onboarding tasks, or admin can update any
+  if (req.user.role !== 'admin' && String(req.params.employeeId) !== String(req.user.id)) {
+    return res.status(403).json({ error: 'You can only update your own onboarding tasks' });
+  }
   const { status, notes } = req.body;
   const completedAt = status === 'completed' ? new Date().toISOString() : null;
   db.prepare(`INSERT INTO onboarding_progress (employeeId, taskId, status, completedAt, notes) VALUES (?,?,?,?,?)

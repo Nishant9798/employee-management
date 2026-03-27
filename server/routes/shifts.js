@@ -42,6 +42,26 @@ router.post('/', adminOnly, (req, res) => {
   res.status(201).json({ id: result.lastInsertRowid });
 });
 
+// Update shift (admin)
+router.put('/:id', adminOnly, (req, res) => {
+  const { name, startTime, endTime, graceMinutes, description } = req.body;
+  try {
+    db.prepare('UPDATE shifts SET name=?, startTime=?, endTime=?, graceMinutes=?, description=? WHERE id=?')
+      .run(name, startTime, endTime, graceMinutes || 15, description, req.params.id);
+    res.json({ message: 'Shift updated' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Delete shift (admin)
+router.delete('/:id', adminOnly, (req, res) => {
+  try {
+    // Remove employee assignments for this shift first
+    db.prepare('DELETE FROM employee_shifts WHERE shiftId = ?').run(req.params.id);
+    db.prepare('DELETE FROM shifts WHERE id = ?').run(req.params.id);
+    res.json({ message: 'Shift deleted' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
 // Assign shift (admin)
 router.post('/assign', adminOnly, (req, res) => {
   const { employeeId, shiftId, fromDate, toDate } = req.body;
