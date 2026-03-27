@@ -1,12 +1,13 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { useState, useEffect, useRef } from 'react';
-import { Menu, Search, Bell, X } from 'lucide-react';
+import { Menu, Search, Bell, X, Command } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -16,11 +17,11 @@ export default function Layout() {
   const [showNotifs, setShowNotifs] = useState(false);
   const notifRef = useRef(null);
 
-  // Global search
+  // Global search (Ctrl+K modal)
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
-  const searchRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     loadNotifications();
@@ -43,6 +44,30 @@ export default function Layout() {
     loadNotifications();
   };
 
+  // Ctrl+K shortcut
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowSearch(prev => !prev);
+        setSearchQuery('');
+        setSearchResults(null);
+      }
+      if (e.key === 'Escape') {
+        setShowSearch(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Focus search input when modal opens
+  useEffect(() => {
+    if (showSearch && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [showSearch]);
+
   // Search
   useEffect(() => {
     if (searchQuery.length < 2) { setSearchResults(null); return; }
@@ -56,7 +81,6 @@ export default function Layout() {
   useEffect(() => {
     const handleClick = (e) => {
       if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifs(false);
-      if (searchRef.current && !searchRef.current.contains(e.target)) { setShowSearch(false); setSearchResults(null); }
     };
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
@@ -84,6 +108,13 @@ export default function Layout() {
     return `${days}d ago`;
   };
 
+  const handleSearchNavigate = (path) => {
+    navigate(path);
+    setShowSearch(false);
+    setSearchQuery('');
+    setSearchResults(null);
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
       {/* Mobile overlay */}
@@ -92,8 +123,12 @@ export default function Layout() {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <Sidebar onClose={() => setSidebarOpen(false)} />
+      <div className={`fixed inset-y-0 left-0 z-40 transform transition-all duration-300 lg:static lg:inset-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 ${sidebarCollapsed ? 'w-[72px]' : 'w-64'}`}>
+        <Sidebar
+          onClose={() => setSidebarOpen(false)}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        />
       </div>
 
       {/* Main content */}
@@ -108,61 +143,15 @@ export default function Layout() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Global Search */}
-            <div ref={searchRef} className="relative hidden sm:block">
-              <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5">
-                <Search size={16} className="text-gray-400" />
-                <input
-                  value={searchQuery}
-                  onChange={e => { setSearchQuery(e.target.value); setShowSearch(true); }}
-                  onFocus={() => setShowSearch(true)}
-                  placeholder="Search employees, announcements..."
-                  className="bg-transparent text-sm text-gray-700 dark:text-gray-300 outline-none w-48 lg:w-64 placeholder-gray-400"
-                />
-                {searchQuery && (
-                  <button onClick={() => { setSearchQuery(''); setSearchResults(null); }}>
-                    <X size={14} className="text-gray-400" />
-                  </button>
-                )}
-              </div>
-
-              {/* Search Results Dropdown */}
-              {showSearch && searchResults && (
-                <div className="absolute top-full mt-2 right-0 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border dark:border-gray-700 overflow-hidden z-50">
-                  {searchResults.employees?.length > 0 && (
-                    <div>
-                      <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase bg-gray-50 dark:bg-gray-700/50">Employees</p>
-                      {searchResults.employees.map(e => (
-                        <button key={e.id} onClick={() => { navigate('/employees'); setShowSearch(false); setSearchQuery(''); }}
-                          className="w-full px-4 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-3 transition">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
-                            {e.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium dark:text-white">{e.name}</p>
-                            <p className="text-xs text-gray-400">{e.department} · {e.designation}</p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  {searchResults.announcements?.length > 0 && (
-                    <div>
-                      <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase bg-gray-50 dark:bg-gray-700/50">Announcements</p>
-                      {searchResults.announcements.map(a => (
-                        <button key={a.id} onClick={() => { navigate('/announcements'); setShowSearch(false); setSearchQuery(''); }}
-                          className="w-full px-4 py-2.5 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                          <p className="text-sm font-medium dark:text-white">{a.title}</p>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  {(!searchResults.employees?.length && !searchResults.announcements?.length) && (
-                    <p className="px-4 py-6 text-center text-sm text-gray-400">No results found</p>
-                  )}
-                </div>
-              )}
-            </div>
+            {/* Search trigger */}
+            <button
+              onClick={() => setShowSearch(true)}
+              className="hidden sm:flex items-center gap-2 bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors cursor-pointer group"
+            >
+              <Search size={16} className="text-gray-400 group-hover:text-gray-500" />
+              <span className="text-sm text-gray-400 w-32 lg:w-48 text-left">Search...</span>
+              <kbd>Ctrl K</kbd>
+            </button>
 
             {/* Notifications Bell */}
             <div ref={notifRef} className="relative">
@@ -177,7 +166,7 @@ export default function Layout() {
 
               {/* Notifications Dropdown */}
               {showNotifs && (
-                <div className="absolute top-full mt-2 right-0 w-80 sm:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border dark:border-gray-700 overflow-hidden z-50">
+                <div className="absolute top-full mt-2 right-0 w-80 sm:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border dark:border-gray-700 overflow-hidden z-50 animate-scale-in">
                   <div className="flex items-center justify-between px-4 py-3 border-b dark:border-gray-700">
                     <h3 className="font-semibold dark:text-white">Notifications</h3>
                     {unreadCount > 0 && (
@@ -218,6 +207,73 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Ctrl+K Search Modal */}
+      {showSearch && (
+        <div className="search-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) setShowSearch(false); }}>
+          <div className="search-modal mx-4">
+            <div className="flex items-center gap-3 px-4 py-3 border-b dark:border-gray-700">
+              <Search size={20} className="text-gray-400 shrink-0" />
+              <input
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Search employees, announcements..."
+                className="flex-1 bg-transparent text-gray-800 dark:text-white outline-none text-base placeholder-gray-400"
+              />
+              <button onClick={() => setShowSearch(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                <kbd>ESC</kbd>
+              </button>
+            </div>
+
+            <div className="max-h-80 overflow-y-auto">
+              {!searchResults && searchQuery.length < 2 && (
+                <div className="px-4 py-8 text-center">
+                  <p className="text-sm text-gray-400">Type to search employees and announcements</p>
+                  <p className="text-xs text-gray-300 dark:text-gray-500 mt-1">Minimum 2 characters</p>
+                </div>
+              )}
+
+              {searchResults && (
+                <>
+                  {searchResults.employees?.length > 0 && (
+                    <div>
+                      <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase bg-gray-50 dark:bg-gray-700/50">Employees</p>
+                      {searchResults.employees.map(e => (
+                        <button key={e.id} onClick={() => handleSearchNavigate('/employees')}
+                          className="w-full px-4 py-2.5 text-left hover:bg-indigo-50 dark:hover:bg-indigo-900/20 flex items-center gap-3 transition">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                            {e.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium dark:text-white">{e.name}</p>
+                            <p className="text-xs text-gray-400">{e.department} · {e.designation}</p>
+                          </div>
+                          <span className="text-xs text-gray-300 dark:text-gray-600">{e.employeeId}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {searchResults.announcements?.length > 0 && (
+                    <div>
+                      <p className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase bg-gray-50 dark:bg-gray-700/50">Announcements</p>
+                      {searchResults.announcements.map(a => (
+                        <button key={a.id} onClick={() => handleSearchNavigate('/announcements')}
+                          className="w-full px-4 py-2.5 text-left hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition">
+                          <p className="text-sm font-medium dark:text-white">{a.title}</p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {(!searchResults.employees?.length && !searchResults.announcements?.length) && (
+                    <p className="px-4 py-8 text-center text-sm text-gray-400">No results found for "{searchQuery}"</p>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

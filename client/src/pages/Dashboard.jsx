@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
 import { Users, CalendarCheck, CalendarX, Clock, TrendingUp, Megaphone, PartyPopper, ChevronRight, Receipt, DoorOpen, Cake, UserMinus, Zap } from 'lucide-react';
@@ -23,6 +23,26 @@ function AnimatedNumber({ value, duration = 1000 }) {
   return <span>{display}</span>;
 }
 
+function LiveClock() {
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <span className="font-mono text-lg font-semibold text-indigo-600 dark:text-indigo-400">
+      {time.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
+    </span>
+  );
+}
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good Morning';
+  if (h < 17) return 'Good Afternoon';
+  return 'Good Evening';
+}
+
 export default function Dashboard() {
   const { user, isAdmin, isManager } = useAuth();
   const [stats, setStats] = useState({});
@@ -30,23 +50,29 @@ export default function Dashboard() {
   const [recentLeaves, setRecentLeaves] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [celebrations, setCelebrations] = useState({ anniversaries: [], birthdays: [] });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const promises = [];
     if (isAdmin) {
-      api.get('/employees/stats/dashboard').then(r => setStats(r.data));
-      api.get('/leaves/all-applications').then(r => setRecentLeaves(r.data.slice(0, 5)));
+      promises.push(api.get('/employees/stats/dashboard').then(r => setStats(r.data)));
+      promises.push(api.get('/leaves/all-applications').then(r => setRecentLeaves(r.data.slice(0, 5))));
     } else {
-      api.get('/leaves/my-applications').then(r => setRecentLeaves(r.data.slice(0, 5)));
+      promises.push(api.get('/leaves/my-applications').then(r => setRecentLeaves(r.data.slice(0, 5))));
     }
-    api.get('/announcements').then(r => setAnnouncements(r.data.slice(0, 3))).catch(() => {});
-    api.get('/employees/stats/celebrations').then(r => setCelebrations(r.data)).catch(() => {});
+    promises.push(api.get('/announcements').then(r => setAnnouncements(r.data.slice(0, 3))).catch(() => {}));
+    promises.push(api.get('/employees/stats/celebrations').then(r => setCelebrations(r.data)).catch(() => {}));
 
     const today = new Date().toISOString().split('T')[0];
-    api.get('/attendance/my', { params: { month: new Date().getMonth() + 1, year: new Date().getFullYear() } })
-      .then(r => {
-        const todayRec = r.data.find(a => a.date === today);
-        setMyAttendance(todayRec);
-      });
+    promises.push(
+      api.get('/attendance/my', { params: { month: new Date().getMonth() + 1, year: new Date().getFullYear() } })
+        .then(r => {
+          const todayRec = r.data.find(a => a.date === today);
+          setMyAttendance(todayRec);
+        })
+    );
+
+    Promise.allSettled(promises).finally(() => setLoading(false));
   }, [isAdmin]);
 
   const statCards = isAdmin ? [
@@ -85,13 +111,33 @@ export default function Dashboard() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="skeleton h-32 rounded-xl" />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[1,2,3,4].map(i => <div key={i} className="skeleton h-14 rounded-xl" />)}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {[1,2,3].map(i => <div key={i} className="skeleton h-64 rounded-xl" />)}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div className="page-header">
-        <div className="relative z-10">
-          <h1>Welcome back, {user?.name?.split(' ')[0]}!</h1>
-          <p>{new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div>
+            <h1>{getGreeting()}, {user?.name?.split(' ')[0]}!</h1>
+            <p>{new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          </div>
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+            <Clock size={16} className="text-indigo-200" />
+            <LiveClock />
+          </div>
         </div>
         <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-10">
           <TrendingUp size={120} className="text-white" />
@@ -106,7 +152,7 @@ export default function Dashboard() {
           { label: 'My Payslips', to: '/payslips', icon: Zap, color: 'from-amber-500 to-orange-500' },
           { label: 'Messages', to: '/messages', icon: Megaphone, color: 'from-pink-500 to-rose-500' },
         ].map((a, i) => (
-          <Link key={a.label} to={a.to} className={`flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r ${a.color} text-white hover:shadow-lg transition-all duration-300 animate-slide-up`} style={{ animationDelay: `${i * 50}ms` }}>
+          <Link key={a.label} to={a.to} className={`flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r ${a.color} text-white hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 animate-slide-up`} style={{ animationDelay: `${i * 50}ms` }}>
             <a.icon size={20} />
             <span className="text-sm font-medium">{a.label}</span>
           </Link>
@@ -117,7 +163,7 @@ export default function Dashboard() {
       {isAdmin && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {statCards.map((s, i) => (
-            <div key={s.label} className={`${s.gradient} rounded-xl p-5 border border-white/50 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 animate-slide-up`} style={{ animationDelay: `${i * 80}ms` }}>
+            <div key={s.label} className={`${s.gradient} rounded-xl p-5 border border-white/50 dark:border-gray-700 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 animate-slide-up cursor-default`} style={{ animationDelay: `${i * 80}ms` }}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-2xl font-bold text-gray-800 dark:text-white">
@@ -143,7 +189,7 @@ export default function Dashboard() {
           </div>
           <div className="flex flex-wrap gap-2">
             {stats.onLeaveNames.map((e, i) => (
-              <span key={i} className="px-3 py-1 bg-white/60 dark:bg-gray-800/40 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300">
+              <span key={i} className="px-3 py-1 bg-white/60 dark:bg-gray-800/40 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800/60 transition-colors">
                 {e.name} <span className="text-gray-400">· {e.department}</span>
               </span>
             ))}
@@ -153,7 +199,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Attendance Card */}
-        <div className="card animate-slide-up">
+        <div className="card card-interactive animate-slide-up">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
             <CalendarCheck size={20} className="text-indigo-600 dark:text-indigo-400" /> Today's Attendance
           </h2>
@@ -185,12 +231,17 @@ export default function Dashboard() {
               {myAttendance?.checkIn && !myAttendance?.checkOut && (
                 <button onClick={handleCheckOut} className="btn-danger flex-1">Check Out</button>
               )}
+              {myAttendance?.checkIn && myAttendance?.checkOut && (
+                <div className="flex-1 text-center py-2 text-sm text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                  Day Complete
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Recent Leaves */}
-        <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
+        <div className="card card-interactive animate-slide-up" style={{ animationDelay: '100ms' }}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
               <CalendarX size={20} className="text-indigo-600 dark:text-indigo-400" /> Recent Leaves
@@ -222,7 +273,7 @@ export default function Dashboard() {
         </div>
 
         {/* Announcements Widget */}
-        <div className="card animate-slide-up" style={{ animationDelay: '200ms' }}>
+        <div className="card card-interactive animate-slide-up" style={{ animationDelay: '200ms' }}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
               <Megaphone size={20} className="text-indigo-600 dark:text-indigo-400" /> Announcements
@@ -261,7 +312,7 @@ export default function Dashboard() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {celebrations.birthdays.map((b, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/40 rounded-lg">
+              <div key={i} className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/40 rounded-lg hover:bg-white dark:hover:bg-gray-800/60 transition-colors">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-bold text-sm">
                   {b.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>
@@ -285,7 +336,7 @@ export default function Dashboard() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {celebrations.anniversaries.map((a, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-100 dark:border-amber-800/30">
+              <div key={i} className="flex items-center gap-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-100 dark:border-amber-800/30 hover:shadow-sm transition-all">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm">
                   {a.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>

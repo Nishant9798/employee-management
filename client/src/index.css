@@ -17,6 +17,7 @@ body {
 }
 .sidebar-link:hover {
   @apply bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400;
+  transform: translateX(4px);
 }
 .sidebar-link.active {
   @apply bg-indigo-100 text-indigo-800 font-semibold dark:bg-indigo-900/50 dark:text-indigo-300;
@@ -24,25 +25,59 @@ body {
   @apply border-indigo-600 dark:border-indigo-400;
 }
 
+/* Collapsed sidebar link */
+.sidebar-collapsed .sidebar-link {
+  @apply justify-center px-2 py-2.5;
+  gap: 0;
+}
+.sidebar-collapsed .sidebar-link:hover {
+  transform: translateX(0) scale(1.05);
+}
+.sidebar-collapsed .sidebar-link.active {
+  border-left: none;
+  @apply border-b-2 border-indigo-600 dark:border-indigo-400;
+}
+
 .card {
   @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6 dark:bg-gray-800 dark:border-gray-700;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  @apply shadow-md;
+}
+.card-interactive:hover {
+  transform: translateY(-2px);
+  @apply shadow-lg;
 }
 
 .btn-primary {
   @apply bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-all disabled:opacity-50 hover:shadow-lg hover:shadow-indigo-200 dark:hover:shadow-indigo-900/30;
 }
+.btn-primary:active {
+  transform: scale(0.97);
+}
 .btn-secondary {
   @apply bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600;
+}
+.btn-secondary:active {
+  transform: scale(0.97);
 }
 .btn-success {
   @apply bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition-all hover:shadow-lg hover:shadow-emerald-200 dark:hover:shadow-emerald-900/30;
 }
+.btn-success:active {
+  transform: scale(0.97);
+}
 .btn-danger {
   @apply bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-all hover:shadow-lg hover:shadow-red-200 dark:hover:shadow-red-900/30;
+}
+.btn-danger:active {
+  transform: scale(0.97);
 }
 
 .input {
   @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .badge {
@@ -151,4 +186,90 @@ table thead {
 }
 .empty-state svg {
   @apply w-24 h-24 mb-4 opacity-50;
+}
+
+/* Skeleton loading shimmer */
+.skeleton {
+  @apply bg-gray-200 dark:bg-gray-700 rounded-lg;
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+.dark .skeleton {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Search modal overlay */
+.search-modal-overlay {
+  @apply fixed inset-0 z-50 flex items-start justify-center pt-[15vh];
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.15s ease-out;
+}
+
+.search-modal {
+  @apply w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border dark:border-gray-700 overflow-hidden;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-20px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Tooltip */
+.tooltip-wrapper {
+  position: relative;
+}
+.tooltip-wrapper .tooltip {
+  @apply invisible absolute left-full ml-3 px-2.5 py-1.5 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg whitespace-nowrap z-50;
+  opacity: 0;
+  transition: opacity 0.15s, visibility 0.15s;
+}
+.tooltip-wrapper .tooltip::before {
+  content: '';
+  @apply absolute right-full top-1/2 -translate-y-1/2;
+  border: 5px solid transparent;
+  border-right-color: #111827;
+}
+.dark .tooltip-wrapper .tooltip::before {
+  border-right-color: #374151;
+}
+.tooltip-wrapper:hover .tooltip {
+  @apply visible;
+  opacity: 1;
+}
+
+/* Live pulse dot */
+.pulse-dot {
+  @apply relative;
+}
+.pulse-dot::after {
+  content: '';
+  @apply absolute w-2.5 h-2.5 bg-emerald-500 rounded-full -top-0.5 -right-0.5;
+  animation: livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+}
+
+/* Kbd shortcut style */
+kbd {
+  @apply inline-flex items-center px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded text-[10px] font-mono text-gray-500 dark:text-gray-400;
 }
