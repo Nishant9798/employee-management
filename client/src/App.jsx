@@ -21,6 +21,8 @@ import Messages from './pages/Messages';
 import Onboarding from './pages/Onboarding';
 import ExitManagement from './pages/ExitManagement';
 import Settings from './pages/Settings';
+import CompanyPolicies from './pages/CompanyPolicies';
+import NDAAgreements from './pages/NDAAgreements';
 
 function ProtectedRoute({ children }) {
   const { token, loading } = useAuth();
@@ -57,6 +59,8 @@ export default function App() {
         <Route path="announcements" element={<Announcements />} />
         <Route path="onboarding" element={<Onboarding />} />
         <Route path="exit" element={<ExitManagement />} />
+        <Route path="company-policies" element={<CompanyPolicies />} />
+        <Route path="nda-agreements" element={<NDAAgreements />} />
         <Route path="settings" element={<Settings />} />
         <Route path="profile" element={<MyProfile />} />
       </Route>

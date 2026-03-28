@@ -363,6 +363,46 @@ db.exec(`
     category TEXT DEFAULT 'general'
   );
 
+  -- Company Policies
+  CREATE TABLE IF NOT EXISTS company_policies (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    category TEXT DEFAULT 'General',
+    filePath TEXT NOT NULL,
+    fileName TEXT NOT NULL,
+    fileSize INTEGER,
+    uploadedBy INTEGER REFERENCES employees(id),
+    updatedBy INTEGER REFERENCES employees(id),
+    createdAt TEXT DEFAULT (datetime('now')),
+    updatedAt TEXT DEFAULT (datetime('now'))
+  );
+
+  -- NDA / Employment Agreements
+  CREATE TABLE IF NOT EXISTS nda_agreements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    templatePath TEXT NOT NULL,
+    templateName TEXT NOT NULL,
+    templateSize INTEGER,
+    uploadedBy INTEGER REFERENCES employees(id),
+    createdAt TEXT DEFAULT (datetime('now')),
+    updatedAt TEXT DEFAULT (datetime('now'))
+  );
+
+  -- Employee signed/uploaded agreements
+  CREATE TABLE IF NOT EXISTS employee_agreements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    agreementId INTEGER NOT NULL REFERENCES nda_agreements(id),
+    employeeId INTEGER NOT NULL REFERENCES employees(id),
+    filePath TEXT NOT NULL,
+    fileName TEXT NOT NULL,
+    fileSize INTEGER,
+    uploadedAt TEXT DEFAULT (datetime('now')),
+    UNIQUE(agreementId, employeeId)
+  );
+
   -- Indexes for performance
   CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(userId, isRead);
   CREATE INDEX IF NOT EXISTS idx_attendance_emp_date ON attendance(employeeId, date);

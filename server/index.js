@@ -29,6 +29,8 @@ app.use('/api/exit', require('./routes/exit'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/documents', require('./routes/documents'));
+app.use('/api/policies', require('./routes/policies'));
+app.use('/api/agreements', require('./routes/agreements'));
 
 // Serve React build in production
 if (process.env.NODE_ENV === 'production') {

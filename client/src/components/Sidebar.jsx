@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { LayoutDashboard, Users, CalendarCheck, CalendarDays, TreePine, UserCircle, LogOut, X, Building2, BarChart3, Megaphone, Sun, Moon, Receipt, Wallet, Award, GraduationCap, Clock, ClipboardList, DoorOpen, MessageSquare, FileText, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarCheck, CalendarDays, TreePine, UserCircle, LogOut, X, Building2, BarChart3, Megaphone, Sun, Moon, Receipt, Wallet, Award, GraduationCap, Clock, ClipboardList, DoorOpen, MessageSquare, FileText, Settings, ChevronLeft, ChevronRight, Shield, FileSignature } from 'lucide-react';
 
 const links = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
@@ -19,6 +19,8 @@ const links = [
   { to: '/hierarchy', icon: TreePine, label: 'Org Hierarchy' },
   { to: '/reports', icon: BarChart3, label: 'Reports' },
   { to: '/announcements', icon: Megaphone, label: 'Announcements' },
+  { to: '/company-policies', icon: Shield, label: 'Company Policies' },
+  { to: '/nda-agreements', icon: FileSignature, label: 'NDA & Agreements' },
 ];
 
 const adminLinks = [
