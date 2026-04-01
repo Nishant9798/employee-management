@@ -130,10 +130,14 @@ router.put('/:id', adminOnly, (req, res) => {
 
 // Update own profile (employee self-service)
 router.put('/profile/self', (req, res) => {
-  const { phone, address, emergencyContactName, emergencyContactPhone, dateOfBirth, bloodGroup, gender } = req.body;
-  db.prepare('UPDATE employees SET phone=?, address=?, emergencyContactName=?, emergencyContactPhone=?, dateOfBirth=?, bloodGroup=?, gender=? WHERE id=?')
-    .run(phone, address, emergencyContactName, emergencyContactPhone, dateOfBirth, bloodGroup, gender || null, req.user.id);
-  res.json({ message: 'Profile updated' });
+  try {
+    const { phone, address, emergencyContactName, emergencyContactPhone, dateOfBirth, bloodGroup, gender } = req.body;
+    db.prepare('UPDATE employees SET phone=?, address=?, emergencyContactName=?, emergencyContactPhone=?, dateOfBirth=?, bloodGroup=?, gender=? WHERE id=?')
+      .run(phone, address, emergencyContactName, emergencyContactPhone, dateOfBirth, bloodGroup, gender || null, req.user.id);
+    res.json({ message: 'Profile updated' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Upload avatar (self-service)

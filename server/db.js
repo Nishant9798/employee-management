@@ -119,7 +119,7 @@ db.exec(`
     userId INTEGER NOT NULL REFERENCES employees(id),
     title TEXT NOT NULL,
     message TEXT NOT NULL,
-    type TEXT DEFAULT 'info' CHECK(type IN ('info','success','warning','error','leave','attendance','expense','performance')),
+    type TEXT DEFAULT 'info' CHECK(type IN ('info','success','warning','error','leave','attendance','expense','performance','ticket')),
     isRead INTEGER DEFAULT 0,
     link TEXT,
     createdAt TEXT DEFAULT (datetime('now'))
@@ -448,6 +448,34 @@ db.exec(`
     paidOn TEXT DEFAULT (datetime('now'))
   );
 
+  -- Helpdesk / Support Tickets
+  CREATE TABLE IF NOT EXISTS tickets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ticketId TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    category TEXT DEFAULT 'general' CHECK(category IN ('it','hr','finance','admin','general')),
+    priority TEXT DEFAULT 'normal' CHECK(priority IN ('low','normal','high','urgent')),
+    status TEXT DEFAULT 'open' CHECK(status IN ('open','in_progress','resolved','closed','reopened')),
+    createdBy INTEGER NOT NULL REFERENCES employees(id),
+    assignedTo INTEGER REFERENCES employees(id),
+    resolvedBy INTEGER REFERENCES employees(id),
+    resolvedAt TEXT,
+    closedAt TEXT,
+    createdAt TEXT DEFAULT (datetime('now')),
+    updatedAt TEXT DEFAULT (datetime('now'))
+  );
+
+  -- Ticket comments / replies
+  CREATE TABLE IF NOT EXISTS ticket_comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ticketId INTEGER NOT NULL REFERENCES tickets(id),
+    userId INTEGER NOT NULL REFERENCES employees(id),
+    comment TEXT NOT NULL,
+    isInternal INTEGER DEFAULT 0,
+    createdAt TEXT DEFAULT (datetime('now'))
+  );
+
   -- Indexes for performance
   CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(userId, isRead);
   CREATE INDEX IF NOT EXISTS idx_attendance_emp_date ON attendance(employeeId, date);
@@ -458,6 +486,10 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_expenses_emp ON expenses(employeeId);
   CREATE INDEX IF NOT EXISTS idx_payslips_emp ON payslips(employeeId, year, month);
   CREATE INDEX IF NOT EXISTS idx_activity_log_user ON activity_log(userId);
+  CREATE INDEX IF NOT EXISTS idx_tickets_created_by ON tickets(createdBy);
+  CREATE INDEX IF NOT EXISTS idx_tickets_assigned ON tickets(assignedTo);
+  CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
+  CREATE INDEX IF NOT EXISTS idx_ticket_comments_ticket ON ticket_comments(ticketId);
 `);
 
 // Seed data
@@ -805,9 +837,56 @@ function seed() {
   const insertActivity = db.prepare('INSERT INTO activity_log (userId, action, target, details) VALUES (?,?,?,?)');
   activities.forEach(a => insertActivity.run(...a));
 
+  // Helpdesk tickets
+  const ticketData = [
+    ['TKT-001', 'Laptop not booting', 'My laptop shows a blue screen on startup and won\'t boot properly', 'it', 'high', 'in_progress', 8, 2, null, null, null],
+    ['TKT-002', 'Leave balance incorrect', 'My casual leave balance shows 8 but it should be 10', 'hr', 'normal', 'open', 7, null, null, null, null],
+    ['TKT-003', 'Expense reimbursement delayed', 'My expense from last month is still pending reimbursement', 'finance', 'normal', 'resolved', 6, 4, 4, "datetime('now')", null],
+    ['TKT-004', 'Access to GitHub repo', 'Need access to the new microservices repository', 'it', 'high', 'open', 8, null, null, null, null],
+    ['TKT-005', 'AC not working in 3rd floor', 'The air conditioning in the 3rd floor conference room is not working', 'admin', 'low', 'open', 11, null, null, null, null],
+    ['TKT-006', 'Request for ergonomic chair', 'I need an ergonomic chair due to back problems. Have doctor prescription.', 'admin', 'normal', 'in_progress', 9, 3, null, null, null],
+  ];
+  const insertTicket = db.prepare('INSERT INTO tickets (ticketId, title, description, category, priority, status, createdBy, assignedTo, resolvedBy, resolvedAt, closedAt) VALUES (?,?,?,?,?,?,?,?,?,?,?)');
+  ticketData.forEach(t => insertTicket.run(...t));
+
+  // Ticket comments
+  const ticketComments = [
+    [1, 2, 'I am looking into this. Can you tell me the laptop model?', 0],
+    [1, 8, 'It is a Dell Latitude 5520. The error code is 0x0000007E', 0],
+    [1, 2, 'Scheduling a hardware check tomorrow morning.', 0],
+    [3, 4, 'Reimbursement has been processed. Please check your bank account.', 0],
+    [3, 6, 'Received, thank you!', 0],
+    [6, 3, 'I have forwarded your request to admin. Will update soon.', 0],
+  ];
+  const insertTC = db.prepare('INSERT INTO ticket_comments (ticketId, userId, comment, isInternal) VALUES (?,?,?,?)');
+  ticketComments.forEach(c => insertTC.run(...c));
+
   console.log('Database seeded successfully!');
 }
 
 seed();
+
+// Migration: update notifications CHECK constraint to include 'ticket' type
+try {
+  const tableInfo = db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='notifications'").get();
+  if (tableInfo && tableInfo.sql && !tableInfo.sql.includes("'ticket'")) {
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS notifications_new (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER NOT NULL REFERENCES employees(id),
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        type TEXT DEFAULT 'info' CHECK(type IN ('info','success','warning','error','leave','attendance','expense','performance','ticket')),
+        isRead INTEGER DEFAULT 0,
+        link TEXT,
+        createdAt TEXT DEFAULT (datetime('now'))
+      );
+      INSERT INTO notifications_new SELECT * FROM notifications;
+      DROP TABLE notifications;
+      ALTER TABLE notifications_new RENAME TO notifications;
+      CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(userId, isRead);
+    `);
+  }
+} catch(e) { /* migration already applied or not needed */ }
 
 module.exports = db;

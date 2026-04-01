@@ -6,7 +6,7 @@ export default function Hierarchy() {
   const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
-    api.get('/employees/org/hierarchy').then(r => setEmployees(r.data));
+    api.get('/employees/org/hierarchy').then(r => setEmployees(r.data)).catch(() => {});
   }, []);
 
   const buildTree = (list) => {

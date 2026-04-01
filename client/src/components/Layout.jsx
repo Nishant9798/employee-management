@@ -1,21 +1,38 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { useState, useEffect, useRef } from 'react';
-import { Menu, Search, Bell, X, Command } from 'lucide-react';
+import { Menu, Search, Bell, X, Command, ChevronRight, Inbox, CheckCheck, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api';
+import toast from 'react-hot-toast';
+
+// Breadcrumb labels for routes
+const ROUTE_LABELS = {
+  '': 'Dashboard', 'employees': 'Employees', 'attendance': 'Attendance', 'leaves': 'Leaves',
+  'holidays': 'Holidays', 'expenses': 'Expenses', 'payslips': 'Payslips', 'performance': 'Performance',
+  'training': 'Training', 'shifts': 'Shifts', 'documents': 'Documents', 'messages': 'Messages',
+  'hierarchy': 'Org Hierarchy', 'reports': 'Reports', 'announcements': 'Announcements',
+  'onboarding': 'Onboarding', 'exit': 'Exit Management', 'company-policies': 'Company Policies',
+  'nda-agreements': 'NDA & Agreements', 'leave-calendar': 'Leave Calendar', 'assets': 'Assets',
+  'loans': 'Loans & Advances', 'letters': 'Letter Generation', 'settings': 'Settings',
+  'profile': 'My Profile', 'approvals': 'Approvals', 'team-calendar': 'Team Calendar',
+  'my-space': 'My Space', 'smart-analytics': 'Smart Insights', 'tickets': 'Helpdesk',
+};
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Notifications
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifs, setShowNotifs] = useState(false);
+  const [notifTab, setNotifTab] = useState('all'); // 'all' | 'unread'
   const notifRef = useRef(null);
+  const prevUnreadRef = useRef(0);
 
   // Global search (Ctrl+K modal)
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,23 +42,34 @@ export default function Layout() {
 
   useEffect(() => {
     loadNotifications();
-    const interval = setInterval(loadNotifications, 30000);
+    const interval = setInterval(loadNotifications, 15000); // Faster polling: 15s
     return () => clearInterval(interval);
   }, []);
 
   const loadNotifications = () => {
-    api.get('/notifications/unread-count').then(r => setUnreadCount(r.data.count)).catch(() => {});
+    api.get('/notifications/unread-count').then(r => {
+      const newCount = r.data.count;
+      // Toast for new notifications
+      if (prevUnreadRef.current > 0 && newCount > prevUnreadRef.current) {
+        toast('You have new notifications', { icon: '🔔', duration: 3000 });
+      }
+      prevUnreadRef.current = newCount;
+      setUnreadCount(newCount);
+    }).catch(() => {});
     api.get('/notifications').then(r => setNotifications(r.data)).catch(() => {});
   };
 
   const markAsRead = async (id) => {
-    await api.put(`/notifications/read/${id}`);
-    loadNotifications();
+    try { await api.put(`/notifications/read/${id}`); loadNotifications(); } catch {}
   };
 
   const markAllRead = async () => {
-    await api.put('/notifications/read-all');
-    loadNotifications();
+    try { await api.put('/notifications/read-all'); loadNotifications(); } catch {}
+  };
+
+  const deleteNotification = async (e, id) => {
+    e.stopPropagation();
+    try { await api.delete(`/notifications/${id}`); loadNotifications(); } catch {}
   };
 
   // Ctrl+K shortcut
@@ -91,9 +119,11 @@ export default function Layout() {
       case 'leave': return '📋';
       case 'expense': return '💰';
       case 'performance': return '⭐';
+      case 'ticket': return '🎫';
       case 'warning': return '⚠️';
       case 'success': return '✅';
       case 'error': return '❌';
+      case 'attendance': return '📅';
       default: return 'ℹ️';
     }
   };
@@ -105,7 +135,8 @@ export default function Layout() {
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return `${hrs}h ago`;
     const days = Math.floor(hrs / 24);
-    return `${days}d ago`;
+    if (days < 7) return `${days}d ago`;
+    return new Date(date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
   };
 
   const handleSearchNavigate = (path) => {
@@ -114,6 +145,13 @@ export default function Layout() {
     setSearchQuery('');
     setSearchResults(null);
   };
+
+  // Breadcrumbs
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const currentPage = ROUTE_LABELS[pathSegments[0] || ''] || 'Dashboard';
+
+  // Filtered notifications
+  const filteredNotifs = notifTab === 'unread' ? notifications.filter(n => !n.isRead) : notifications;
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50 dark:bg-gray-900">
@@ -134,15 +172,27 @@ export default function Layout() {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top header bar */}
-        <div className="flex items-center justify-between gap-3 p-4 bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm">
+        <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-b dark:border-gray-700 shadow-sm sticky top-0 z-20">
           <div className="flex items-center gap-3">
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
               <Menu size={22} className="text-gray-600 dark:text-gray-300" />
             </button>
-            <h1 className="text-lg font-bold text-indigo-800 dark:text-indigo-400 lg:hidden">EMS</h1>
+
+            {/* Breadcrumb */}
+            <div className="hidden sm:flex items-center gap-1.5 text-sm">
+              <span className="text-gray-400 dark:text-gray-500">Home</span>
+              {pathSegments.length > 0 && (
+                <>
+                  <ChevronRight size={12} className="text-gray-300 dark:text-gray-600" />
+                  <span className="font-medium text-gray-700 dark:text-gray-200">{currentPage}</span>
+                </>
+              )}
+            </div>
+
+            <h1 className="text-lg font-bold text-indigo-800 dark:text-indigo-400 sm:hidden">EMS</h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Search trigger */}
             <button
               onClick={() => setShowSearch(true)}
@@ -156,39 +206,66 @@ export default function Layout() {
             {/* Notifications Bell */}
             <div ref={notifRef} className="relative">
               <button onClick={() => setShowNotifs(!showNotifs)} className="relative p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                <Bell size={20} className="text-gray-600 dark:text-gray-300" />
+                <Bell size={20} className={`text-gray-600 dark:text-gray-300 transition-transform ${showNotifs ? 'scale-110' : ''}`} />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
-                    {unreadCount > 9 ? '9+' : unreadCount}
+                  <span className="absolute -top-0.5 -right-0.5 min-w-[20px] h-5 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-bounce-in">
+                    {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
                 )}
               </button>
 
               {/* Notifications Dropdown */}
               {showNotifs && (
-                <div className="absolute top-full mt-2 right-0 w-80 sm:w-96 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border dark:border-gray-700 overflow-hidden z-50 animate-scale-in">
-                  <div className="flex items-center justify-between px-4 py-3 border-b dark:border-gray-700">
-                    <h3 className="font-semibold dark:text-white">Notifications</h3>
-                    {unreadCount > 0 && (
-                      <button onClick={markAllRead} className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">
-                        Mark all read
+                <div className="absolute top-full mt-2 right-0 w-80 sm:w-[420px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border dark:border-gray-700 overflow-hidden z-50 animate-scale-in">
+                  {/* Header */}
+                  <div className="px-4 pt-4 pb-2">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-base font-bold dark:text-white">Notifications</h3>
+                      <div className="flex items-center gap-2">
+                        {unreadCount > 0 && (
+                          <button onClick={markAllRead} className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+                            <CheckCheck size={12} /> Mark all read
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    {/* Tabs */}
+                    <div className="flex gap-1 bg-gray-100 dark:bg-gray-700/50 rounded-lg p-0.5">
+                      <button onClick={() => setNotifTab('all')}
+                        className={`flex-1 text-xs font-medium py-1.5 rounded-md transition ${notifTab === 'all' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-800 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
+                        All ({notifications.length})
                       </button>
-                    )}
+                      <button onClick={() => setNotifTab('unread')}
+                        className={`flex-1 text-xs font-medium py-1.5 rounded-md transition ${notifTab === 'unread' ? 'bg-white dark:bg-gray-700 shadow-sm text-gray-800 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>
+                        Unread ({unreadCount})
+                      </button>
+                    </div>
                   </div>
+
                   <div className="max-h-80 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <p className="px-4 py-8 text-center text-sm text-gray-400">No notifications</p>
+                    {filteredNotifs.length === 0 ? (
+                      <div className="px-4 py-10 text-center">
+                        <Inbox size={36} className="mx-auto text-gray-300 dark:text-gray-600 mb-2" />
+                        <p className="text-sm text-gray-400">{notifTab === 'unread' ? 'All caught up!' : 'No notifications yet'}</p>
+                      </div>
                     ) : (
-                      notifications.slice(0, 15).map(n => (
+                      filteredNotifs.slice(0, 20).map(n => (
                         <button key={n.id} onClick={() => { if (n.link) navigate(n.link); markAsRead(n.id); setShowNotifs(false); }}
-                          className={`w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 flex gap-3 transition border-b dark:border-gray-700/50 last:border-0 ${!n.isRead ? 'bg-indigo-50/50 dark:bg-indigo-900/10' : ''}`}>
-                          <span className="text-lg shrink-0 mt-0.5">{notifIcon(n.type)}</span>
+                          className={`group w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700/50 flex gap-3 transition border-b dark:border-gray-700/50 last:border-0 ${!n.isRead ? 'bg-indigo-50/50 dark:bg-indigo-900/10' : ''}`}>
+                          <div className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-lg shrink-0">
+                            {notifIcon(n.type)}
+                          </div>
                           <div className="flex-1 min-w-0">
-                            <p className={`text-sm ${!n.isRead ? 'font-semibold text-gray-800 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>{n.title}</p>
+                            <div className="flex items-center gap-2">
+                              <p className={`text-sm flex-1 ${!n.isRead ? 'font-semibold text-gray-800 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>{n.title}</p>
+                              {!n.isRead && <div className="w-2 h-2 bg-indigo-500 rounded-full shrink-0" />}
+                            </div>
                             <p className="text-xs text-gray-400 mt-0.5 truncate">{n.message}</p>
                             <p className="text-[10px] text-gray-300 dark:text-gray-500 mt-1">{timeAgo(n.createdAt)}</p>
                           </div>
-                          {!n.isRead && <div className="w-2 h-2 bg-indigo-500 rounded-full shrink-0 mt-2" />}
+                          <button onClick={(e) => deleteNotification(e, n.id)} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition shrink-0 self-center">
+                            <Trash2 size={12} className="text-gray-400 hover:text-red-500" />
+                          </button>
                         </button>
                       ))
                     )}
@@ -197,9 +274,16 @@ export default function Layout() {
               )}
             </div>
 
-            <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              Welcome, <span className="font-semibold text-gray-800 dark:text-white">{user?.name?.split(' ')[0]}</span>
-            </div>
+            {/* User avatar in header */}
+            <button onClick={() => navigate('/profile')} className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg px-2 py-1.5 transition">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2)}
+              </div>
+              <div className="hidden sm:block text-left">
+                <p className="text-xs font-semibold text-gray-800 dark:text-white leading-tight">{user?.name?.split(' ')[0]}</p>
+                <p className="text-[10px] text-gray-400 leading-tight capitalize">{user?.role}</p>
+              </div>
+            </button>
           </div>
         </div>
 

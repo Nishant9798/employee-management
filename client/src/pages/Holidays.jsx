@@ -13,7 +13,7 @@ export default function Holidays() {
 
   useEffect(() => { loadHolidays(); }, []);
 
-  const loadHolidays = () => api.get('/holidays').then(r => setHolidays(r.data));
+  const loadHolidays = () => api.get('/holidays').then(r => setHolidays(r.data)).catch(() => {});
 
   const openAdd = () => { setEditing(null); setForm({ name: '', date: '', type: 'national' }); setShowModal(true); };
   const openEdit = (h) => { setEditing(h); setForm(h); setShowModal(true); };
@@ -36,9 +36,13 @@ export default function Holidays() {
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this holiday?')) return;
-    await api.delete(`/holidays/${id}`);
-    toast.success('Holiday deleted');
-    loadHolidays();
+    try {
+      await api.delete(`/holidays/${id}`);
+      toast.success('Holiday deleted');
+      loadHolidays();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to delete');
+    }
   };
 
   const today = new Date().toISOString().split('T')[0];

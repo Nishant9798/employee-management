@@ -524,3 +524,145 @@ html {
   max-height: 500px;
   opacity: 1;
 }
+
+/* ===== Enhanced UI/UX Additions ===== */
+
+/* Page transition */
+main > * {
+  animation: pageEnter 0.35s ease-out;
+}
+@keyframes pageEnter {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Better card hover with subtle border glow */
+.card {
+  @apply relative;
+}
+.card::before {
+  content: '';
+  @apply absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 pointer-events-none;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.05));
+}
+.card:hover::before {
+  @apply opacity-100;
+}
+
+/* Staggered animation helper */
+.stagger-1 { animation-delay: 50ms; }
+.stagger-2 { animation-delay: 100ms; }
+.stagger-3 { animation-delay: 150ms; }
+.stagger-4 { animation-delay: 200ms; }
+.stagger-5 { animation-delay: 250ms; }
+.stagger-6 { animation-delay: 300ms; }
+
+/* Improved page header with animated gradient */
+.page-header {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+}
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Better focus rings */
+.input:focus {
+  @apply ring-2 ring-indigo-500/30;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Enhanced buttons with ripple effect placeholder */
+.btn-primary, .btn-success, .btn-danger {
+  @apply relative overflow-hidden;
+}
+.btn-primary::after, .btn-success::after, .btn-danger::after {
+  content: '';
+  @apply absolute inset-0 bg-white/10 opacity-0 transition-opacity;
+}
+.btn-primary:hover::after, .btn-success:hover::after, .btn-danger:hover::after {
+  @apply opacity-100;
+}
+
+/* Notification bell ring animation */
+@keyframes bellRing {
+  0% { transform: rotate(0); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-14deg); }
+  30% { transform: rotate(10deg); }
+  40% { transform: rotate(-8deg); }
+  50% { transform: rotate(4deg); }
+  60% { transform: rotate(0); }
+}
+.bell-ring {
+  animation: bellRing 0.8s ease-in-out;
+}
+
+/* Better modal backdrop */
+.modal-backdrop {
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+}
+.modal-backdrop::before {
+  content: '';
+  @apply absolute inset-0 bg-black/50 backdrop-blur-sm;
+}
+
+/* Status dot pulse variants */
+.status-dot {
+  @apply relative inline-block w-2.5 h-2.5 rounded-full;
+}
+.status-dot::after {
+  content: '';
+  @apply absolute inset-0 rounded-full;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+@keyframes statusPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(2); opacity: 0; }
+}
+
+/* Tag/badge hover lift */
+.badge {
+  @apply transition-transform;
+}
+.badge:hover {
+  transform: translateY(-1px);
+}
+
+/* Improved header bar */
+.header-bar {
+  @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg;
+}
+
+/* Better empty states */
+.empty-state {
+  @apply select-none;
+}
+.empty-state svg {
+  filter: grayscale(0.5);
+}
+
+/* Smooth number counter */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Better dark mode transitions */
+.dark .card {
+  @apply border-gray-700/50;
+}
+.dark .card:hover {
+  @apply border-gray-600/50;
+}
+
+/* Subtle shadow for light mode cards */
+@media (prefers-color-scheme: light) {
+  .card {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .card:hover {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.06);
+  }
+}

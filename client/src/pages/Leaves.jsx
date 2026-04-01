@@ -17,10 +17,10 @@ export default function Leaves() {
   const [remark, setRemark] = useState('');
 
   useEffect(() => {
-    api.get('/leaves/balance').then(r => setBalances(r.data));
-    api.get('/leaves/my-applications').then(r => setMyApps(r.data));
-    api.get('/leaves/types').then(r => setLeaveTypes(r.data));
-    if (isManager) api.get('/leaves/all-applications').then(r => setAllApps(r.data));
+    api.get('/leaves/balance').then(r => setBalances(r.data)).catch(() => {});
+    api.get('/leaves/my-applications').then(r => setMyApps(r.data)).catch(() => {});
+    api.get('/leaves/types').then(r => setLeaveTypes(r.data)).catch(() => {});
+    if (isManager) api.get('/leaves/all-applications').then(r => setAllApps(r.data)).catch(() => {});
   }, [isManager]);
 
   const calcDays = (from, to) => {

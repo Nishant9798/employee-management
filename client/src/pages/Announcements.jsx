@@ -13,7 +13,7 @@ export default function Announcements() {
 
   useEffect(() => { loadAnnouncements(); }, []);
 
-  const loadAnnouncements = () => api.get('/announcements').then(r => setAnnouncements(r.data));
+  const loadAnnouncements = () => api.get('/announcements').then(r => setAnnouncements(r.data)).catch(() => {});
 
   const openAdd = () => { setEditing(null); setForm({ title: '', content: '', priority: 'normal' }); setShowModal(true); };
   const openEdit = (a) => { setEditing(a); setForm({ title: a.title, content: a.content, priority: a.priority }); setShowModal(true); };
@@ -36,9 +36,13 @@ export default function Announcements() {
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this announcement?')) return;
-    await api.delete(`/announcements/${id}`);
-    toast.success('Announcement deleted');
-    loadAnnouncements();
+    try {
+      await api.delete(`/announcements/${id}`);
+      toast.success('Announcement deleted');
+      loadAnnouncements();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to delete');
+    }
   };
 
   const priorityColor = (p) => {

@@ -31,6 +31,7 @@ import KanbanApprovals from './pages/KanbanApprovals';
 import TeamCalendar from './pages/TeamCalendar';
 import MySpace from './pages/MySpace';
 import SmartAnalytics from './pages/SmartAnalytics';
+import Tickets from './pages/Tickets';
 
 function ProtectedRoute({ children }) {
   const { token, loading } = useAuth();
@@ -43,6 +44,20 @@ function ProtectedRoute({ children }) {
     </div>
   );
   return token ? children : <Navigate to="/login" />;
+}
+
+// Role-based route guard: requires manager or admin
+function ManagerRoute({ children }) {
+  const { user } = useAuth();
+  if (user?.role === 'admin' || user?.role === 'manager') return children;
+  return <Navigate to="/" />;
+}
+
+// Role-based route guard: requires admin only
+function AdminRoute({ children }) {
+  const { user } = useAuth();
+  if (user?.role === 'admin') return children;
+  return <Navigate to="/" />;
 }
 
 export default function App() {
@@ -59,26 +74,27 @@ export default function App() {
         <Route path="payslips" element={<Payslips />} />
         <Route path="performance" element={<Performance />} />
         <Route path="training" element={<Training />} />
-        <Route path="shifts" element={<Shifts />} />
+        <Route path="shifts" element={<ManagerRoute><Shifts /></ManagerRoute>} />
         <Route path="documents" element={<Documents />} />
         <Route path="messages" element={<Messages />} />
         <Route path="hierarchy" element={<Hierarchy />} />
-        <Route path="reports" element={<Reports />} />
+        <Route path="reports" element={<ManagerRoute><Reports /></ManagerRoute>} />
         <Route path="announcements" element={<Announcements />} />
-        <Route path="onboarding" element={<Onboarding />} />
-        <Route path="exit" element={<ExitManagement />} />
+        <Route path="onboarding" element={<AdminRoute><Onboarding /></AdminRoute>} />
+        <Route path="exit" element={<AdminRoute><ExitManagement /></AdminRoute>} />
         <Route path="company-policies" element={<CompanyPolicies />} />
         <Route path="nda-agreements" element={<NDAAgreements />} />
         <Route path="leave-calendar" element={<LeaveCalendar />} />
-        <Route path="assets" element={<AssetManagement />} />
+        <Route path="assets" element={<ManagerRoute><AssetManagement /></ManagerRoute>} />
         <Route path="loans" element={<LoanManagement />} />
-        <Route path="letters" element={<LetterGeneration />} />
-        <Route path="settings" element={<Settings />} />
+        <Route path="letters" element={<AdminRoute><LetterGeneration /></AdminRoute>} />
+        <Route path="settings" element={<AdminRoute><Settings /></AdminRoute>} />
         <Route path="profile" element={<MyProfile />} />
-        <Route path="approvals" element={<KanbanApprovals />} />
-        <Route path="team-calendar" element={<TeamCalendar />} />
+        <Route path="approvals" element={<ManagerRoute><KanbanApprovals /></ManagerRoute>} />
+        <Route path="team-calendar" element={<ManagerRoute><TeamCalendar /></ManagerRoute>} />
         <Route path="my-space" element={<MySpace />} />
-        <Route path="smart-analytics" element={<SmartAnalytics />} />
+        <Route path="smart-analytics" element={<ManagerRoute><SmartAnalytics /></ManagerRoute>} />
+        <Route path="tickets" element={<Tickets />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

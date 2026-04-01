@@ -12,6 +12,8 @@ export default {
         'float': 'float 6s ease-in-out infinite',
         'bounce-in': 'bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
         'scale-in': 'scaleIn 0.3s ease-out',
+        'shimmer': 'shimmer 2s linear infinite',
+        'gradient': 'gradientShift 8s ease infinite',
       },
       keyframes: {
         fadeIn: {
@@ -43,6 +45,15 @@ export default {
         scaleIn: {
           '0%': { opacity: '0', transform: 'scale(0.9)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '200% 0' },
+          '100%': { backgroundPosition: '-200% 0' },
+        },
+        gradientShift: {
+          '0%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' },
+          '100%': { backgroundPosition: '0% 50%' },
         },
       },
     },

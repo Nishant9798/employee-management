@@ -64,9 +64,13 @@ export default function Employees() {
 
   const handleDelete = async (id) => {
     if (!confirm('Deactivate this employee?')) return;
-    await api.delete(`/employees/${id}`);
-    toast.success('Employee deactivated');
-    loadEmployees();
+    try {
+      await api.delete(`/employees/${id}`);
+      toast.success('Employee deactivated');
+      loadEmployees();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Failed to deactivate');
+    }
   };
 
   const handleExportCSV = async () => {

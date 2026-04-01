@@ -34,6 +34,7 @@ app.use('/api/agreements', require('./routes/agreements'));
 app.use('/api/assets', require('./routes/assets'));
 app.use('/api/loans', require('./routes/loans'));
 app.use('/api/letters', require('./routes/letters'));
+app.use('/api/tickets', require('./routes/tickets'));
 
 // Serve React build in production
 if (process.env.NODE_ENV === 'production') {

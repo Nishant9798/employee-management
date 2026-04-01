@@ -2,9 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { LayoutDashboard, Users, CalendarCheck, CalendarDays, TreePine, UserCircle, LogOut, X, Building2, BarChart3, Megaphone, Sun, Moon, Receipt, Wallet, Award, GraduationCap, Clock, ClipboardList, DoorOpen, MessageSquare, FileText, Settings, ChevronLeft, ChevronRight, Shield, FileSignature, Calendar, Package, Banknote, FileOutput, Sparkles, CalendarRange, Kanban, Brain, ChevronDown } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarCheck, CalendarDays, TreePine, UserCircle, LogOut, X, Building2, BarChart3, Megaphone, Sun, Moon, Receipt, Wallet, Award, GraduationCap, Clock, ClipboardList, DoorOpen, MessageSquare, FileText, Settings, ChevronLeft, ChevronRight, Shield, FileSignature, Calendar, Package, Banknote, FileOutput, Sparkles, CalendarRange, Kanban, Brain, ChevronDown, Ticket, HelpCircle } from 'lucide-react';
 import api from '../api';
 
+// role: undefined = all, 'manager' = manager+admin, 'admin' = admin only
 const navGroups = [
   {
     key: 'main',
@@ -29,9 +30,9 @@ const navGroups = [
       { to: '/attendance', icon: CalendarCheck, label: 'Attendance' },
       { to: '/leaves', icon: CalendarDays, label: 'Leaves' },
       { to: '/leave-calendar', icon: Calendar, label: 'Leave Calendar' },
-      { to: '/team-calendar', icon: CalendarRange, label: 'Team Calendar' },
+      { to: '/team-calendar', icon: CalendarRange, label: 'Team Calendar', role: 'manager' },
       { to: '/holidays', icon: Building2, label: 'Holidays' },
-      { to: '/shifts', icon: Clock, label: 'Shifts' },
+      { to: '/shifts', icon: Clock, label: 'Shifts', role: 'manager' },
     ],
   },
   {
@@ -54,8 +55,16 @@ const navGroups = [
   {
     key: 'approvals',
     label: 'Approvals',
+    role: 'manager',
     links: [
       { to: '/approvals', icon: Kanban, label: 'Kanban Board' },
+    ],
+  },
+  {
+    key: 'support',
+    label: 'Support',
+    links: [
+      { to: '/tickets', icon: Ticket, label: 'Helpdesk' },
     ],
   },
   {
@@ -78,6 +87,7 @@ const navGroups = [
   {
     key: 'analytics',
     label: 'Analytics',
+    role: 'manager',
     links: [
       { to: '/reports', icon: BarChart3, label: 'Reports' },
       { to: '/smart-analytics', icon: Brain, label: 'Smart Insights' },
@@ -86,6 +96,7 @@ const navGroups = [
   {
     key: 'assets',
     label: 'Assets',
+    role: 'manager',
     links: [
       { to: '/assets', icon: Package, label: 'Assets' },
     ],
@@ -224,6 +235,9 @@ export default function Sidebar({ onClose, collapsed, onToggleCollapse }) {
         requests.push(
           api.get('/messages/unread-count').then(res => {
             newBadges['/messages'] = res.data?.count || 0;
+          }).catch(() => {}),
+          api.get('/tickets/count/open').then(res => {
+            newBadges['/tickets'] = res.data?.count || 0;
           }).catch(() => {})
         );
 
@@ -257,7 +271,29 @@ export default function Sidebar({ onClose, collapsed, onToggleCollapse }) {
     setExpandedGroups(prev => ({ ...prev, [key]: !prev[key] }));
   }, []);
 
-  const groups = isAdmin ? [...navGroups, adminGroup] : navGroups;
+  // Filter groups and links based on user role
+  const filterByRole = (groups) => {
+    return groups
+      .filter(group => {
+        if (!group.role) return true;
+        if (group.role === 'admin') return isAdmin;
+        if (group.role === 'manager') return isAdmin || user?.role === 'manager';
+        return true;
+      })
+      .map(group => ({
+        ...group,
+        links: group.links.filter(link => {
+          if (!link.role) return true;
+          if (link.role === 'admin') return isAdmin;
+          if (link.role === 'manager') return isAdmin || user?.role === 'manager';
+          return true;
+        }),
+      }))
+      .filter(group => group.links.length > 0);
+  };
+
+  const baseGroups = isAdmin ? [...navGroups, adminGroup] : navGroups;
+  const groups = filterByRole(baseGroups);
 
   return (
     <div className={`flex flex-col h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${collapsed ? 'sidebar-collapsed' : ''}`}>

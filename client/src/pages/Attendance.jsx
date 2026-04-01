@@ -18,10 +18,10 @@ export default function Attendance() {
   useEffect(() => { loadData(); }, [month, year, tab]);
 
   const loadData = () => {
-    api.get('/attendance/my', { params: { month, year } }).then(r => setMyRecords(r.data));
+    api.get('/attendance/my', { params: { month, year } }).then(r => setMyRecords(r.data)).catch(() => {});
     if (isAdmin) {
-      api.get('/attendance/summary', { params: { month, year } }).then(r => setSummary(r.data));
-      api.get('/attendance/today').then(r => setTodayAll(r.data));
+      api.get('/attendance/summary', { params: { month, year } }).then(r => setSummary(r.data)).catch(() => {});
+      api.get('/attendance/today').then(r => setTodayAll(r.data)).catch(() => {});
     }
   };
 
