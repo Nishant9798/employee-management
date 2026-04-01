@@ -59,12 +59,14 @@ router.get('/all-applications', managerOrAdmin, (req, res) => {
     LEFT JOIN employees h ON la.hrApprovedBy = h.id
   `;
 
+  const params = [];
   if (req.user.role === 'manager') {
-    query += ` WHERE la.employeeId IN (SELECT id FROM employees WHERE managerId = ${req.user.id})`;
+    query += ` WHERE la.employeeId IN (SELECT id FROM employees WHERE managerId = ?)`;
+    params.push(req.user.id);
   }
 
   query += ' ORDER BY la.appliedOn DESC';
-  const apps = db.prepare(query).all();
+  const apps = db.prepare(query).all(...params);
   res.json(apps);
 });
 
@@ -176,6 +178,26 @@ router.put('/hr-action/:id', adminOnly, (req, res) => {
 
     res.json({ message: 'Leave approved by HR' });
   }
+});
+
+// Leave calendar data - get all approved leaves for a month
+router.get('/calendar/:year/:month', (req, res) => {
+  const { year, month } = req.params;
+  const startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+  const endDate = `${year}-${String(month).padStart(2, '0')}-31`;
+
+  const leaves = db.prepare(`
+    SELECT la.*, lt.name as leaveType, e.name as employeeName, e.department, e.employeeId as empCode
+    FROM leave_applications la
+    JOIN leave_types lt ON la.leaveTypeId = lt.id
+    JOIN employees e ON la.employeeId = e.id
+    WHERE la.status = 'approved' AND la.fromDate <= ? AND la.toDate >= ?
+    ORDER BY la.fromDate
+  `).all(endDate, startDate);
+
+  const holidays = db.prepare('SELECT * FROM holidays WHERE date BETWEEN ? AND ? ORDER BY date').all(startDate, endDate);
+
+  res.json({ leaves, holidays });
 });
 
 module.exports = router;

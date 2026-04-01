@@ -1,35 +1,119 @@
+import { useState, useEffect, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { LayoutDashboard, Users, CalendarCheck, CalendarDays, TreePine, UserCircle, LogOut, X, Building2, BarChart3, Megaphone, Sun, Moon, Receipt, Wallet, Award, GraduationCap, Clock, ClipboardList, DoorOpen, MessageSquare, FileText, Settings, ChevronLeft, ChevronRight, Shield, FileSignature } from 'lucide-react';
+import { LayoutDashboard, Users, CalendarCheck, CalendarDays, TreePine, UserCircle, LogOut, X, Building2, BarChart3, Megaphone, Sun, Moon, Receipt, Wallet, Award, GraduationCap, Clock, ClipboardList, DoorOpen, MessageSquare, FileText, Settings, ChevronLeft, ChevronRight, Shield, FileSignature, Calendar, Package, Banknote, FileOutput, Sparkles, CalendarRange, Kanban, Brain, ChevronDown } from 'lucide-react';
+import api from '../api';
 
-const links = [
-  { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
-  { to: '/employees', icon: Users, label: 'Employees' },
-  { to: '/attendance', icon: CalendarCheck, label: 'Attendance' },
-  { to: '/leaves', icon: CalendarDays, label: 'Leaves' },
-  { to: '/holidays', icon: Building2, label: 'Holidays' },
-  { to: '/expenses', icon: Receipt, label: 'Expenses' },
-  { to: '/payslips', icon: Wallet, label: 'Payslips' },
-  { to: '/performance', icon: Award, label: 'Performance' },
-  { to: '/training', icon: GraduationCap, label: 'Training' },
-  { to: '/shifts', icon: Clock, label: 'Shifts' },
-  { to: '/documents', icon: FileText, label: 'Documents' },
-  { to: '/messages', icon: MessageSquare, label: 'Messages' },
-  { to: '/hierarchy', icon: TreePine, label: 'Org Hierarchy' },
-  { to: '/reports', icon: BarChart3, label: 'Reports' },
-  { to: '/announcements', icon: Megaphone, label: 'Announcements' },
-  { to: '/company-policies', icon: Shield, label: 'Company Policies' },
-  { to: '/nda-agreements', icon: FileSignature, label: 'NDA & Agreements' },
+const navGroups = [
+  {
+    key: 'main',
+    label: 'Main',
+    links: [
+      { to: '/', icon: LayoutDashboard, label: 'Dashboard', end: true },
+      { to: '/my-space', icon: Sparkles, label: 'My Space' },
+    ],
+  },
+  {
+    key: 'people',
+    label: 'People',
+    links: [
+      { to: '/employees', icon: Users, label: 'Employees' },
+      { to: '/hierarchy', icon: TreePine, label: 'Org Hierarchy' },
+    ],
+  },
+  {
+    key: 'time-attendance',
+    label: 'Time & Attendance',
+    links: [
+      { to: '/attendance', icon: CalendarCheck, label: 'Attendance' },
+      { to: '/leaves', icon: CalendarDays, label: 'Leaves' },
+      { to: '/leave-calendar', icon: Calendar, label: 'Leave Calendar' },
+      { to: '/team-calendar', icon: CalendarRange, label: 'Team Calendar' },
+      { to: '/holidays', icon: Building2, label: 'Holidays' },
+      { to: '/shifts', icon: Clock, label: 'Shifts' },
+    ],
+  },
+  {
+    key: 'finance',
+    label: 'Finance',
+    links: [
+      { to: '/expenses', icon: Receipt, label: 'Expenses' },
+      { to: '/payslips', icon: Wallet, label: 'Payslips' },
+      { to: '/loans', icon: Banknote, label: 'Loans & Advances' },
+    ],
+  },
+  {
+    key: 'performance',
+    label: 'Performance',
+    links: [
+      { to: '/performance', icon: Award, label: 'Performance' },
+      { to: '/training', icon: GraduationCap, label: 'Training' },
+    ],
+  },
+  {
+    key: 'approvals',
+    label: 'Approvals',
+    links: [
+      { to: '/approvals', icon: Kanban, label: 'Kanban Board' },
+    ],
+  },
+  {
+    key: 'communication',
+    label: 'Communication',
+    links: [
+      { to: '/messages', icon: MessageSquare, label: 'Messages' },
+      { to: '/announcements', icon: Megaphone, label: 'Announcements' },
+    ],
+  },
+  {
+    key: 'documents',
+    label: 'Documents',
+    links: [
+      { to: '/documents', icon: FileText, label: 'Documents' },
+      { to: '/company-policies', icon: Shield, label: 'Company Policies' },
+      { to: '/nda-agreements', icon: FileSignature, label: 'NDA & Agreements' },
+    ],
+  },
+  {
+    key: 'analytics',
+    label: 'Analytics',
+    links: [
+      { to: '/reports', icon: BarChart3, label: 'Reports' },
+      { to: '/smart-analytics', icon: Brain, label: 'Smart Insights' },
+    ],
+  },
+  {
+    key: 'assets',
+    label: 'Assets',
+    links: [
+      { to: '/assets', icon: Package, label: 'Assets' },
+    ],
+  },
 ];
 
-const adminLinks = [
-  { to: '/onboarding', icon: ClipboardList, label: 'Onboarding' },
-  { to: '/exit', icon: DoorOpen, label: 'Exit Management' },
-  { to: '/settings', icon: Settings, label: 'Settings' },
-];
+const adminGroup = {
+  key: 'admin',
+  label: 'Admin',
+  links: [
+    { to: '/onboarding', icon: ClipboardList, label: 'Onboarding' },
+    { to: '/exit', icon: DoorOpen, label: 'Exit Management' },
+    { to: '/letters', icon: FileOutput, label: 'Letter Generation' },
+    { to: '/settings', icon: Settings, label: 'Settings' },
+  ],
+};
 
-function SidebarLink({ link, collapsed, onClose }) {
+const STORAGE_KEY = 'sidebar-expanded-groups';
+
+function getInitialExpandedGroups() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) return JSON.parse(stored);
+  } catch {}
+  return null;
+}
+
+function SidebarLink({ link, collapsed, onClose, badge }) {
   return (
     <div className={collapsed ? 'tooltip-wrapper' : ''}>
       <NavLink
@@ -38,10 +122,60 @@ function SidebarLink({ link, collapsed, onClose }) {
         className={({ isActive }) => `sidebar-link ${isActive ? 'active' : 'text-gray-600 dark:text-gray-400'}`}
         onClick={onClose}
       >
-        <link.icon size={18} className="shrink-0" />
-        {!collapsed && <span>{link.label}</span>}
+        <div className="relative shrink-0">
+          <link.icon size={18} />
+          {collapsed && badge > 0 && (
+            <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 px-1 text-[10px] font-bold text-white bg-red-500 rounded-full flex items-center justify-center">
+              {badge > 99 ? '99+' : badge}
+            </span>
+          )}
+        </div>
+        {!collapsed && (
+          <span className="flex-1 flex items-center justify-between">
+            <span>{link.label}</span>
+            {badge > 0 && (
+              <span className="min-w-[20px] h-5 px-1.5 text-[11px] font-semibold text-white bg-red-500 rounded-full flex items-center justify-center ml-2">
+                {badge > 99 ? '99+' : badge}
+              </span>
+            )}
+          </span>
+        )}
       </NavLink>
       {collapsed && <div className="tooltip">{link.label}</div>}
+    </div>
+  );
+}
+
+function SidebarGroup({ group, collapsed, onClose, expanded, onToggle, badges }) {
+  if (collapsed) {
+    return (
+      <>
+        {group.links.map(link => (
+          <SidebarLink key={link.to} link={link} collapsed={collapsed} onClose={onClose} badge={badges[link.to] || 0} />
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <div className="mb-1">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-4 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+      >
+        <span>{group.label}</span>
+        <ChevronDown
+          size={14}
+          className={`transform transition-transform duration-200 ${expanded ? '' : '-rotate-90'}`}
+        />
+      </button>
+      {expanded && (
+        <div className="space-y-0.5">
+          {group.links.map(link => (
+            <SidebarLink key={link.to} link={link} collapsed={collapsed} onClose={onClose} badge={badges[link.to] || 0} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -49,6 +183,81 @@ function SidebarLink({ link, collapsed, onClose }) {
 export default function Sidebar({ onClose, collapsed, onToggleCollapse }) {
   const { user, logout, isAdmin } = useAuth();
   const { dark, toggleTheme } = useTheme();
+
+  const allGroupKeys = [...navGroups.map(g => g.key), 'admin'];
+  const defaultExpanded = Object.fromEntries(allGroupKeys.map(k => [k, true]));
+
+  const [expandedGroups, setExpandedGroups] = useState(() => {
+    return getInitialExpandedGroups() || defaultExpanded;
+  });
+
+  const [badges, setBadges] = useState({});
+
+  // Persist expanded groups to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(expandedGroups));
+    } catch {}
+  }, [expandedGroups]);
+
+  // Fetch notification badges
+  useEffect(() => {
+    const fetchBadges = async () => {
+      try {
+        const newBadges = {};
+
+        const requests = [];
+
+        if (isAdmin || user?.role === 'manager') {
+          requests.push(
+            api.get('/leaves/all-applications').then(res => {
+              const pending = (res.data || []).filter(l => l.status === 'pending_manager' || l.status === 'pending_hr');
+              newBadges['/leaves'] = pending.length;
+            }).catch(() => {}),
+            api.get('/expenses/all').then(res => {
+              const pending = (res.data || []).filter(e => e.status === 'pending_manager' || e.status === 'pending_finance');
+              newBadges['/expenses'] = pending.length;
+            }).catch(() => {})
+          );
+        }
+
+        requests.push(
+          api.get('/messages/unread-count').then(res => {
+            newBadges['/messages'] = res.data?.count || 0;
+          }).catch(() => {})
+        );
+
+        // Calculate total pending approvals for the kanban badge
+        if (isAdmin || user?.role === 'manager') {
+          requests.push(
+            Promise.all([
+              api.get('/leaves/all-applications').catch(() => ({ data: [] })),
+              api.get('/expenses/all').catch(() => ({ data: [] })),
+              api.get('/loans/all').catch(() => ({ data: [] })),
+            ]).then(([lr, er, lo]) => {
+              const pendingLeaves = (lr.data || []).filter(l => l.status === 'pending_manager' || l.status === 'pending_hr').length;
+              const pendingExpenses = (er.data || []).filter(e => e.status === 'pending_manager' || e.status === 'pending_finance').length;
+              const pendingLoans = (lo.data || []).filter(l => l.status === 'pending').length;
+              newBadges['/approvals'] = pendingLeaves + pendingExpenses + pendingLoans;
+            }).catch(() => {})
+          );
+        }
+
+        await Promise.all(requests);
+        setBadges(newBadges);
+      } catch {}
+    };
+
+    fetchBadges();
+    const interval = setInterval(fetchBadges, 60000);
+    return () => clearInterval(interval);
+  }, [isAdmin, user?.role]);
+
+  const toggleGroup = useCallback((key) => {
+    setExpandedGroups(prev => ({ ...prev, [key]: !prev[key] }));
+  }, []);
+
+  const groups = isAdmin ? [...navGroups, adminGroup] : navGroups;
 
   return (
     <div className={`flex flex-col h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${collapsed ? 'sidebar-collapsed' : ''}`}>
@@ -107,29 +316,27 @@ export default function Sidebar({ onClose, collapsed, onToggleCollapse }) {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-        {links.map(link => (
-          <SidebarLink key={link.to} link={link} collapsed={collapsed} onClose={onClose} />
+        {groups.map(group => (
+          <SidebarGroup
+            key={group.key}
+            group={group}
+            collapsed={collapsed}
+            onClose={onClose}
+            expanded={expandedGroups[group.key] !== false}
+            onToggle={() => toggleGroup(group.key)}
+            badges={badges}
+          />
         ))}
 
-        {isAdmin && (
-          <>
-            {!collapsed && (
-              <div className="pt-3 pb-1 px-4">
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Admin</p>
-              </div>
-            )}
-            {collapsed && <div className="border-t dark:border-gray-700 my-2" />}
-            {adminLinks.map(link => (
-              <SidebarLink key={link.to} link={link} collapsed={collapsed} onClose={onClose} />
-            ))}
-          </>
-        )}
-
-        <SidebarLink
-          link={{ to: '/profile', icon: UserCircle, label: 'My Profile' }}
-          collapsed={collapsed}
-          onClose={onClose}
-        />
+        {/* My Profile */}
+        <div className="pt-2">
+          <SidebarLink
+            link={{ to: '/profile', icon: UserCircle, label: 'My Profile' }}
+            collapsed={collapsed}
+            onClose={onClose}
+            badge={0}
+          />
+        </div>
       </nav>
 
       {/* Theme toggle + Logout + Collapse */}

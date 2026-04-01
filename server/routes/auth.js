@@ -43,6 +43,7 @@ router.get('/me', authMiddleware, (req, res) => {
 router.put('/change-password', authMiddleware, (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const user = db.prepare('SELECT password FROM employees WHERE id = ?').get(req.user.id);
+  if (!user) return res.status(404).json({ error: 'User not found' });
 
   if (!bcrypt.compareSync(currentPassword, user.password)) {
     return res.status(400).json({ error: 'Current password is incorrect' });

@@ -28,11 +28,13 @@ router.get('/team-reviews', managerOrAdmin, (req, res) => {
     JOIN employees e ON pr.employeeId = e.id
     JOIN employees r ON pr.reviewerId = r.id
   `;
+  const params = [];
   if (req.user.role === 'manager') {
-    query += ` WHERE pr.employeeId IN (SELECT id FROM employees WHERE managerId = ${req.user.id})`;
+    query += ` WHERE pr.employeeId IN (SELECT id FROM employees WHERE managerId = ?)`;
+    params.push(req.user.id);
   }
   query += ' ORDER BY pr.createdAt DESC';
-  res.json(db.prepare(query).all());
+  res.json(db.prepare(query).all(...params));
 });
 
 // Create review (manager/admin)
@@ -97,11 +99,13 @@ router.delete('/goals/:id', (req, res) => {
 // Team goals (manager)
 router.get('/team-goals', managerOrAdmin, (req, res) => {
   let query = `SELECT g.*, e.name as employeeName, e.department FROM goals g JOIN employees e ON g.employeeId = e.id`;
+  const gParams = [];
   if (req.user.role === 'manager') {
-    query += ` WHERE g.employeeId IN (SELECT id FROM employees WHERE managerId = ${req.user.id})`;
+    query += ` WHERE g.employeeId IN (SELECT id FROM employees WHERE managerId = ?)`;
+    gParams.push(req.user.id);
   }
   query += ' ORDER BY g.createdAt DESC';
-  res.json(db.prepare(query).all());
+  res.json(db.prepare(query).all(...gParams));
 });
 
 module.exports = router;

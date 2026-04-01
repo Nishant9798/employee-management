@@ -34,6 +34,16 @@ router.get('/', (req, res) => {
 // Get categories
 router.get('/categories', (req, res) => res.json(CATEGORIES));
 
+// Download policy file (all employees) - MUST be before /:id routes
+router.get('/download/:id', (req, res) => {
+  const policy = db.prepare('SELECT * FROM company_policies WHERE id = ?').get(req.params.id);
+  if (!policy) return res.status(404).json({ error: 'Policy not found' });
+
+  const filePath = path.join(uploadsDir, policy.filePath);
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
+  res.download(filePath, policy.fileName);
+});
+
 // Upload new policy (admin only)
 router.post('/', adminOnly, upload.single('file'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
@@ -60,25 +70,15 @@ router.put('/:id', adminOnly, upload.single('file'), (req, res) => {
     if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
 
     db.prepare(
-      'UPDATE company_policies SET title=?, description=?, category=?, filePath=?, fileName=?, fileSize=?, updatedBy=?, updatedAt=datetime("now") WHERE id=?'
+      `UPDATE company_policies SET title=?, description=?, category=?, filePath=?, fileName=?, fileSize=?, updatedBy=?, updatedAt=datetime('now') WHERE id=?`
     ).run(title || policy.title, description ?? policy.description, category || policy.category, req.file.filename, req.file.originalname, req.file.size, req.user.id, req.params.id);
   } else {
     db.prepare(
-      'UPDATE company_policies SET title=?, description=?, category=?, updatedBy=?, updatedAt=datetime("now") WHERE id=?'
+      `UPDATE company_policies SET title=?, description=?, category=?, updatedBy=?, updatedAt=datetime('now') WHERE id=?`
     ).run(title || policy.title, description ?? policy.description, category || policy.category, req.user.id, req.params.id);
   }
 
   res.json({ message: 'Policy updated successfully' });
-});
-
-// Download policy file (all employees)
-router.get('/download/:id', (req, res) => {
-  const policy = db.prepare('SELECT * FROM company_policies WHERE id = ?').get(req.params.id);
-  if (!policy) return res.status(404).json({ error: 'Policy not found' });
-
-  const filePath = path.join(uploadsDir, policy.filePath);
-  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
-  res.download(filePath, policy.fileName);
 });
 
 // Delete policy (admin only)

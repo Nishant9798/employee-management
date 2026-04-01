@@ -67,6 +67,30 @@ router.get('/', (req, res) => {
   res.json(result);
 });
 
+// Download agreement template (all employees) - MUST be before /:id routes
+router.get('/download/:id', (req, res) => {
+  const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
+  if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
+
+  const filePath = path.join(templatesDir, agreement.templatePath);
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
+  res.download(filePath, agreement.templateName);
+});
+
+// Download employee's submitted agreement
+router.get('/submission/:submissionId/download', (req, res) => {
+  const submission = db.prepare('SELECT * FROM employee_agreements WHERE id = ?').get(req.params.submissionId);
+  if (!submission) return res.status(404).json({ error: 'Submission not found' });
+
+  if (submission.employeeId !== req.user.id && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Access denied' });
+  }
+
+  const filePath = path.join(submissionsDir, submission.filePath);
+  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
+  res.download(filePath, submission.fileName);
+});
+
 // Get all submissions for an agreement (admin only)
 router.get('/:id/submissions', adminOnly, (req, res) => {
   const submissions = db.prepare(`
@@ -104,25 +128,15 @@ router.put('/:id', adminOnly, templateUpload.single('file'), (req, res) => {
     if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
 
     db.prepare(
-      'UPDATE nda_agreements SET title=?, description=?, templatePath=?, templateName=?, templateSize=?, updatedAt=datetime("now") WHERE id=?'
+      `UPDATE nda_agreements SET title=?, description=?, templatePath=?, templateName=?, templateSize=?, updatedAt=datetime('now') WHERE id=?`
     ).run(title || agreement.title, description ?? agreement.description, req.file.filename, req.file.originalname, req.file.size, req.params.id);
   } else {
     db.prepare(
-      'UPDATE nda_agreements SET title=?, description=?, updatedAt=datetime("now") WHERE id=?'
+      `UPDATE nda_agreements SET title=?, description=?, updatedAt=datetime('now') WHERE id=?`
     ).run(title || agreement.title, description ?? agreement.description, req.params.id);
   }
 
   res.json({ message: 'Agreement updated successfully' });
-});
-
-// Download agreement template (all employees)
-router.get('/download/:id', (req, res) => {
-  const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
-  if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
-
-  const filePath = path.join(templatesDir, agreement.templatePath);
-  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
-  res.download(filePath, agreement.templateName);
 });
 
 // Employee uploads signed agreement (PDF only)
@@ -138,7 +152,7 @@ router.post('/:id/submit', submissionUpload.single('file'), (req, res) => {
     const oldPath = path.join(submissionsDir, existing.filePath);
     if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
     db.prepare(
-      'UPDATE employee_agreements SET filePath=?, fileName=?, fileSize=?, uploadedAt=datetime("now") WHERE id=?'
+      `UPDATE employee_agreements SET filePath=?, fileName=?, fileSize=?, uploadedAt=datetime('now') WHERE id=?`
     ).run(req.file.filename, req.file.originalname, req.file.size, existing.id);
   } else {
     db.prepare(
@@ -147,21 +161,6 @@ router.post('/:id/submit', submissionUpload.single('file'), (req, res) => {
   }
 
   res.json({ message: 'Agreement submitted successfully' });
-});
-
-// Download employee's submitted agreement
-router.get('/submission/:submissionId/download', (req, res) => {
-  const submission = db.prepare('SELECT * FROM employee_agreements WHERE id = ?').get(req.params.submissionId);
-  if (!submission) return res.status(404).json({ error: 'Submission not found' });
-
-  // Only the employee themselves or admin can download
-  if (submission.employeeId !== req.user.id && req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Access denied' });
-  }
-
-  const filePath = path.join(submissionsDir, submission.filePath);
-  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
-  res.download(filePath, submission.fileName);
 });
 
 // Delete agreement (admin only)

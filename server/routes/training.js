@@ -75,7 +75,7 @@ router.post('/enroll/:programId', (req, res) => {
 // Complete enrollment (admin)
 router.put('/complete-enrollment/:id', adminOnly, (req, res) => {
   const { feedback, rating } = req.body;
-  db.prepare('UPDATE training_enrollments SET status = ?, completionDate = datetime("now"), feedback = ?, rating = ? WHERE id = ?')
+  db.prepare(`UPDATE training_enrollments SET status = ?, completionDate = datetime('now'), feedback = ?, rating = ? WHERE id = ?`)
     .run('completed', feedback, rating, req.params.id);
   res.json({ message: 'Marked as completed' });
 });

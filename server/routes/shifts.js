@@ -86,9 +86,13 @@ router.post('/overtime', (req, res) => {
 
 router.get('/overtime/all', managerOrAdmin, (req, res) => {
   let query = `SELECT o.*, e.name, e.department FROM overtime_requests o JOIN employees e ON o.employeeId = e.id`;
-  if (req.user.role === 'manager') query += ` WHERE o.employeeId IN (SELECT id FROM employees WHERE managerId = ${req.user.id})`;
+  const params = [];
+  if (req.user.role === 'manager') {
+    query += ` WHERE o.employeeId IN (SELECT id FROM employees WHERE managerId = ?)`;
+    params.push(req.user.id);
+  }
   query += ' ORDER BY o.date DESC';
-  res.json(db.prepare(query).all());
+  res.json(db.prepare(query).all(...params));
 });
 
 router.put('/overtime/:id', managerOrAdmin, (req, res) => {

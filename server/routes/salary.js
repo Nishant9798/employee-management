@@ -93,6 +93,20 @@ router.post('/generate-payslips', adminOnly, (req, res) => {
   res.json({ message: `Generated ${count} payslips` });
 });
 
+// All payslips (admin) - for reports
+router.get('/all-payslips', adminOnly, (req, res) => {
+  const { month, year } = req.query;
+  let query = `SELECT p.*, e.name as employeeName, e.department, e.employeeId as empCode
+    FROM payslips p JOIN employees e ON p.employeeId = e.id WHERE e.status = 'active'`;
+  const params = [];
+  if (month && year) {
+    query += ` AND p.month = ? AND p.year = ?`;
+    params.push(month, year);
+  }
+  query += ` ORDER BY p.year DESC, p.month DESC, e.name`;
+  res.json(db.prepare(query).all(...params));
+});
+
 // All salary structures (admin)
 router.get('/all-structures', adminOnly, (req, res) => {
   const structures = db.prepare(`

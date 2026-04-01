@@ -37,11 +37,13 @@ router.get('/all', managerOrAdmin, (req, res) => {
     LEFT JOIN employees m ON e.managerApprovedBy = m.id
     LEFT JOIN employees f ON e.financeApprovedBy = f.id
   `;
+  const params = [];
   if (req.user.role === 'manager') {
-    query += ` WHERE e.employeeId IN (SELECT id FROM employees WHERE managerId = ${req.user.id})`;
+    query += ` WHERE e.employeeId IN (SELECT id FROM employees WHERE managerId = ?)`;
+    params.push(req.user.id);
   }
   query += ' ORDER BY e.submittedOn DESC';
-  res.json(db.prepare(query).all());
+  res.json(db.prepare(query).all(...params));
 });
 
 // Submit expense

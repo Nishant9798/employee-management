@@ -403,6 +403,51 @@ db.exec(`
     UNIQUE(agreementId, employeeId)
   );
 
+  -- Asset Management
+  CREATE TABLE IF NOT EXISTS assets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    assetId TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    category TEXT DEFAULT 'Hardware',
+    serialNumber TEXT,
+    purchaseDate TEXT,
+    purchaseCost REAL,
+    condition TEXT DEFAULT 'good' CHECK(condition IN ('new','good','fair','poor','damaged')),
+    assignedTo INTEGER REFERENCES employees(id),
+    assignedDate TEXT,
+    returnDate TEXT,
+    status TEXT DEFAULT 'available' CHECK(status IN ('available','assigned','maintenance','retired')),
+    notes TEXT,
+    createdAt TEXT DEFAULT (datetime('now'))
+  );
+
+  -- Loan/Advance Management
+  CREATE TABLE IF NOT EXISTS loans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employeeId INTEGER NOT NULL REFERENCES employees(id),
+    type TEXT DEFAULT 'salary_advance' CHECK(type IN ('salary_advance','personal_loan','emergency_loan')),
+    amount REAL NOT NULL,
+    reason TEXT,
+    emiMonths INTEGER DEFAULT 1,
+    emiAmount REAL,
+    totalRepaid REAL DEFAULT 0,
+    status TEXT DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected','active','completed')),
+    approvedBy INTEGER REFERENCES employees(id),
+    approvedDate TEXT,
+    remarks TEXT,
+    appliedOn TEXT DEFAULT (datetime('now'))
+  );
+
+  -- Loan repayments
+  CREATE TABLE IF NOT EXISTS loan_repayments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    loanId INTEGER NOT NULL REFERENCES loans(id),
+    amount REAL NOT NULL,
+    month INTEGER,
+    year INTEGER,
+    paidOn TEXT DEFAULT (datetime('now'))
+  );
+
   -- Indexes for performance
   CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(userId, isRead);
   CREATE INDEX IF NOT EXISTS idx_attendance_emp_date ON attendance(employeeId, date);

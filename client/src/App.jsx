@@ -23,6 +23,14 @@ import ExitManagement from './pages/ExitManagement';
 import Settings from './pages/Settings';
 import CompanyPolicies from './pages/CompanyPolicies';
 import NDAAgreements from './pages/NDAAgreements';
+import AssetManagement from './pages/AssetManagement';
+import LoanManagement from './pages/LoanManagement';
+import LetterGeneration from './pages/LetterGeneration';
+import LeaveCalendar from './pages/LeaveCalendar';
+import KanbanApprovals from './pages/KanbanApprovals';
+import TeamCalendar from './pages/TeamCalendar';
+import MySpace from './pages/MySpace';
+import SmartAnalytics from './pages/SmartAnalytics';
 
 function ProtectedRoute({ children }) {
   const { token, loading } = useAuth();
@@ -61,8 +69,16 @@ export default function App() {
         <Route path="exit" element={<ExitManagement />} />
         <Route path="company-policies" element={<CompanyPolicies />} />
         <Route path="nda-agreements" element={<NDAAgreements />} />
+        <Route path="leave-calendar" element={<LeaveCalendar />} />
+        <Route path="assets" element={<AssetManagement />} />
+        <Route path="loans" element={<LoanManagement />} />
+        <Route path="letters" element={<LetterGeneration />} />
         <Route path="settings" element={<Settings />} />
         <Route path="profile" element={<MyProfile />} />
+        <Route path="approvals" element={<KanbanApprovals />} />
+        <Route path="team-calendar" element={<TeamCalendar />} />
+        <Route path="my-space" element={<MySpace />} />
+        <Route path="smart-analytics" element={<SmartAnalytics />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

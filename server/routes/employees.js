@@ -1,7 +1,22 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const db = require('../db');
+const path = require('path');
+const fs = require('fs');
+const multer = require('multer');
 const { authMiddleware, adminOnly } = require('../middleware/auth');
+
+const avatarDir = path.join(__dirname, '..', '..', 'uploads', 'avatars');
+if (!fs.existsSync(avatarDir)) fs.mkdirSync(avatarDir, { recursive: true });
+
+const avatarStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, avatarDir),
+  filename: (req, file, cb) => cb(null, 'avatar-' + req.user.id + '-' + Date.now() + path.extname(file.originalname))
+});
+const avatarUpload = multer({ storage: avatarStorage, limits: { fileSize: 5 * 1024 * 1024 }, fileFilter: (req, file, cb) => {
+  const allowed = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+  cb(null, allowed.includes(path.extname(file.originalname).toLowerCase()));
+}});
 
 const router = express.Router();
 router.use(authMiddleware);
@@ -115,10 +130,24 @@ router.put('/:id', adminOnly, (req, res) => {
 
 // Update own profile (employee self-service)
 router.put('/profile/self', (req, res) => {
-  const { phone, address, emergencyContactName, emergencyContactPhone, dateOfBirth, bloodGroup } = req.body;
-  db.prepare('UPDATE employees SET phone=?, address=?, emergencyContactName=?, emergencyContactPhone=?, dateOfBirth=?, bloodGroup=? WHERE id=?')
-    .run(phone, address, emergencyContactName, emergencyContactPhone, dateOfBirth, bloodGroup, req.user.id);
+  const { phone, address, emergencyContactName, emergencyContactPhone, dateOfBirth, bloodGroup, gender } = req.body;
+  db.prepare('UPDATE employees SET phone=?, address=?, emergencyContactName=?, emergencyContactPhone=?, dateOfBirth=?, bloodGroup=?, gender=? WHERE id=?')
+    .run(phone, address, emergencyContactName, emergencyContactPhone, dateOfBirth, bloodGroup, gender || null, req.user.id);
   res.json({ message: 'Profile updated' });
+});
+
+// Upload avatar (self-service)
+router.post('/profile/avatar', avatarUpload.single('avatar'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
+  const avatarPath = 'avatars/' + req.file.filename;
+  // Delete old avatar
+  const old = db.prepare('SELECT avatar FROM employees WHERE id = ?').get(req.user.id);
+  if (old?.avatar) {
+    const oldPath = path.join(__dirname, '..', '..', 'uploads', old.avatar);
+    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+  }
+  db.prepare('UPDATE employees SET avatar = ? WHERE id = ?').run(avatarPath, req.user.id);
+  res.json({ avatar: avatarPath, message: 'Avatar updated' });
 });
 
 // Delete employee (admin only)
@@ -223,6 +252,7 @@ router.get('/stats/analytics', (req, res) => {
 // Upcoming birthdays and work anniversaries
 router.get('/stats/celebrations', (req, res) => {
   const currentMonth = new Date().getMonth() + 1;
+  const currentDay = new Date().getDate();
 
   const anniversaries = db.prepare(`
     SELECT name, department, designation, joiningDate, employeeId,
@@ -241,7 +271,27 @@ router.get('/stats/celebrations', (req, res) => {
     ORDER BY CAST(strftime('%d', dateOfBirth) AS INTEGER)
   `).all(currentMonth);
 
-  res.json({ anniversaries, birthdays });
+  // Today's celebrations
+  const todayBirthdays = birthdays.filter(b => {
+    const day = new Date(b.dateOfBirth).getDate();
+    return day === currentDay;
+  });
+  const todayAnniversaries = anniversaries.filter(a => {
+    const day = new Date(a.joiningDate).getDate();
+    return day === currentDay;
+  });
+
+  // Upcoming (next 7 days)
+  const upcomingBirthdays = birthdays.filter(b => {
+    const day = new Date(b.dateOfBirth).getDate();
+    return day > currentDay && day <= currentDay + 7;
+  });
+  const upcomingAnniversaries = anniversaries.filter(a => {
+    const day = new Date(a.joiningDate).getDate();
+    return day > currentDay && day <= currentDay + 7;
+  });
+
+  res.json({ anniversaries, birthdays, todayBirthdays, todayAnniversaries, upcomingBirthdays, upcomingAnniversaries });
 });
 
 // Export employees CSV
