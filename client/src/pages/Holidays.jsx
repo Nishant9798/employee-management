@@ -50,7 +50,7 @@ export default function Holidays() {
   const past = holidays.filter(h => h.date < today);
 
   const typeColor = (t) => t === 'national' ? 'badge-danger' : t === 'optional' ? 'badge-info' : 'badge-gray';
-  const typeBg = (t) => t === 'national' ? 'from-red-500 to-pink-500' : t === 'optional' ? 'from-blue-500 to-cyan-500' : 'from-gray-400 to-gray-500';
+  const typeBg = (t) => t === 'national' ? 'from-red-500 to-pink-500' : t === 'optional' ? 'from-blue-500 to-cyan-500' : 'from-slate-400 to-slate-500';
 
   return (
     <div className="space-y-6">
@@ -62,7 +62,7 @@ export default function Holidays() {
             <p>{holidays.length} holidays in 2026</p>
           </div>
           {isAdmin && (
-            <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+            <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
               <Plus size={16} /> Add Holiday
             </button>
           )}
@@ -75,7 +75,7 @@ export default function Holidays() {
       {/* Upcoming */}
       {upcoming.length > 0 && (
         <div>
-          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Upcoming Holidays</h2>
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Upcoming Holidays</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {upcoming.map((h, i) => (
               <div key={h.id} className="card flex items-start gap-4 hover:shadow-md transition-all duration-300 animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
@@ -84,14 +84,14 @@ export default function Holidays() {
                   <span className="text-lg font-bold text-white leading-tight">{new Date(h.date).getDate()}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-800 dark:text-white">{h.name}</h3>
-                  <p className="text-xs text-gray-400">{new Date(h.date).toLocaleDateString('en-IN', { weekday: 'long' })}</p>
+                  <h3 className="font-semibold text-slate-800 dark:text-white">{h.name}</h3>
+                  <p className="text-xs text-slate-400">{new Date(h.date).toLocaleDateString('en-IN', { weekday: 'long' })}</p>
                   <span className={`badge mt-1 ${typeColor(h.type)}`}>{h.type}</span>
                 </div>
                 {isAdmin && (
                   <div className="flex gap-1 shrink-0">
-                    <button onClick={() => openEdit(h)} className="p-1 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"><Edit2 size={14} /></button>
-                    <button onClick={() => handleDelete(h.id)} className="p-1 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition"><Trash2 size={14} /></button>
+                    <button onClick={() => openEdit(h)} className="p-1 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"><Edit2 size={14} /></button>
+                    <button onClick={() => handleDelete(h.id)} className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition"><Trash2 size={14} /></button>
                   </div>
                 )}
               </div>
@@ -103,18 +103,18 @@ export default function Holidays() {
       {/* Past */}
       {past.length > 0 && (
         <div>
-          <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Past Holidays</h2>
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">Past Holidays</h2>
           <div className="card p-0 overflow-hidden">
             <table className="w-full">
-              <thead><tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Holiday</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Day</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Type</th>
+              <thead><tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Date</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Holiday</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Day</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Type</th>
               </tr></thead>
-              <tbody className="divide-y dark:divide-gray-700">
+              <tbody className="divide-y dark:divide-slate-700">
                 {past.map(h => (
-                  <tr key={h.id} className="text-gray-400 dark:text-gray-500">
+                  <tr key={h.id} className="text-slate-400 dark:text-slate-500">
                     <td className="px-4 py-2.5 text-sm">{h.date}</td>
                     <td className="px-4 py-2.5 text-sm">{h.name}</td>
                     <td className="px-4 py-2.5 text-sm">{new Date(h.date).toLocaleDateString('en-IN', { weekday: 'long' })}</td>
@@ -131,22 +131,22 @@ export default function Holidays() {
       {showModal && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50 max-w-sm">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50 max-w-sm">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">{editing ? 'Edit Holiday' : 'Add Holiday'}</h2>
-              <button onClick={() => setShowModal(false)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowModal(false)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Holiday Name</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Holiday Name</label>
                 <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="input mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Date</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Date</label>
                 <input type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} className="input mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Type</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Type</label>
                 <select value={form.type} onChange={e => setForm({...form, type: e.target.value})} className="input mt-1">
                   <option value="national">National</option>
                   <option value="optional">Optional</option>
@@ -154,7 +154,7 @@ export default function Holidays() {
                 </select>
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={() => setShowModal(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleSave} className="btn-primary">{editing ? 'Update' : 'Add'}</button>
             </div>

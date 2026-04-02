@@ -13,11 +13,11 @@ const CATEGORIES = [
   { value: 'hr', label: 'HR', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
   { value: 'finance', label: 'Finance', color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
   { value: 'admin', label: 'Admin/Facilities', color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' },
-  { value: 'general', label: 'General', color: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' },
+  { value: 'general', label: 'General', color: 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300' },
 ];
 
 const PRIORITIES = [
-  { value: 'low', label: 'Low', color: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400' },
+  { value: 'low', label: 'Low', color: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400' },
   { value: 'normal', label: 'Normal', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
   { value: 'high', label: 'High', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
   { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
@@ -27,7 +27,7 @@ const STATUSES = [
   { value: 'open', label: 'Open', icon: Circle, color: 'text-blue-500' },
   { value: 'in_progress', label: 'In Progress', icon: Loader2, color: 'text-amber-500' },
   { value: 'resolved', label: 'Resolved', icon: CheckCircle2, color: 'text-emerald-500' },
-  { value: 'closed', label: 'Closed', icon: CheckCircle2, color: 'text-gray-400' },
+  { value: 'closed', label: 'Closed', icon: CheckCircle2, color: 'text-slate-400' },
   { value: 'reopened', label: 'Reopened', icon: RotateCcw, color: 'text-red-500' },
 ];
 
@@ -209,7 +209,7 @@ export default function Tickets() {
             <div key={s.label} className="card card-interactive !p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{s.label}</p>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">{s.label}</p>
                   <p className="text-2xl font-bold mt-1 dark:text-white">{s.value}</p>
                 </div>
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${s.color} flex items-center justify-center`}>
@@ -224,7 +224,7 @@ export default function Tickets() {
       {/* Filters */}
       <div className="card !p-3 flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px]">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tickets..." className="input !pl-9" />
         </div>
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="input !w-auto">
@@ -258,21 +258,21 @@ export default function Tickets() {
                 <div className={`w-2 h-2 rounded-full mt-2 shrink-0 ${
                   t.priority === 'urgent' ? 'bg-red-500 animate-pulse' :
                   t.priority === 'high' ? 'bg-orange-500' :
-                  t.priority === 'normal' ? 'bg-blue-500' : 'bg-gray-400'
+                  t.priority === 'normal' ? 'bg-blue-500' : 'bg-slate-400'
                 }`} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-mono text-gray-400 dark:text-gray-500">{t.ticketId}</span>
+                    <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">{t.ticketId}</span>
                     <StatusBadge status={t.status} />
                   </div>
-                  <p className="text-sm font-semibold text-gray-800 dark:text-white truncate">{t.title}</p>
-                  <div className="flex items-center gap-3 mt-2 text-[11px] text-gray-400">
+                  <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{t.title}</p>
+                  <div className="flex items-center gap-3 mt-2 text-[11px] text-slate-400">
                     <span className="flex items-center gap-1"><User size={10} />{t.createdByName}</span>
                     <span className="flex items-center gap-1"><Clock size={10} />{timeAgo(t.createdAt)}</span>
                     <CategoryBadge category={t.category} />
                   </div>
                 </div>
-                <ChevronRight size={16} className="text-gray-300 dark:text-gray-600 shrink-0 mt-2" />
+                <ChevronRight size={16} className="text-slate-300 dark:text-slate-600 shrink-0 mt-2" />
               </div>
             </button>
           ))}
@@ -281,28 +281,28 @@ export default function Tickets() {
         {/* Detail */}
         <div className={`lg:col-span-3 ${!selectedTicket ? 'hidden lg:block' : ''}`}>
           {!ticketDetail ? (
-            <div className="card flex flex-col items-center justify-center py-20 text-gray-400">
+            <div className="card flex flex-col items-center justify-center py-20 text-slate-400">
               <MessageSquare size={48} className="mb-3 opacity-40" />
               <p className="font-medium">Select a ticket to view details</p>
             </div>
           ) : (
             <div className="card !p-0 overflow-hidden">
               {/* Detail Header */}
-              <div className="p-5 border-b dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-800">
+              <div className="p-5 border-b dark:border-slate-700 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800 dark:to-slate-800">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1">
                     <button onClick={() => { setSelectedTicket(null); setTicketDetail(null); }} className="lg:hidden text-sm text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-1">
                       <ChevronRight size={14} className="rotate-180" /> Back
                     </button>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-mono text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">{ticketDetail.ticketId}</span>
+                      <span className="text-xs font-mono text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded">{ticketDetail.ticketId}</span>
                       <StatusBadge status={ticketDetail.status} />
                       <PriorityBadge priority={ticketDetail.priority} />
                       <CategoryBadge category={ticketDetail.category} />
                     </div>
                     <h2 className="text-lg font-bold mt-2 dark:text-white">{ticketDetail.title}</h2>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Raised by <span className="font-medium text-gray-600 dark:text-gray-300">{ticketDetail.createdByName}</span> ({ticketDetail.createdByDept}) &middot; {timeAgo(ticketDetail.createdAt)}
+                    <p className="text-xs text-slate-400 mt-1">
+                      Raised by <span className="font-medium text-slate-600 dark:text-slate-300">{ticketDetail.createdByName}</span> ({ticketDetail.createdByDept}) &middot; {timeAgo(ticketDetail.createdAt)}
                     </p>
                   </div>
 
@@ -349,7 +349,7 @@ export default function Tickets() {
 
                 {ticketDetail.assignedToName && (
                   <div className="mt-3 flex items-center gap-2 text-xs">
-                    <span className="text-gray-400">Assigned to:</span>
+                    <span className="text-slate-400">Assigned to:</span>
                     <span className="inline-flex items-center gap-1.5 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 px-2 py-0.5 rounded-full font-medium">
                       <User size={10} /> {ticketDetail.assignedToName}
                     </span>
@@ -358,17 +358,17 @@ export default function Tickets() {
               </div>
 
               {/* Description */}
-              <div className="px-5 py-4 border-b dark:border-gray-700">
-                <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">{ticketDetail.description}</p>
+              <div className="px-5 py-4 border-b dark:border-slate-700">
+                <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">{ticketDetail.description}</p>
               </div>
 
               {/* Comments */}
               <div className="px-5 py-3 max-h-80 overflow-y-auto">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
                   Comments ({ticketDetail.comments?.length || 0})
                 </p>
                 {ticketDetail.comments?.length === 0 ? (
-                  <p className="text-sm text-gray-400 text-center py-6">No comments yet</p>
+                  <p className="text-sm text-slate-400 text-center py-6">No comments yet</p>
                 ) : (
                   <div className="space-y-3">
                     {ticketDetail.comments?.map(c => (
@@ -380,11 +380,11 @@ export default function Tickets() {
                           <div className={`rounded-2xl px-4 py-2.5 ${
                             c.userId === user?.id
                               ? 'bg-indigo-600 text-white rounded-tr-md'
-                              : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-tl-md'
+                              : 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-tl-md'
                           }`}>
                             <p className="text-sm">{c.comment}</p>
                           </div>
-                          <p className={`text-[10px] mt-1 text-gray-400 ${c.userId === user?.id ? 'text-right' : ''}`}>
+                          <p className={`text-[10px] mt-1 text-slate-400 ${c.userId === user?.id ? 'text-right' : ''}`}>
                             {c.userName} &middot; {timeAgo(c.createdAt)}
                           </p>
                         </div>
@@ -397,7 +397,7 @@ export default function Tickets() {
 
               {/* Comment Input */}
               {ticketDetail.status !== 'closed' && (
-                <div className="px-5 py-3 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                <div className="px-5 py-3 border-t dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
                   <div className="flex gap-2">
                     <input
                       value={comment}
@@ -421,38 +421,38 @@ export default function Tickets() {
       {showCreate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={e => { if (e.target === e.currentTarget) setShowCreate(false); }}>
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-          <div className="relative w-full max-w-lg bg-white dark:bg-gray-800 rounded-2xl shadow-2xl animate-scale-in overflow-hidden">
-            <div className="p-6 border-b dark:border-gray-700">
+          <div className="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl shadow-2xl animate-scale-in overflow-hidden">
+            <div className="p-6 border-b dark:border-slate-700">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold dark:text-white flex items-center gap-2"><Ticket size={20} /> Raise New Ticket</h2>
-                <button onClick={() => setShowCreate(false)} className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"><X size={18} /></button>
+                <button onClick={() => setShowCreate(false)} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl"><X size={18} /></button>
               </div>
             </div>
             <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title *</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title *</label>
                 <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input" placeholder="Brief summary of the issue" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description *</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description *</label>
                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} className="input !h-28 resize-none" placeholder="Detailed description of the issue..." />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
                   <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className="input">
                     {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Priority</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Priority</label>
                   <select value={form.priority} onChange={e => setForm({ ...form, priority: e.target.value })} className="input">
                     {PRIORITIES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
                   </select>
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t dark:border-gray-700 flex justify-end gap-3">
+            <div className="p-6 border-t dark:border-slate-700 flex justify-end gap-3">
               <button onClick={() => setShowCreate(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleCreate} disabled={submitting} className="btn-primary flex items-center gap-2">
                 {submitting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}

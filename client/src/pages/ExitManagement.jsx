@@ -107,7 +107,7 @@ export default function ExitManagement() {
             <p>{isAdmin ? 'Manage employee resignations and exit process' : 'Submit and track your resignation'}</p>
           </div>
           {!isAdmin && !myExit && (
-            <button onClick={() => setShowResignForm(true)} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+            <button onClick={() => setShowResignForm(true)} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
               <Send size={16} /> Submit Resignation
             </button>
           )}
@@ -121,21 +121,21 @@ export default function ExitManagement() {
       <div className="card bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border border-indigo-100 dark:border-indigo-800">
         <div className="flex items-center gap-3 text-sm flex-wrap">
           <span className="font-medium text-indigo-700 dark:text-indigo-400">Exit Flow:</span>
-          <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 flex-wrap">
+          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 flex-wrap">
             <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 rounded text-xs font-medium text-amber-700 dark:text-amber-400">Pending</span>
-            <span className="text-gray-400">&#8594;</span>
+            <span className="text-slate-400">&#8594;</span>
             <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 rounded text-xs font-medium text-blue-700 dark:text-blue-400">Approved</span>
-            <span className="text-gray-400">&#8594;</span>
+            <span className="text-slate-400">&#8594;</span>
             <span className="px-2 py-0.5 bg-emerald-100 dark:bg-emerald-900/30 rounded text-xs font-medium text-emerald-700 dark:text-emerald-400">Completed (Employee Deactivated)</span>
           </div>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit flex-wrap">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit flex-wrap">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'}`}>
+            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'}`}>
             {t.label}
           </button>
         ))}
@@ -151,32 +151,32 @@ export default function ExitManagement() {
                   <LogOut size={22} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-white">Resignation Status</h3>
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-white">Resignation Status</h3>
                   {getStatusBadge(myExit.status)}
                 </div>
               </div>
               <div className="space-y-3 mt-4">
-                <div className="flex justify-between py-2 border-b dark:border-gray-700">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Resignation Date</span>
+                <div className="flex justify-between py-2 border-b dark:border-slate-700">
+                  <span className="text-sm text-slate-500 dark:text-slate-400">Resignation Date</span>
                   <span className="text-sm font-medium dark:text-white">{myExit.resignationDate}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b dark:border-gray-700">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Last Working Date</span>
+                <div className="flex justify-between py-2 border-b dark:border-slate-700">
+                  <span className="text-sm text-slate-500 dark:text-slate-400">Last Working Date</span>
                   <span className="text-sm font-medium dark:text-white">{myExit.lastWorkingDate}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b dark:border-gray-700">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Reason</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400 text-right max-w-[200px]">{myExit.reason}</span>
+                <div className="flex justify-between py-2 border-b dark:border-slate-700">
+                  <span className="text-sm text-slate-500 dark:text-slate-400">Reason</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-400 text-right max-w-[200px]">{myExit.reason}</span>
                 </div>
                 {myExit.notes && (
-                  <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg mt-3">
-                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">Admin Notes</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{myExit.notes}</p>
+                  <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl mt-3">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">Admin Notes</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{myExit.notes}</p>
                   </div>
                 )}
               </div>
               {myExit.status === 'approved' && (
-                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
                   <p className="text-xs text-blue-700 dark:text-blue-400">
                     <AlertTriangle size={12} className="inline mr-1" />
                     Your resignation has been approved. Please complete the exit formalities before your last working date.
@@ -201,25 +201,25 @@ export default function ExitManagement() {
         <div className="card p-0 overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Resignation Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Last Working Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Actions</th>
+              <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Employee</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Resignation Date</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Last Working Date</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Reason</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y dark:divide-gray-700">
+            <tbody className="divide-y dark:divide-slate-700">
               {allExits.filter(e => e.status === 'pending').map(exit => (
                 <tr key={exit.id}>
                   <td className="px-4 py-3">
                     <p className="text-sm font-medium dark:text-white">{exit.employeeName}</p>
-                    <p className="text-xs text-gray-400">{exit.department}</p>
+                    <p className="text-xs text-slate-400">{exit.department}</p>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{exit.resignationDate}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{exit.lastWorkingDate}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{exit.reason}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{exit.resignationDate}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{exit.lastWorkingDate}</td>
+                  <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-w-[200px] truncate hidden sm:table-cell">{exit.reason}</td>
                   <td className="px-4 py-3">{getStatusBadge(exit.status)}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
@@ -237,7 +237,7 @@ export default function ExitManagement() {
                 </tr>
               ))}
               {allExits.filter(e => e.status === 'pending').length === 0 && (
-                <tr><td colSpan={6} className="text-center py-8 text-gray-400 text-sm">No pending exit requests</td></tr>
+                <tr><td colSpan={6} className="text-center py-8 text-slate-400 text-sm">No pending exit requests</td></tr>
               )}
             </tbody>
           </table>
@@ -249,25 +249,25 @@ export default function ExitManagement() {
         <div className="card p-0 overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Resignation Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Last Working Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Actions</th>
+              <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Employee</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Resignation Date</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Last Working Date</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Reason</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y dark:divide-gray-700">
+            <tbody className="divide-y dark:divide-slate-700">
               {allExits.map(exit => (
                 <tr key={exit.id}>
                   <td className="px-4 py-3">
                     <p className="text-sm font-medium dark:text-white">{exit.employeeName}</p>
-                    <p className="text-xs text-gray-400">{exit.department}</p>
+                    <p className="text-xs text-slate-400">{exit.department}</p>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{exit.resignationDate}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{exit.lastWorkingDate}</td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{exit.reason}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{exit.resignationDate}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{exit.lastWorkingDate}</td>
+                  <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-w-[200px] truncate hidden sm:table-cell">{exit.reason}</td>
                   <td className="px-4 py-3">{getStatusBadge(exit.status)}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
@@ -284,7 +284,7 @@ export default function ExitManagement() {
                 </tr>
               ))}
               {allExits.length === 0 && (
-                <tr><td colSpan={6} className="text-center py-8 text-gray-400 text-sm">No exit requests found</td></tr>
+                <tr><td colSpan={6} className="text-center py-8 text-slate-400 text-sm">No exit requests found</td></tr>
               )}
             </tbody>
           </table>
@@ -295,32 +295,32 @@ export default function ExitManagement() {
       {showResignForm && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowResignForm(false)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">Submit Resignation</h2>
-              <button onClick={() => setShowResignForm(false)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowResignForm(false)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
                 <p className="text-xs text-red-700 dark:text-red-400">
                   <AlertTriangle size={12} className="inline mr-1" />
                   This action will submit your resignation to HR for review. Please ensure all details are correct.
                 </p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Resignation Date</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Resignation Date</label>
                 <input type="date" value={resignForm.resignationDate} onChange={e => setResignForm({...resignForm, resignationDate: e.target.value})} className="input mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Last Working Date</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Last Working Date</label>
                 <input type="date" value={resignForm.lastWorkingDate} onChange={e => setResignForm({...resignForm, lastWorkingDate: e.target.value})} className="input mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Reason for Resignation</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Reason for Resignation</label>
                 <textarea value={resignForm.reason} onChange={e => setResignForm({...resignForm, reason: e.target.value})} rows={4} className="input mt-1" placeholder="Please share your reason for leaving..." />
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={() => setShowResignForm(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleSubmitResignation} className="btn-danger" disabled={!resignForm.resignationDate || !resignForm.lastWorkingDate || !resignForm.reason}>
                 Submit Resignation
@@ -334,58 +334,58 @@ export default function ExitManagement() {
       {selectedExit && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedExit(null)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">Exit Details</h2>
-              <button onClick={() => setSelectedExit(null)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setSelectedExit(null)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4 overflow-y-auto max-h-[calc(100vh-130px)]">
               {/* Employee Info */}
-              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-xs">
                   {selectedExit.employeeName?.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>
                 <div>
                   <p className="text-sm font-semibold dark:text-white">{selectedExit.employeeName}</p>
-                  <p className="text-xs text-gray-400">{selectedExit.department}</p>
+                  <p className="text-xs text-slate-400">{selectedExit.department}</p>
                 </div>
                 <div className="ml-auto">{getStatusBadge(selectedExit.status)}</div>
               </div>
 
               {/* Details */}
               <div className="space-y-2">
-                <div className="flex justify-between py-2 border-b dark:border-gray-700">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Resignation Date</span>
+                <div className="flex justify-between py-2 border-b dark:border-slate-700">
+                  <span className="text-sm text-slate-500 dark:text-slate-400">Resignation Date</span>
                   <span className="text-sm font-medium dark:text-white">{selectedExit.resignationDate}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b dark:border-gray-700">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Last Working Date</span>
+                <div className="flex justify-between py-2 border-b dark:border-slate-700">
+                  <span className="text-sm text-slate-500 dark:text-slate-400">Last Working Date</span>
                   <span className="text-sm font-medium dark:text-white">{selectedExit.lastWorkingDate}</span>
                 </div>
-                <div className="py-2 border-b dark:border-gray-700">
-                  <span className="text-sm text-gray-500 dark:text-gray-400">Reason</span>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{selectedExit.reason}</p>
+                <div className="py-2 border-b dark:border-slate-700">
+                  <span className="text-sm text-slate-500 dark:text-slate-400">Reason</span>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{selectedExit.reason}</p>
                 </div>
               </div>
 
               {/* Exit Checklist */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-800 dark:text-white mb-3">Exit Checklist</h3>
+                <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-3">Exit Checklist</h3>
                 <div className="space-y-3">
-                  <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                  <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                     <input type="checkbox" checked={checklistForm.exitInterview} onChange={e => setChecklistForm({...checklistForm, exitInterview: e.target.checked})}
-                      className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+                      className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
                     <div className="flex items-center gap-2">
                       <MessageSquare size={16} className="text-indigo-500" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Exit Interview Conducted</span>
+                      <span className="text-sm text-slate-700 dark:text-slate-300">Exit Interview Conducted</span>
                     </div>
                   </label>
-                  <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                  <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition">
                     <input type="checkbox" checked={checklistForm.assetsReturned} onChange={e => setChecklistForm({...checklistForm, assetsReturned: e.target.checked})}
-                      className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+                      className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
                     <div className="flex items-center gap-2">
                       <Package size={16} className="text-emerald-500" />
-                      <span className="text-sm text-gray-700 dark:text-gray-300">Company Assets Returned</span>
+                      <span className="text-sm text-slate-700 dark:text-slate-300">Company Assets Returned</span>
                     </div>
                   </label>
                 </div>
@@ -393,7 +393,7 @@ export default function ExitManagement() {
 
               {/* Notes */}
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Admin Notes</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Admin Notes</label>
                 <textarea value={checklistForm.notes} onChange={e => setChecklistForm({...checklistForm, notes: e.target.value})} rows={3} className="input mt-1" placeholder="Add notes about the exit process..." />
               </div>
 

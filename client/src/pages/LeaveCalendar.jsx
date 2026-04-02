@@ -165,11 +165,11 @@ export default function LeaveCalendar() {
       <div className="card animate-slide-up">
         {/* Month Navigation */}
         <div className="flex items-center justify-between mb-6">
-          <button onClick={goToPrevMonth} className="btn-secondary p-2 rounded-lg">
+          <button onClick={goToPrevMonth} className="btn-secondary p-2 rounded-xl">
             <ChevronLeft size={20} />
           </button>
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
               {MONTH_NAMES[currentMonth]} {currentYear}
             </h2>
             <button
@@ -179,7 +179,7 @@ export default function LeaveCalendar() {
               Today
             </button>
           </div>
-          <button onClick={goToNextMonth} className="btn-secondary p-2 rounded-lg">
+          <button onClick={goToNextMonth} className="btn-secondary p-2 rounded-xl">
             <ChevronRight size={20} />
           </button>
         </div>
@@ -191,8 +191,8 @@ export default function LeaveCalendar() {
               key={d}
               className={`text-center text-xs font-semibold uppercase tracking-wider py-2 ${
                 i === 0 || i === 6
-                  ? 'text-gray-400 dark:text-gray-500'
-                  : 'text-gray-600 dark:text-gray-400'
+                  ? 'text-slate-400 dark:text-slate-500'
+                  : 'text-slate-600 dark:text-slate-400'
               }`}
             >
               {d}
@@ -206,7 +206,7 @@ export default function LeaveCalendar() {
             <div className="w-8 h-8 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="grid grid-cols-7 border-t border-l border-gray-200 dark:border-gray-700">
+          <div className="grid grid-cols-7 border-t border-l border-slate-200 dark:border-slate-700">
             {calendarCells.map((cell, idx) => {
               const weekend = isWeekend(idx);
               const todayCell = cell.isCurrentMonth && isToday(cell.day);
@@ -220,10 +220,10 @@ export default function LeaveCalendar() {
                   key={idx}
                   onClick={() => handleDayClick(cell.day, cell.isCurrentMonth)}
                   className={`
-                    relative min-h-[90px] p-1.5 border-b border-r border-gray-200 dark:border-gray-700 transition-colors
-                    ${cell.isCurrentMonth ? 'cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50' : 'cursor-default'}
-                    ${!cell.isCurrentMonth ? 'bg-gray-50/50 dark:bg-gray-900/30' : ''}
-                    ${cell.isCurrentMonth && weekend && !hasHoliday ? 'bg-gray-100/80 dark:bg-gray-800/40' : ''}
+                    relative min-h-[90px] p-1.5 border-b border-r border-slate-200 dark:border-slate-700 transition-colors
+                    ${cell.isCurrentMonth ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50' : 'cursor-default'}
+                    ${!cell.isCurrentMonth ? 'bg-slate-50/50 dark:bg-slate-900/30' : ''}
+                    ${cell.isCurrentMonth && weekend && !hasHoliday ? 'bg-slate-100/80 dark:bg-slate-800/40' : ''}
                     ${cell.isCurrentMonth && hasHoliday ? 'bg-rose-50 dark:bg-rose-900/20' : ''}
                     ${isSelected ? 'ring-2 ring-inset ring-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20' : ''}
                   `}
@@ -233,8 +233,8 @@ export default function LeaveCalendar() {
                     <span
                       className={`
                         inline-flex items-center justify-center w-7 h-7 text-sm font-medium rounded-full
-                        ${!cell.isCurrentMonth ? 'text-gray-300 dark:text-gray-600' : ''}
-                        ${cell.isCurrentMonth && !todayCell ? 'text-gray-700 dark:text-gray-300' : ''}
+                        ${!cell.isCurrentMonth ? 'text-slate-300 dark:text-slate-600' : ''}
+                        ${cell.isCurrentMonth && !todayCell ? 'text-slate-700 dark:text-slate-300' : ''}
                         ${todayCell ? 'bg-indigo-600 text-white ring-2 ring-indigo-300 dark:ring-indigo-500' : ''}
                       `}
                     >
@@ -265,7 +265,7 @@ export default function LeaveCalendar() {
                         />
                       ))}
                       {dayLeaves.length > 4 && (
-                        <span className="text-[9px] font-medium text-gray-500 dark:text-gray-400 leading-none ml-0.5">
+                        <span className="text-[9px] font-medium text-slate-500 dark:text-slate-400 leading-none ml-0.5">
                           +{dayLeaves.length - 4}
                         </span>
                       )}
@@ -282,7 +282,7 @@ export default function LeaveCalendar() {
       {selectedDay && (
         <div className="card animate-slide-up" style={{ animationDelay: '50ms' }}>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
               {MONTH_NAMES[currentMonth]} {selectedDay}, {currentYear}
               {isToday(selectedDay) && (
                 <span className="ml-2 text-xs font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
@@ -290,7 +290,7 @@ export default function LeaveCalendar() {
                 </span>
               )}
             </h3>
-            <button onClick={() => setSelectedDay(null)} className="btn-secondary p-1.5 rounded-lg">
+            <button onClick={() => setSelectedDay(null)} className="btn-secondary p-1.5 rounded-xl">
               <X size={16} />
             </button>
           </div>
@@ -298,14 +298,14 @@ export default function LeaveCalendar() {
           {/* Holidays for selected day */}
           {selectedHolidays.length > 0 && (
             <div className="mb-4">
-              <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+              <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
                 Holidays
               </h4>
               <div className="space-y-2">
                 {selectedHolidays.map((h, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 p-2 rounded-lg bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800"
+                    className="flex items-center gap-3 p-2 rounded-xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800"
                   >
                     <span className="w-3 h-3 rounded-full bg-rose-500 shrink-0" />
                     <div>
@@ -321,25 +321,25 @@ export default function LeaveCalendar() {
           {/* Leaves for selected day */}
           {selectedLeaves.length > 0 ? (
             <div>
-              <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+              <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
                 Employees on Leave ({selectedLeaves.length})
               </h4>
               <div className="space-y-2">
                 {selectedLeaves.map((l, i) => (
                   <div
                     key={i}
-                    className="flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700"
+                    className="flex items-center gap-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700"
                   >
                     <span className={`w-3 h-3 rounded-full ${getDeptColor(l.department)} shrink-0`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
                         {l.employeeName}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
                         {l.department} &middot; {l.leaveType}
                       </p>
                     </div>
-                    <span className="text-[10px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 whitespace-nowrap">
                       {new Date(l.fromDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                       {' - '}
                       {new Date(l.toDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
@@ -350,7 +350,7 @@ export default function LeaveCalendar() {
             </div>
           ) : (
             selectedHolidays.length === 0 && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">No leaves or holidays on this day.</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">No leaves or holidays on this day.</p>
             )
           )}
         </div>
@@ -358,27 +358,27 @@ export default function LeaveCalendar() {
 
       {/* Legend */}
       <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
-        <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+        <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
           Legend
         </h4>
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-indigo-500" />
-            <span className="text-sm text-gray-600 dark:text-gray-400">Leave</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400">Leave</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-rose-500" />
-            <span className="text-sm text-gray-600 dark:text-gray-400">Holiday</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400">Holiday</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-4 h-3 rounded bg-gray-200 dark:bg-gray-700" />
-            <span className="text-sm text-gray-600 dark:text-gray-400">Weekend</span>
+            <span className="w-4 h-3 rounded bg-slate-200 dark:bg-slate-700" />
+            <span className="text-sm text-slate-600 dark:text-slate-400">Weekend</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-[9px] text-white font-bold ring-2 ring-indigo-300">
               {today.getDate()}
             </span>
-            <span className="text-sm text-gray-600 dark:text-gray-400">Today</span>
+            <span className="text-sm text-slate-600 dark:text-slate-400">Today</span>
           </div>
         </div>
       </div>

@@ -13,7 +13,7 @@ const categoryColors = {
   Policy: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
   Contract: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
   Certificate: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-400',
-  Other: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+  Other: 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300',
 };
 
 const fileIcon = (name) => {
@@ -144,16 +144,16 @@ export default function Documents() {
                 {fileIcon(doc.originalName || doc.name)}
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-gray-800 dark:text-white truncate">{doc.originalName || doc.name}</h3>
-                {doc.description && <p className="text-xs text-gray-400 mt-0.5 truncate">{doc.description}</p>}
+                <h3 className="text-sm font-semibold text-slate-800 dark:text-white truncate">{doc.originalName || doc.name}</h3>
+                {doc.description && <p className="text-xs text-slate-400 mt-0.5 truncate">{doc.description}</p>}
                 <div className="flex items-center gap-2 mt-2">
                   <span className={`badge ${categoryColors[doc.category] || categoryColors.Other}`}>{doc.category}</span>
-                  <span className="text-xs text-gray-400">{formatSize(doc.size)}</span>
+                  <span className="text-xs text-slate-400">{formatSize(doc.size)}</span>
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-between mt-4 pt-3 border-t dark:border-gray-700">
-              <div className="text-xs text-gray-400">
+            <div className="flex items-center justify-between mt-4 pt-3 border-t dark:border-slate-700">
+              <div className="text-xs text-slate-400">
                 {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
                 {doc.employeeName && <span className="ml-1">by {doc.employeeName}</span>}
               </div>
@@ -183,7 +183,7 @@ export default function Documents() {
             <h1>Documents</h1>
             <p>Manage and organize your documents</p>
           </div>
-          <button onClick={() => setShowUpload(true)} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+          <button onClick={() => setShowUpload(true)} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
             <Upload size={16} /> Upload Document
           </button>
         </div>
@@ -194,10 +194,10 @@ export default function Documents() {
 
       {/* Tabs */}
       <div className="flex flex-col sm:flex-row justify-between gap-3">
-        <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit">
+        <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
           {tabs.map(t => (
             <button key={t.id} onClick={() => setTab(t.id)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'}`}>
+              className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'}`}>
               {t.label}
             </button>
           ))}
@@ -207,7 +207,7 @@ export default function Documents() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-2.5 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-2.5 text-slate-400" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search documents..." className="input pl-9" />
         </div>
         <select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="input w-auto">
@@ -225,51 +225,51 @@ export default function Documents() {
       {showUpload && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowUpload(false)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">Upload Document</h2>
-              <button onClick={() => setShowUpload(false)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowUpload(false)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">File</label>
-                <div className="mt-1 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-indigo-400 dark:hover:border-indigo-500 transition cursor-pointer"
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">File</label>
+                <div className="mt-1 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center hover:border-indigo-400 dark:hover:border-indigo-500 transition cursor-pointer"
                   onClick={() => document.getElementById('file-input').click()}>
                   <input id="file-input" type="file" className="hidden" onChange={e => setSelectedFile(e.target.files[0])} />
-                  <FilePlus size={32} className="mx-auto text-gray-400 mb-2" />
+                  <FilePlus size={32} className="mx-auto text-slate-400 mb-2" />
                   {selectedFile ? (
                     <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white">{selectedFile.name}</p>
-                      <p className="text-xs text-gray-400">{formatSize(selectedFile.size)}</p>
+                      <p className="text-sm font-medium text-slate-800 dark:text-white">{selectedFile.name}</p>
+                      <p className="text-xs text-slate-400">{formatSize(selectedFile.size)}</p>
                     </div>
                   ) : (
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Click to select a file</p>
-                      <p className="text-xs text-gray-400 mt-1">PDF, DOC, XLS, JPG, PNG up to 10MB</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">Click to select a file</p>
+                      <p className="text-xs text-slate-400 mt-1">PDF, DOC, XLS, JPG, PNG up to 10MB</p>
                     </div>
                   )}
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Category</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Category</label>
                 <select value={uploadForm.category} onChange={e => setUploadForm({...uploadForm, category: e.target.value})} className="input mt-1">
                   <option value="">Select category</option>
                   {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Description (optional)</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Description (optional)</label>
                 <textarea value={uploadForm.description} onChange={e => setUploadForm({...uploadForm, description: e.target.value})} rows={3} className="input mt-1" placeholder="Brief description of this document..." />
               </div>
               {isAdmin && (
-                <div className="flex items-center gap-3 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl">
                   <input type="checkbox" id="company-doc" checked={uploadForm.isCompanyDoc} onChange={e => setUploadForm({...uploadForm, isCompanyDoc: e.target.checked})}
-                    className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
-                  <label htmlFor="company-doc" className="text-sm text-gray-700 dark:text-gray-300">Upload as company-wide document</label>
+                    className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
+                  <label htmlFor="company-doc" className="text-sm text-slate-700 dark:text-slate-300">Upload as company-wide document</label>
                 </div>
               )}
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={() => setShowUpload(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleUpload} className="btn-primary" disabled={!selectedFile || !uploadForm.category || uploading}>
                 {uploading ? 'Uploading...' : 'Upload'}

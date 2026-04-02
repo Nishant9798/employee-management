@@ -77,14 +77,14 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
   const newCtc = salary.new_ctc || salary.revised_ctc || null;
 
   const renderLetterhead = () => (
-    <div className="text-center border-b-2 border-gray-800 dark:border-gray-300 pb-4 mb-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-wide uppercase">
+    <div className="text-center border-b-2 border-slate-800 dark:border-slate-300 pb-4 mb-6">
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-wide uppercase">
         {companyName}
       </h1>
       {companyAddress && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{companyAddress}</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{companyAddress}</p>
       )}
-      <div className="flex justify-center gap-6 text-sm text-gray-600 dark:text-gray-400 mt-1">
+      <div className="flex justify-center gap-6 text-sm text-slate-600 dark:text-slate-400 mt-1">
         {companyEmail && <span>Email: {companyEmail}</span>}
         {companyPhone && <span>Phone: {companyPhone}</span>}
       </div>
@@ -92,7 +92,7 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
   );
 
   const renderDateAndRef = () => (
-    <div className="flex justify-between items-start mb-6 text-sm text-gray-700 dark:text-gray-300">
+    <div className="flex justify-between items-start mb-6 text-sm text-slate-700 dark:text-slate-300">
       <div>
         <p><span className="font-semibold">Ref:</span> {refNumber}</p>
       </div>
@@ -105,10 +105,10 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
   const renderSignature = () => (
     <div className="mt-16">
       <div className="mt-8">
-        <p className="text-gray-700 dark:text-gray-300">Yours sincerely,</p>
-        <div className="mt-12 border-t border-gray-400 dark:border-gray-500 w-48">
-          <p className="mt-1 font-semibold text-gray-800 dark:text-gray-200">Authorized Signatory</p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">{companyName}</p>
+        <p className="text-slate-700 dark:text-slate-300">Yours sincerely,</p>
+        <div className="mt-12 border-t border-slate-400 dark:border-slate-500 w-48">
+          <p className="mt-1 font-semibold text-slate-800 dark:text-slate-200">Authorized Signatory</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">{companyName}</p>
         </div>
       </div>
     </div>
@@ -118,10 +118,10 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
     <div>
       {renderLetterhead()}
       {renderDateAndRef()}
-      <h2 className="text-center text-lg font-bold text-gray-900 dark:text-white underline mb-6 uppercase">
+      <h2 className="text-center text-lg font-bold text-slate-900 dark:text-white underline mb-6 uppercase">
         Offer Letter
       </h2>
-      <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+      <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
         <p>To,</p>
         <p className="font-semibold">{empName}</p>
 
@@ -134,26 +134,26 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
         </p>
 
         <div className="my-4">
-          <table className="w-full border-collapse border border-gray-300 dark:border-gray-600 text-sm">
+          <table className="w-full border-collapse border border-slate-300 dark:border-slate-600 text-sm">
             <tbody>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
-                <td className="p-2 font-semibold bg-gray-50 dark:bg-gray-700 w-1/3">Employee Name</td>
+              <tr className="border-b border-slate-300 dark:border-slate-600">
+                <td className="p-2 font-semibold bg-slate-50 dark:bg-slate-700 w-1/3">Employee Name</td>
                 <td className="p-2">{empName}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
-                <td className="p-2 font-semibold bg-gray-50 dark:bg-gray-700">Designation</td>
+              <tr className="border-b border-slate-300 dark:border-slate-600">
+                <td className="p-2 font-semibold bg-slate-50 dark:bg-slate-700">Designation</td>
                 <td className="p-2">{designation}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
-                <td className="p-2 font-semibold bg-gray-50 dark:bg-gray-700">Department</td>
+              <tr className="border-b border-slate-300 dark:border-slate-600">
+                <td className="p-2 font-semibold bg-slate-50 dark:bg-slate-700">Department</td>
                 <td className="p-2">{department}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
-                <td className="p-2 font-semibold bg-gray-50 dark:bg-gray-700">Date of Joining</td>
+              <tr className="border-b border-slate-300 dark:border-slate-600">
+                <td className="p-2 font-semibold bg-slate-50 dark:bg-slate-700">Date of Joining</td>
                 <td className="p-2">{formatDate(joiningDate)}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
-                <td className="p-2 font-semibold bg-gray-50 dark:bg-gray-700">Cost to Company (CTC)</td>
+              <tr className="border-b border-slate-300 dark:border-slate-600">
+                <td className="p-2 font-semibold bg-slate-50 dark:bg-slate-700">Cost to Company (CTC)</td>
                 <td className="p-2">{formatIndianRupees(ctc)} per annum</td>
               </tr>
             </tbody>
@@ -162,35 +162,35 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
 
         <p className="font-semibold mt-4">Salary Breakdown (Per Annum):</p>
         <div className="my-2">
-          <table className="w-full border-collapse border border-gray-300 dark:border-gray-600 text-sm">
+          <table className="w-full border-collapse border border-slate-300 dark:border-slate-600 text-sm">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700">
-                <th className="p-2 text-left border-b border-gray-300 dark:border-gray-600">Component</th>
-                <th className="p-2 text-right border-b border-gray-300 dark:border-gray-600">Amount</th>
+              <tr className="bg-slate-50 dark:bg-slate-700">
+                <th className="p-2 text-left border-b border-slate-300 dark:border-slate-600">Component</th>
+                <th className="p-2 text-right border-b border-slate-300 dark:border-slate-600">Amount</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Basic Salary</td>
                 <td className="p-2 text-right">{formatIndianRupees(basicSalary)}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">House Rent Allowance (HRA)</td>
                 <td className="p-2 text-right">{formatIndianRupees(hra)}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Dearness Allowance (DA)</td>
                 <td className="p-2 text-right">{formatIndianRupees(da)}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Special Allowance</td>
                 <td className="p-2 text-right">{formatIndianRupees(specialAllowance)}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Provident Fund (Employer Contribution)</td>
                 <td className="p-2 text-right">{formatIndianRupees(pf)}</td>
               </tr>
-              <tr className="bg-gray-50 dark:bg-gray-700 font-semibold">
+              <tr className="bg-slate-50 dark:bg-slate-700 font-semibold">
                 <td className="p-2">Total CTC</td>
                 <td className="p-2 text-right">{formatIndianRupees(ctc)}</td>
               </tr>
@@ -218,20 +218,20 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
       </div>
       {renderSignature()}
 
-      <div className="mt-12 pt-6 border-t border-gray-300 dark:border-gray-600">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+      <div className="mt-12 pt-6 border-t border-slate-300 dark:border-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           <strong>Acceptance:</strong> I accept the above offer of employment and agree to the terms
           and conditions mentioned.
         </p>
         <div className="flex justify-between mt-8">
           <div>
-            <div className="border-t border-gray-400 dark:border-gray-500 w-48 mt-8">
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Employee Signature</p>
+            <div className="border-t border-slate-400 dark:border-slate-500 w-48 mt-8">
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Employee Signature</p>
             </div>
           </div>
           <div>
-            <div className="border-t border-gray-400 dark:border-gray-500 w-48 mt-8">
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Date</p>
+            <div className="border-t border-slate-400 dark:border-slate-500 w-48 mt-8">
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Date</p>
             </div>
           </div>
         </div>
@@ -243,10 +243,10 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
     <div>
       {renderLetterhead()}
       {renderDateAndRef()}
-      <h2 className="text-center text-lg font-bold text-gray-900 dark:text-white underline mb-6 uppercase">
+      <h2 className="text-center text-lg font-bold text-slate-900 dark:text-white underline mb-6 uppercase">
         Experience Letter
       </h2>
-      <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+      <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
         <p className="font-semibold">To Whom It May Concern,</p>
 
         <p>
@@ -292,10 +292,10 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
     <div>
       {renderLetterhead()}
       {renderDateAndRef()}
-      <h2 className="text-center text-lg font-bold text-gray-900 dark:text-white underline mb-6 uppercase">
+      <h2 className="text-center text-lg font-bold text-slate-900 dark:text-white underline mb-6 uppercase">
         Salary Certificate
       </h2>
-      <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+      <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
         <p className="font-semibold">To Whom It May Concern,</p>
 
         <p>
@@ -311,56 +311,56 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
         </p>
 
         <div className="my-4">
-          <table className="w-full border-collapse border border-gray-300 dark:border-gray-600 text-sm">
+          <table className="w-full border-collapse border border-slate-300 dark:border-slate-600 text-sm">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700">
-                <th className="p-2 text-left border-b border-gray-300 dark:border-gray-600">Particulars</th>
-                <th className="p-2 text-right border-b border-gray-300 dark:border-gray-600">Amount (Per Annum)</th>
-                <th className="p-2 text-right border-b border-gray-300 dark:border-gray-600">Amount (Per Month)</th>
+              <tr className="bg-slate-50 dark:bg-slate-700">
+                <th className="p-2 text-left border-b border-slate-300 dark:border-slate-600">Particulars</th>
+                <th className="p-2 text-right border-b border-slate-300 dark:border-slate-600">Amount (Per Annum)</th>
+                <th className="p-2 text-right border-b border-slate-300 dark:border-slate-600">Amount (Per Month)</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Basic Salary</td>
                 <td className="p-2 text-right">{formatIndianRupees(basicSalary)}</td>
                 <td className="p-2 text-right">{formatIndianRupees(Math.round(basicSalary / 12))}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">House Rent Allowance (HRA)</td>
                 <td className="p-2 text-right">{formatIndianRupees(hra)}</td>
                 <td className="p-2 text-right">{formatIndianRupees(Math.round(hra / 12))}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Dearness Allowance (DA)</td>
                 <td className="p-2 text-right">{formatIndianRupees(da)}</td>
                 <td className="p-2 text-right">{formatIndianRupees(Math.round(da / 12))}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Special Allowance</td>
                 <td className="p-2 text-right">{formatIndianRupees(specialAllowance)}</td>
                 <td className="p-2 text-right">{formatIndianRupees(Math.round(specialAllowance / 12))}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 font-semibold">
+              <tr className="border-b border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-700 font-semibold">
                 <td className="p-2">Gross Salary</td>
                 <td className="p-2 text-right">{formatIndianRupees(grossSalary)}</td>
                 <td className="p-2 text-right">{formatIndianRupees(Math.round(grossSalary / 12))}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Less: Provident Fund (PF)</td>
                 <td className="p-2 text-right">({formatIndianRupees(pf)})</td>
                 <td className="p-2 text-right">({formatIndianRupees(Math.round(pf / 12))})</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Less: Professional Tax</td>
                 <td className="p-2 text-right">({formatIndianRupees(tax)})</td>
                 <td className="p-2 text-right">({formatIndianRupees(Math.round(tax / 12))})</td>
               </tr>
-              <tr className="bg-gray-50 dark:bg-gray-700 font-bold">
+              <tr className="bg-slate-50 dark:bg-slate-700 font-bold">
                 <td className="p-2">Net Salary</td>
                 <td className="p-2 text-right">{formatIndianRupees(netSalary)}</td>
                 <td className="p-2 text-right">{formatIndianRupees(Math.round(netSalary / 12))}</td>
               </tr>
-              <tr className="bg-gray-100 dark:bg-gray-600 font-bold">
+              <tr className="bg-slate-100 dark:bg-slate-600 font-bold">
                 <td className="p-2">Cost to Company (CTC)</td>
                 <td className="p-2 text-right">{formatIndianRupees(ctc)}</td>
                 <td className="p-2 text-right">{formatIndianRupees(Math.round(ctc / 12))}</td>
@@ -388,10 +388,10 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
     <div>
       {renderLetterhead()}
       {renderDateAndRef()}
-      <h2 className="text-center text-lg font-bold text-gray-900 dark:text-white underline mb-6 uppercase">
+      <h2 className="text-center text-lg font-bold text-slate-900 dark:text-white underline mb-6 uppercase">
         Relieving Letter
       </h2>
-      <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+      <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
         <p>To,</p>
         <p className="font-semibold">{empName}</p>
         <p>Employee ID: {empId}</p>
@@ -441,10 +441,10 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
     <div>
       {renderLetterhead()}
       {renderDateAndRef()}
-      <h2 className="text-center text-lg font-bold text-gray-900 dark:text-white underline mb-6 uppercase">
+      <h2 className="text-center text-lg font-bold text-slate-900 dark:text-white underline mb-6 uppercase">
         Appraisal Letter
       </h2>
-      <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+      <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
         <p className="font-semibold">Confidential</p>
 
         <p>To,</p>
@@ -467,21 +467,21 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
         </p>
 
         <div className="my-4">
-          <table className="w-full border-collapse border border-gray-300 dark:border-gray-600 text-sm">
+          <table className="w-full border-collapse border border-slate-300 dark:border-slate-600 text-sm">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700">
-                <th className="p-2 text-left border-b border-gray-300 dark:border-gray-600">Particulars</th>
-                <th className="p-2 text-right border-b border-gray-300 dark:border-gray-600">Previous</th>
-                <th className="p-2 text-right border-b border-gray-300 dark:border-gray-600">Revised</th>
+              <tr className="bg-slate-50 dark:bg-slate-700">
+                <th className="p-2 text-left border-b border-slate-300 dark:border-slate-600">Particulars</th>
+                <th className="p-2 text-right border-b border-slate-300 dark:border-slate-600">Previous</th>
+                <th className="p-2 text-right border-b border-slate-300 dark:border-slate-600">Revised</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-gray-300 dark:border-gray-600">
+              <tr className="border-b border-slate-300 dark:border-slate-600">
                 <td className="p-2">Gross Salary (Per Annum)</td>
                 <td className="p-2 text-right">{formatIndianRupees(grossSalary)}</td>
                 <td className="p-2 text-right">{newSalary ? formatIndianRupees(newSalary) : 'As per revised structure'}</td>
               </tr>
-              <tr className="border-b border-gray-300 dark:border-gray-600 font-semibold">
+              <tr className="border-b border-slate-300 dark:border-slate-600 font-semibold">
                 <td className="p-2">Cost to Company (CTC) (Per Annum)</td>
                 <td className="p-2 text-right">{formatIndianRupees(ctc)}</td>
                 <td className="p-2 text-right">{newCtc ? formatIndianRupees(newCtc) : 'As per revised structure'}</td>
@@ -528,10 +528,10 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
     <div>
       {renderLetterhead()}
       {renderDateAndRef()}
-      <h2 className="text-center text-lg font-bold text-gray-900 dark:text-white underline mb-6 uppercase">
+      <h2 className="text-center text-lg font-bold text-slate-900 dark:text-white underline mb-6 uppercase">
         Warning Letter
       </h2>
-      <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+      <div className="space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
         <p>To,</p>
         <p className="font-semibold">{empName}</p>
         <p>Employee ID: {empId}</p>
@@ -549,7 +549,7 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
           detailed below. It has been brought to the notice of the management that:
         </p>
 
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 my-4">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 my-4">
           <p className="text-red-800 dark:text-red-300 whitespace-pre-wrap">
             {warningReason || 'Reason for warning will be specified here.'}
           </p>
@@ -591,20 +591,20 @@ function LetterPreview({ type, data, letterDate, warningReason, refNumber }) {
       </div>
       {renderSignature()}
 
-      <div className="mt-12 pt-6 border-t border-gray-300 dark:border-gray-600">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+      <div className="mt-12 pt-6 border-t border-slate-300 dark:border-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           <strong>Acknowledgement:</strong> I acknowledge receipt of this warning letter and
           understand the contents mentioned above.
         </p>
         <div className="flex justify-between mt-8">
           <div>
-            <div className="border-t border-gray-400 dark:border-gray-500 w-48 mt-8">
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Employee Signature</p>
+            <div className="border-t border-slate-400 dark:border-slate-500 w-48 mt-8">
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Employee Signature</p>
             </div>
           </div>
           <div>
-            <div className="border-t border-gray-400 dark:border-gray-500 w-48 mt-8">
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">Date</p>
+            <div className="border-t border-slate-400 dark:border-slate-500 w-48 mt-8">
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Date</p>
             </div>
           </div>
         </div>
@@ -699,7 +699,7 @@ export default function LetterGeneration() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertTriangle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
+          <p className="text-slate-600 dark:text-slate-400 text-lg">
             You do not have permission to access this page.
           </p>
         </div>
@@ -737,7 +737,7 @@ export default function LetterGeneration() {
           #letter-preview th, #letter-preview td {
             border-color: #333 !important;
           }
-          #letter-preview .bg-gray-50, #letter-preview .dark\\:bg-gray-700 {
+          #letter-preview .bg-slate-50, #letter-preview .dark\\:bg-slate-700 {
             background: #f5f5f5 !important;
           }
           #letter-preview .bg-red-50, #letter-preview .dark\\:bg-red-900\\/20 {
@@ -758,8 +758,8 @@ export default function LetterGeneration() {
         <div className="flex items-center gap-3">
           <FileText className="w-7 h-7 text-blue-600 dark:text-blue-400" />
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Letter Generation</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Letter Generation</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
               Generate formal letters for employees
             </p>
           </div>
@@ -771,7 +771,7 @@ export default function LetterGeneration() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Employee Dropdown */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Select Employee
             </label>
             <select
@@ -794,7 +794,7 @@ export default function LetterGeneration() {
 
           {/* Template Dropdown */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Letter Template
             </label>
             <select
@@ -816,7 +816,7 @@ export default function LetterGeneration() {
 
           {/* Date Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Letter Date
             </label>
             <input
@@ -852,7 +852,7 @@ export default function LetterGeneration() {
         {/* Warning Reason Textarea */}
         {selectedTemplate === 'warning' && (
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               Reason for Warning
             </label>
             <textarea
@@ -883,7 +883,7 @@ export default function LetterGeneration() {
           {/* Letter Card */}
           <div
             id="letter-preview"
-            className="card bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 max-w-4xl mx-auto"
+            className="card bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 max-w-4xl mx-auto"
             style={{ padding: '3rem', fontFamily: "'Times New Roman', 'Georgia', serif" }}
           >
             <LetterPreview
@@ -900,11 +900,11 @@ export default function LetterGeneration() {
       {/* Empty State */}
       {!showPreview && (
         <div className="card mt-6 text-center py-16 no-print">
-          <FileText className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-500 dark:text-gray-400">
+          <FileText className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-slate-500 dark:text-slate-400">
             No Letter Generated Yet
           </h3>
-          <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">
+          <p className="text-slate-400 dark:text-slate-500 text-sm mt-2">
             Select an employee and a letter template, then click &quot;Generate Letter&quot; to preview.
           </p>
         </div>

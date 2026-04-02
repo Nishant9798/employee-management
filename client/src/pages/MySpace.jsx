@@ -35,7 +35,7 @@ function CircularProgress({ value = 0, max = 100, size = 120, strokeWidth = 10, 
           <circle
             cx={size / 2} cy={size / 2} r={radius}
             fill="none" strokeWidth={strokeWidth}
-            className="stroke-gray-200 dark:stroke-gray-700"
+            className="stroke-slate-200 dark:stroke-slate-700"
           />
           <circle
             cx={size / 2} cy={size / 2} r={radius}
@@ -48,13 +48,13 @@ function CircularProgress({ value = 0, max = 100, size = 120, strokeWidth = 10, 
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xl font-bold text-gray-900 dark:text-white">
+          <span className="text-xl font-bold text-slate-900 dark:text-white">
             {Math.round(pct * 100)}%
           </span>
         </div>
       </div>
-      {label && <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</span>}
-      {sublabel && <span className="text-xs text-gray-500 dark:text-gray-400">{sublabel}</span>}
+      {label && <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{label}</span>}
+      {sublabel && <span className="text-xs text-slate-500 dark:text-slate-400">{sublabel}</span>}
     </div>
   );
 }
@@ -91,14 +91,14 @@ function SlideUp({ children, delay = 0, className = '' }) {
 // ---------------------------------------------------------------------------
 function StatCard({ icon: Icon, label, value, color, iconBg }) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
+    <div className="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-slate-100 dark:border-slate-700 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-4">
         <div className={`p-3 rounded-xl ${iconBg}`}>
           <Icon className={`w-6 h-6 ${color}`} />
         </div>
         <div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-white">{value}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
         </div>
       </div>
     </div>
@@ -110,11 +110,11 @@ function StatCard({ icon: Icon, label, value, color, iconBg }) {
 // ---------------------------------------------------------------------------
 function SectionCard({ title, icon: Icon, children, action, className = '' }) {
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden ${className}`}>
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+    <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden ${className}`}>
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700">
         <div className="flex items-center gap-3">
           {Icon && <Icon className="w-5 h-5 text-indigo-500" />}
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{title}</h3>
         </div>
         {action}
       </div>
@@ -129,7 +129,7 @@ function SectionCard({ title, icon: Icon, children, action, className = '' }) {
 function MiniProgress({ value, max, color = 'bg-indigo-500' }) {
   const pct = max > 0 ? Math.min((value / max) * 100, 100) : 0;
   return (
-    <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+    <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
       <div className={`h-full rounded-full transition-all duration-1000 ease-out ${color}`} style={{ width: `${pct}%` }} />
     </div>
   );
@@ -230,7 +230,7 @@ export default function MySpace() {
 
   const proficiencyBadge = (level) => {
     const map = {
-      beginner: 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',
+      beginner: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
       intermediate: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
       advanced: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300',
       expert: 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300',
@@ -245,7 +245,7 @@ export default function MySpace() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-          <p className="text-gray-500 dark:text-gray-400 font-medium">Loading your space...</p>
+          <p className="text-slate-500 dark:text-slate-400 font-medium">Loading your space...</p>
         </div>
       </div>
     );
@@ -275,7 +275,7 @@ export default function MySpace() {
                     </span>
                   )}
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-400 rounded-full border-4 border-white dark:border-gray-900 flex items-center justify-center">
+                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-400 rounded-full border-4 border-white dark:border-slate-900 flex items-center justify-center">
                   <div className="w-2.5 h-2.5 bg-white rounded-full" />
                 </div>
               </div>
@@ -307,25 +307,25 @@ export default function MySpace() {
       {/* ================================================================ */}
       <SlideUp delay={100}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex justify-center">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 flex justify-center">
             <CircularProgress
               value={attendanceRate} max={100} color="#6366f1"
               label="Attendance" sublabel={`${presentDays}/${workingDays} days`}
             />
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex justify-center">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 flex justify-center">
             <CircularProgress
               value={leaveUsagePct} max={100} color="#f59e0b"
               label="Leave Usage" sublabel={`${usedLeaves}/${totalLeaves} used`}
             />
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex justify-center">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 flex justify-center">
             <CircularProgress
               value={goalsCompletion} max={100} color="#10b981"
               label="Goals" sublabel={`${goals.length} goals`}
             />
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex justify-center">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 flex justify-center">
             <CircularProgress
               value={rating} max={5} size={120} color="#ec4899"
               label="Rating" sublabel={rating ? `${rating}/5 stars` : 'No review yet'}
@@ -364,7 +364,7 @@ export default function MySpace() {
                           <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <XAxis dataKey="date" tick={{ fontSize: 11 }} className="text-gray-500" />
+                      <XAxis dataKey="date" tick={{ fontSize: 11 }} className="text-slate-500" />
                       <YAxis
                         tick={{ fontSize: 11 }}
                         tickFormatter={(v) => {
@@ -397,13 +397,13 @@ export default function MySpace() {
                   ].map(s => (
                     <div key={s.label} className={`text-center p-3 rounded-xl ${s.bg}`}>
                       <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{s.label}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{s.label}</p>
                     </div>
                   ))}
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                 <CalendarCheck className="w-12 h-12 mb-3 opacity-40" />
                 <p className="text-sm">No attendance data this month</p>
               </div>
@@ -427,7 +427,7 @@ export default function MySpace() {
                         <span className={`text-sm font-semibold ${c.text}`}>
                           {leave.leaveType || leave.type || leave.name || 'Leave'}
                         </span>
-                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                        <span className="text-sm font-medium text-slate-600 dark:text-slate-300">
                           {remaining}/{total} remaining
                         </span>
                       </div>
@@ -437,7 +437,7 @@ export default function MySpace() {
                 })}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                 <CalendarX className="w-12 h-12 mb-3 opacity-40" />
                 <p className="text-sm">No leave balance data available</p>
               </div>
@@ -469,15 +469,15 @@ export default function MySpace() {
                   return (
                     <div
                       key={slip._id || i}
-                      className="flex items-center justify-between p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="p-2.5 rounded-lg bg-indigo-100 dark:bg-indigo-900/40">
+                        <div className="p-2.5 rounded-xl bg-indigo-100 dark:bg-indigo-900/40">
                           <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                         </div>
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">{period}</p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <p className="font-semibold text-slate-900 dark:text-white">{period}</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">
                             Net Pay: <span className="font-medium text-emerald-600 dark:text-emerald-400">
                               {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(slip.netPay || slip.netSalary || slip.amount || 0)}
                             </span>
@@ -491,7 +491,7 @@ export default function MySpace() {
                             window.open(url, '_blank');
                             toast.success('Downloading payslip...');
                           }}
-                          className="p-2 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 transition-colors"
+                          className="p-2 rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 transition-colors"
                           title="Download Payslip"
                         >
                           <Download className="w-5 h-5" />
@@ -502,7 +502,7 @@ export default function MySpace() {
                 })}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                 <CreditCard className="w-12 h-12 mb-3 opacity-40" />
                 <p className="text-sm">No payslips available</p>
               </div>
@@ -522,14 +522,14 @@ export default function MySpace() {
                   return (
                     <div key={goal._id || i}>
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-[70%]">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate max-w-[70%]">
                           {goal.title || goal.name || goal.description || `Goal ${i + 1}`}
                         </span>
-                        <span className="text-sm font-bold text-gray-900 dark:text-white">{progress}%</span>
+                        <span className="text-sm font-bold text-slate-900 dark:text-white">{progress}%</span>
                       </div>
                       <MiniProgress value={progress} max={100} color={barColor} />
                       {goal.dueDate && (
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-slate-400 mt-1">
                           Due: {new Date(goal.dueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                         </p>
                       )}
@@ -538,7 +538,7 @@ export default function MySpace() {
                 })}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                 <Target className="w-12 h-12 mb-3 opacity-40" />
                 <p className="text-sm">No goals assigned yet</p>
               </div>
@@ -562,9 +562,9 @@ export default function MySpace() {
                   return (
                     <div
                       key={skill._id || i}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600"
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600"
                     >
-                      <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{name}</span>
+                      <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{name}</span>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${proficiencyBadge(level)}`}>
                         {level}
                       </span>
@@ -573,7 +573,7 @@ export default function MySpace() {
                 })}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                 <BookOpen className="w-12 h-12 mb-3 opacity-40" />
                 <p className="text-sm">No skills recorded yet</p>
               </div>

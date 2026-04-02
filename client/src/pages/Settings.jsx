@@ -97,10 +97,10 @@ export default function Settings() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit flex-wrap">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit flex-wrap">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'}`}>
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'}`}>
             {t.icon} {t.label}
           </button>
         ))}
@@ -114,28 +114,28 @@ export default function Settings() {
               <Building2 size={18} className="text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">General Settings</h3>
-              <p className="text-xs text-gray-400">Company information and preferences</p>
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">General Settings</h3>
+              <p className="text-xs text-slate-400">Company information and preferences</p>
             </div>
           </div>
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Company Name</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Company Name</label>
                 <input value={general.companyName} onChange={e => setGeneral({...general, companyName: e.target.value})} className="input mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Company Email</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Company Email</label>
                 <input type="email" value={general.companyEmail} onChange={e => setGeneral({...general, companyEmail: e.target.value})} className="input mt-1" />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Phone</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Phone</label>
                 <input value={general.companyPhone} onChange={e => setGeneral({...general, companyPhone: e.target.value})} className="input mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Timezone</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Timezone</label>
                 <select value={general.timezone} onChange={e => setGeneral({...general, timezone: e.target.value})} className="input mt-1">
                   <option value="Asia/Kolkata">Asia/Kolkata (IST)</option>
                   <option value="UTC">UTC</option>
@@ -145,11 +145,11 @@ export default function Settings() {
               </div>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Company Address</label>
+              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Company Address</label>
               <textarea value={general.companyAddress} onChange={e => setGeneral({...general, companyAddress: e.target.value})} rows={2} className="input mt-1" />
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Date Format</label>
+              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Date Format</label>
               <select value={general.dateFormat} onChange={e => setGeneral({...general, dateFormat: e.target.value})} className="input mt-1 w-auto">
                 <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                 <option value="MM/DD/YYYY">MM/DD/YYYY</option>
@@ -157,7 +157,7 @@ export default function Settings() {
               </select>
             </div>
           </div>
-          <div className="flex justify-end mt-6 pt-4 border-t dark:border-gray-700">
+          <div className="flex justify-end mt-6 pt-4 border-t dark:border-slate-700">
             <button onClick={() => handleSave('general', general)} className="btn-primary flex items-center gap-2" disabled={saving === 'general'}>
               <Save size={16} /> {saving === 'general' ? 'Saving...' : 'Save General Settings'}
             </button>
@@ -173,53 +173,53 @@ export default function Settings() {
               <Clock size={18} className="text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Attendance Settings</h3>
-              <p className="text-xs text-gray-400">Configure work hours and attendance rules</p>
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Attendance Settings</h3>
+              <p className="text-xs text-slate-400">Configure work hours and attendance rules</p>
             </div>
           </div>
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Work Start Time</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Work Start Time</label>
                 <input type="time" value={attendance.workStartTime} onChange={e => setAttendance({...attendance, workStartTime: e.target.value})} className="input mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Work End Time</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Work End Time</label>
                 <input type="time" value={attendance.workEndTime} onChange={e => setAttendance({...attendance, workEndTime: e.target.value})} className="input mt-1" />
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Late Threshold (minutes)</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Late Threshold (minutes)</label>
                 <input type="number" value={attendance.lateThresholdMinutes} onChange={e => setAttendance({...attendance, lateThresholdMinutes: Number(e.target.value)})} className="input mt-1" min="0" />
-                <p className="text-[10px] text-gray-400 mt-1">Minutes after start time to mark as late</p>
+                <p className="text-[10px] text-slate-400 mt-1">Minutes after start time to mark as late</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Half Day Hours</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Half Day Hours</label>
                 <input type="number" value={attendance.halfDayHours} onChange={e => setAttendance({...attendance, halfDayHours: Number(e.target.value)})} className="input mt-1" min="1" />
-                <p className="text-[10px] text-gray-400 mt-1">Minimum hours for half day</p>
+                <p className="text-[10px] text-slate-400 mt-1">Minimum hours for half day</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Full Day Hours</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Full Day Hours</label>
                 <input type="number" value={attendance.fullDayHours} onChange={e => setAttendance({...attendance, fullDayHours: Number(e.target.value)})} className="input mt-1" min="1" />
-                <p className="text-[10px] text-gray-400 mt-1">Minimum hours for full day</p>
+                <p className="text-[10px] text-slate-400 mt-1">Minimum hours for full day</p>
               </div>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Weekend Days</label>
+              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Weekend Days</label>
               <input value={attendance.weekendDays} onChange={e => setAttendance({...attendance, weekendDays: e.target.value})} className="input mt-1" placeholder="Saturday,Sunday" />
-              <p className="text-[10px] text-gray-400 mt-1">Comma-separated weekend days</p>
+              <p className="text-[10px] text-slate-400 mt-1">Comma-separated weekend days</p>
             </div>
-            <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer">
+            <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl cursor-pointer">
               <input type="checkbox" checked={attendance.autoMarkAbsent} onChange={e => setAttendance({...attendance, autoMarkAbsent: e.target.checked})}
-                className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+                className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
               <div>
-                <span className="text-sm text-gray-700 dark:text-gray-300">Auto-mark absent</span>
-                <p className="text-[10px] text-gray-400">Automatically mark employees as absent if no check-in recorded</p>
+                <span className="text-sm text-slate-700 dark:text-slate-300">Auto-mark absent</span>
+                <p className="text-[10px] text-slate-400">Automatically mark employees as absent if no check-in recorded</p>
               </div>
             </label>
           </div>
-          <div className="flex justify-end mt-6 pt-4 border-t dark:border-gray-700">
+          <div className="flex justify-end mt-6 pt-4 border-t dark:border-slate-700">
             <button onClick={() => handleSave('attendance', attendance)} className="btn-primary flex items-center gap-2" disabled={saving === 'attendance'}>
               <Save size={16} /> {saving === 'attendance' ? 'Saving...' : 'Save Attendance Settings'}
             </button>
@@ -235,56 +235,56 @@ export default function Settings() {
               <CalendarDays size={18} className="text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Leave Policy</h3>
-              <p className="text-xs text-gray-400">Configure leave rules and approval workflow</p>
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Leave Policy</h3>
+              <p className="text-xs text-slate-400">Configure leave rules and approval workflow</p>
             </div>
           </div>
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Max Carry Forward (days)</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Max Carry Forward (days)</label>
                 <input type="number" value={leavePolicy.maxCarryForward} onChange={e => setLeavePolicy({...leavePolicy, maxCarryForward: Number(e.target.value)})} className="input mt-1" min="0" />
-                <p className="text-[10px] text-gray-400 mt-1">Maximum leaves that can be carried to next year</p>
+                <p className="text-[10px] text-slate-400 mt-1">Maximum leaves that can be carried to next year</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Min Notice Days</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Min Notice Days</label>
                 <input type="number" value={leavePolicy.minDaysNotice} onChange={e => setLeavePolicy({...leavePolicy, minDaysNotice: Number(e.target.value)})} className="input mt-1" min="0" />
-                <p className="text-[10px] text-gray-400 mt-1">Minimum days before leave starts</p>
+                <p className="text-[10px] text-slate-400 mt-1">Minimum days before leave starts</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Max Consecutive Days</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Max Consecutive Days</label>
                 <input type="number" value={leavePolicy.maxConsecutiveDays} onChange={e => setLeavePolicy({...leavePolicy, maxConsecutiveDays: Number(e.target.value)})} className="input mt-1" min="1" />
-                <p className="text-[10px] text-gray-400 mt-1">Maximum consecutive leave days allowed</p>
+                <p className="text-[10px] text-slate-400 mt-1">Maximum consecutive leave days allowed</p>
               </div>
             </div>
             <div className="space-y-3">
-              <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer">
+              <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl cursor-pointer">
                 <input type="checkbox" checked={leavePolicy.probationLeavesAllowed} onChange={e => setLeavePolicy({...leavePolicy, probationLeavesAllowed: e.target.checked})}
-                  className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+                  className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
                 <div>
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Allow leaves during probation</span>
-                  <p className="text-[10px] text-gray-400">Employees on probation can apply for leaves</p>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">Allow leaves during probation</span>
+                  <p className="text-[10px] text-slate-400">Employees on probation can apply for leaves</p>
                 </div>
               </label>
-              <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer">
+              <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl cursor-pointer">
                 <input type="checkbox" checked={leavePolicy.requireManagerApproval} onChange={e => setLeavePolicy({...leavePolicy, requireManagerApproval: e.target.checked})}
-                  className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+                  className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
                 <div>
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Require manager approval</span>
-                  <p className="text-[10px] text-gray-400">Leaves must be approved by reporting manager first</p>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">Require manager approval</span>
+                  <p className="text-[10px] text-slate-400">Leaves must be approved by reporting manager first</p>
                 </div>
               </label>
-              <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer">
+              <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl cursor-pointer">
                 <input type="checkbox" checked={leavePolicy.requireHrApproval} onChange={e => setLeavePolicy({...leavePolicy, requireHrApproval: e.target.checked})}
-                  className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+                  className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
                 <div>
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Require HR approval</span>
-                  <p className="text-[10px] text-gray-400">Final HR approval required after manager approval</p>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">Require HR approval</span>
+                  <p className="text-[10px] text-slate-400">Final HR approval required after manager approval</p>
                 </div>
               </label>
             </div>
           </div>
-          <div className="flex justify-end mt-6 pt-4 border-t dark:border-gray-700">
+          <div className="flex justify-end mt-6 pt-4 border-t dark:border-slate-700">
             <button onClick={() => handleSave('leave', leavePolicy)} className="btn-primary flex items-center gap-2" disabled={saving === 'leave'}>
               <Save size={16} /> {saving === 'leave' ? 'Saving...' : 'Save Leave Policy'}
             </button>
@@ -300,43 +300,43 @@ export default function Settings() {
               <LogOut size={18} className="text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-white">Exit Policy</h3>
-              <p className="text-xs text-gray-400">Configure resignation and exit process rules</p>
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Exit Policy</h3>
+              <p className="text-xs text-slate-400">Configure resignation and exit process rules</p>
             </div>
           </div>
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Notice Period (days)</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Notice Period (days)</label>
                 <input type="number" value={exitPolicy.noticePeriodDays} onChange={e => setExitPolicy({...exitPolicy, noticePeriodDays: Number(e.target.value)})} className="input mt-1" min="0" />
-                <p className="text-[10px] text-gray-400 mt-1">Required notice period before last working date</p>
+                <p className="text-[10px] text-slate-400 mt-1">Required notice period before last working date</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">F&F Processing Days</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">F&F Processing Days</label>
                 <input type="number" value={exitPolicy.fnfProcessingDays} onChange={e => setExitPolicy({...exitPolicy, fnfProcessingDays: Number(e.target.value)})} className="input mt-1" min="0" />
-                <p className="text-[10px] text-gray-400 mt-1">Days to process full & final settlement</p>
+                <p className="text-[10px] text-slate-400 mt-1">Days to process full & final settlement</p>
               </div>
             </div>
             <div className="space-y-3">
-              <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer">
+              <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl cursor-pointer">
                 <input type="checkbox" checked={exitPolicy.exitInterviewRequired} onChange={e => setExitPolicy({...exitPolicy, exitInterviewRequired: e.target.checked})}
-                  className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+                  className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
                 <div>
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Exit interview required</span>
-                  <p className="text-[10px] text-gray-400">Mandate exit interview before completing the exit process</p>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">Exit interview required</span>
+                  <p className="text-[10px] text-slate-400">Mandate exit interview before completing the exit process</p>
                 </div>
               </label>
-              <label className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg cursor-pointer">
+              <label className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl cursor-pointer">
                 <input type="checkbox" checked={exitPolicy.assetReturnRequired} onChange={e => setExitPolicy({...exitPolicy, assetReturnRequired: e.target.checked})}
-                  className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500" />
+                  className="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
                 <div>
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Asset return required</span>
-                  <p className="text-[10px] text-gray-400">All company assets must be returned before exit completion</p>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">Asset return required</span>
+                  <p className="text-[10px] text-slate-400">All company assets must be returned before exit completion</p>
                 </div>
               </label>
             </div>
           </div>
-          <div className="flex justify-end mt-6 pt-4 border-t dark:border-gray-700">
+          <div className="flex justify-end mt-6 pt-4 border-t dark:border-slate-700">
             <button onClick={() => handleSave('exit', exitPolicy)} className="btn-primary flex items-center gap-2" disabled={saving === 'exit'}>
               <Save size={16} /> {saving === 'exit' ? 'Saving...' : 'Save Exit Policy'}
             </button>
@@ -350,20 +350,20 @@ export default function Settings() {
           <div className="card p-0 overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">User</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Action</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Target</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">Details</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
+                <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">User</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Action</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Target</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden md:table-cell">Details</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y dark:divide-gray-700">
+              <tbody className="divide-y dark:divide-slate-700">
                 {activityLog.map((log, i) => (
                   <tr key={log.id || i} className="animate-fade-in" style={{ animationDelay: `${i * 30}ms` }}>
                     <td className="px-4 py-3">
                       <p className="text-sm font-medium dark:text-white">{log.userName || log.user}</p>
-                      <p className="text-xs text-gray-400">{log.userRole || ''}</p>
+                      <p className="text-xs text-slate-400">{log.userRole || ''}</p>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`badge ${
@@ -375,14 +375,14 @@ export default function Settings() {
                         {log.action}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">{log.target || '-'}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[250px] truncate hidden md:table-cell">{log.details || '-'}</td>
-                    <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">
+                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 hidden sm:table-cell">{log.target || '-'}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-w-[250px] truncate hidden md:table-cell">{log.details || '-'}</td>
+                    <td className="px-4 py-3 text-xs text-slate-500 dark:text-slate-400">
                       {log.createdAt ? new Date(log.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-'}
                     </td>
                   </tr>
                 ))}
-                {activityLog.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-gray-400 text-sm">No activity logs found</td></tr>}
+                {activityLog.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-slate-400 text-sm">No activity logs found</td></tr>}
               </tbody>
             </table>
           </div>
@@ -390,13 +390,13 @@ export default function Settings() {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 Page {logPage} of {totalPages} ({logTotal} entries)
               </p>
               <div className="flex gap-1">
                 <button onClick={() => setLogPage(p => Math.max(1, p - 1))} disabled={logPage === 1}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition">
-                  <ChevronLeft size={16} className="text-gray-600 dark:text-gray-400" />
+                  className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 transition">
+                  <ChevronLeft size={16} className="text-slate-600 dark:text-slate-400" />
                 </button>
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   let pageNum;
@@ -411,14 +411,14 @@ export default function Settings() {
                   }
                   return (
                     <button key={pageNum} onClick={() => setLogPage(pageNum)}
-                      className={`w-8 h-8 rounded-lg text-xs font-medium transition ${logPage === pageNum ? 'bg-indigo-600 text-white' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
+                      className={`w-8 h-8 rounded-xl text-xs font-medium transition ${logPage === pageNum ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'}`}>
                       {pageNum}
                     </button>
                   );
                 })}
                 <button onClick={() => setLogPage(p => Math.min(totalPages, p + 1))} disabled={logPage === totalPages}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-50 transition">
-                  <ChevronRight size={16} className="text-gray-600 dark:text-gray-400" />
+                  className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-50 transition">
+                  <ChevronRight size={16} className="text-slate-600 dark:text-slate-400" />
                 </button>
               </div>
             </div>

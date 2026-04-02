@@ -36,10 +36,10 @@ import Tickets from './pages/Tickets';
 function ProtectedRoute({ children }) {
   const { token, loading } = useAuth();
   if (loading) return (
-    <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-slate-900">
       <div className="flex flex-col items-center gap-3">
         <div className="animate-spin h-10 w-10 border-4 border-indigo-600 border-t-transparent rounded-full" />
-        <p className="text-sm text-gray-500 dark:text-gray-400">Loading...</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading...</p>
       </div>
     </div>
   );

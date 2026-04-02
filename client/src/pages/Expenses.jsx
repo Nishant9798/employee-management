@@ -130,7 +130,7 @@ export default function Expenses() {
             <h1>Expense Management</h1>
             <p>Submit and track your expense claims</p>
           </div>
-          <button onClick={() => setShowSubmit(true)} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+          <button onClick={() => setShowSubmit(true)} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
             <Plus size={16} /> Submit Expense
           </button>
         </div>
@@ -143,8 +143,8 @@ export default function Expenses() {
       <div className="card bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 border border-indigo-100 dark:border-indigo-800">
         <div className="flex items-center gap-3 text-sm">
           <span className="font-medium text-indigo-700 dark:text-indigo-400">Approval Flow:</span>
-          <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 flex-wrap">
-            <span className="px-2 py-0.5 bg-white dark:bg-gray-800 rounded text-xs font-medium">Employee Submits</span>
+          <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 flex-wrap">
+            <span className="px-2 py-0.5 bg-white dark:bg-slate-800 rounded text-xs font-medium">Employee Submits</span>
             <ArrowRight size={14} />
             <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 rounded text-xs font-medium text-amber-700 dark:text-amber-400">Manager Approval</span>
             <ArrowRight size={14} />
@@ -195,10 +195,10 @@ export default function Expenses() {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit flex-wrap">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit flex-wrap">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'}`}>
+            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'}`}>
             {t.label}
           </button>
         ))}
@@ -209,7 +209,7 @@ export default function Expenses() {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <Filter size={14} className="text-gray-400" />
+              <Filter size={14} className="text-slate-400" />
               <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)} className="input w-auto text-sm">
                 <option value="">All Categories</option>
                 {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
@@ -219,32 +219,32 @@ export default function Expenses() {
           <div className="card p-0 overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Category</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Amount</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Description</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">Remarks</th>
+                <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Category</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Amount</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Description</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Date</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden md:table-cell">Remarks</th>
                 </tr>
               </thead>
-              <tbody className="divide-y dark:divide-gray-700">
+              <tbody className="divide-y dark:divide-slate-700">
                 {filteredMyExpenses.map(e => (
                   <tr key={e.id}>
                     <td className="px-4 py-3 text-sm font-medium dark:text-white">{e.categoryName || e.category}</td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-800 dark:text-gray-200">{formatCurrency(e.amount)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{e.description}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
+                    <td className="px-4 py-3 text-sm font-semibold text-slate-800 dark:text-slate-200">{formatCurrency(e.amount)}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-w-[200px] truncate hidden sm:table-cell">{e.description}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{e.expenseDate || e.date}</td>
                     <td className="px-4 py-3">{getStatusBadge(e.status)}</td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       <div className="text-xs space-y-1">
-                        {e.managerRemarks && <p className="text-gray-500 dark:text-gray-400"><span className="font-medium">Manager:</span> {e.managerRemarks}</p>}
-                        {e.financeRemarks && <p className="text-gray-500 dark:text-gray-400"><span className="font-medium">Finance:</span> {e.financeRemarks}</p>}
+                        {e.managerRemarks && <p className="text-slate-500 dark:text-slate-400"><span className="font-medium">Manager:</span> {e.managerRemarks}</p>}
+                        {e.financeRemarks && <p className="text-slate-500 dark:text-slate-400"><span className="font-medium">Finance:</span> {e.financeRemarks}</p>}
                       </div>
                     </td>
                   </tr>
                 ))}
-                {filteredMyExpenses.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-gray-400 text-sm">No expenses submitted yet</td></tr>}
+                {filteredMyExpenses.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-slate-400 text-sm">No expenses submitted yet</td></tr>}
               </tbody>
             </table>
           </div>
@@ -258,27 +258,27 @@ export default function Expenses() {
           <div className="card p-0 overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Category</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Amount</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Description</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Action</th>
+                <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Employee</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Category</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Amount</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Date</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Description</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y dark:divide-gray-700">
+              <tbody className="divide-y dark:divide-slate-700">
                 {managerPending.map(e => (
                   <tr key={e.id}>
                     <td className="px-4 py-3">
                       <p className="text-sm font-medium dark:text-white">{e.employeeName}</p>
-                      <p className="text-xs text-gray-400">{e.department}</p>
+                      <p className="text-xs text-slate-400">{e.department}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.categoryName || e.category}</td>
-                    <td className="px-4 py-3 text-sm font-semibold dark:text-gray-200">{formatCurrency(e.amount)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{e.description}</td>
+                    <td className="px-4 py-3 text-sm dark:text-slate-300">{e.categoryName || e.category}</td>
+                    <td className="px-4 py-3 text-sm font-semibold dark:text-slate-200">{formatCurrency(e.amount)}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{e.expenseDate || e.date}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-w-[200px] truncate hidden sm:table-cell">{e.description}</td>
                     <td className="px-4 py-3">{getStatusBadge(e.status)}</td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1">
@@ -288,7 +288,7 @@ export default function Expenses() {
                     </td>
                   </tr>
                 ))}
-                {managerPending.length === 0 && <tr><td colSpan={7} className="text-center py-8 text-gray-400 text-sm">No pending requests for manager approval</td></tr>}
+                {managerPending.length === 0 && <tr><td colSpan={7} className="text-center py-8 text-slate-400 text-sm">No pending requests for manager approval</td></tr>}
               </tbody>
             </table>
           </div>
@@ -297,24 +297,24 @@ export default function Expenses() {
           <div className="card p-0 overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Category</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Amount</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Employee</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Category</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Amount</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Date</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y dark:divide-gray-700">
+              <tbody className="divide-y dark:divide-slate-700">
                 {teamExpenses.filter(e => e.status !== 'pending_manager').map(e => (
                   <tr key={e.id}>
                     <td className="px-4 py-3">
                       <p className="text-sm font-medium dark:text-white">{e.employeeName}</p>
-                      <p className="text-xs text-gray-400">{e.department}</p>
+                      <p className="text-xs text-slate-400">{e.department}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.categoryName || e.category}</td>
-                    <td className="px-4 py-3 text-sm font-semibold dark:text-gray-200">{formatCurrency(e.amount)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
+                    <td className="px-4 py-3 text-sm dark:text-slate-300">{e.categoryName || e.category}</td>
+                    <td className="px-4 py-3 text-sm font-semibold dark:text-slate-200">{formatCurrency(e.amount)}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{e.expenseDate || e.date}</td>
                     <td className="px-4 py-3">{getStatusBadge(e.status)}</td>
                   </tr>
                 ))}
@@ -328,35 +328,35 @@ export default function Expenses() {
       {tab === 'finance' && isAdmin && (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold dark:text-white">Pending Finance Approval</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">These expenses have been approved by the manager and need your final approval.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">These expenses have been approved by the manager and need your final approval.</p>
           <div className="card p-0 overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Category</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Amount</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Description</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">Manager Approved By</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Action</th>
+                <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Employee</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Category</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Amount</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Date</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Description</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden md:table-cell">Manager Approved By</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y dark:divide-gray-700">
+              <tbody className="divide-y dark:divide-slate-700">
                 {financePending.map(e => (
                   <tr key={e.id}>
                     <td className="px-4 py-3">
                       <p className="text-sm font-medium dark:text-white">{e.employeeName}</p>
-                      <p className="text-xs text-gray-400">{e.department}</p>
+                      <p className="text-xs text-slate-400">{e.department}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.categoryName || e.category}</td>
-                    <td className="px-4 py-3 text-sm font-semibold dark:text-gray-200">{formatCurrency(e.amount)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 max-w-[200px] truncate hidden sm:table-cell">{e.description}</td>
+                    <td className="px-4 py-3 text-sm dark:text-slate-300">{e.categoryName || e.category}</td>
+                    <td className="px-4 py-3 text-sm font-semibold dark:text-slate-200">{formatCurrency(e.amount)}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{e.expenseDate || e.date}</td>
+                    <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-w-[200px] truncate hidden sm:table-cell">{e.description}</td>
                     <td className="px-4 py-3 hidden md:table-cell">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{e.managerApprovedByName}</p>
-                      {e.managerRemarks && <p className="text-xs text-gray-400">{e.managerRemarks}</p>}
+                      <p className="text-sm text-slate-600 dark:text-slate-400">{e.managerApprovedByName}</p>
+                      {e.managerRemarks && <p className="text-xs text-slate-400">{e.managerRemarks}</p>}
                     </td>
                     <td className="px-4 py-3">{getStatusBadge(e.status)}</td>
                     <td className="px-4 py-3">
@@ -367,7 +367,7 @@ export default function Expenses() {
                     </td>
                   </tr>
                 ))}
-                {financePending.length === 0 && <tr><td colSpan={8} className="text-center py-8 text-gray-400 text-sm">No pending requests for finance approval</td></tr>}
+                {financePending.length === 0 && <tr><td colSpan={8} className="text-center py-8 text-slate-400 text-sm">No pending requests for finance approval</td></tr>}
               </tbody>
             </table>
           </div>
@@ -376,29 +376,29 @@ export default function Expenses() {
           <div className="card p-0 overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Category</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Amount</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">Manager</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">Finance</th>
+                <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Employee</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Category</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Amount</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Date</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden md:table-cell">Manager</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden md:table-cell">Finance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y dark:divide-gray-700">
+              <tbody className="divide-y dark:divide-slate-700">
                 {allExpenses.filter(e => e.status !== 'pending_finance').map(e => (
                   <tr key={e.id}>
                     <td className="px-4 py-3">
                       <p className="text-sm font-medium dark:text-white">{e.employeeName}</p>
-                      <p className="text-xs text-gray-400">{e.department}</p>
+                      <p className="text-xs text-slate-400">{e.department}</p>
                     </td>
-                    <td className="px-4 py-3 text-sm dark:text-gray-300">{e.categoryName || e.category}</td>
-                    <td className="px-4 py-3 text-sm font-semibold dark:text-gray-200">{formatCurrency(e.amount)}</td>
-                    <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{e.expenseDate || e.date}</td>
+                    <td className="px-4 py-3 text-sm dark:text-slate-300">{e.categoryName || e.category}</td>
+                    <td className="px-4 py-3 text-sm font-semibold dark:text-slate-200">{formatCurrency(e.amount)}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{e.expenseDate || e.date}</td>
                     <td className="px-4 py-3">{getStatusBadge(e.status)}</td>
-                    <td className="px-4 py-3 hidden md:table-cell text-xs text-gray-500 dark:text-gray-400">{e.managerApprovedByName || '-'}</td>
-                    <td className="px-4 py-3 hidden md:table-cell text-xs text-gray-500 dark:text-gray-400">{e.financeApprovedByName || '-'}</td>
+                    <td className="px-4 py-3 hidden md:table-cell text-xs text-slate-500 dark:text-slate-400">{e.managerApprovedByName || '-'}</td>
+                    <td className="px-4 py-3 hidden md:table-cell text-xs text-slate-500 dark:text-slate-400">{e.financeApprovedByName || '-'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -411,44 +411,44 @@ export default function Expenses() {
       {showSubmit && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowSubmit(false)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">Submit Expense</h2>
-              <button onClick={() => setShowSubmit(false)}><XIcon size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowSubmit(false)}><XIcon size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Category</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Category</label>
                 <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className="input mt-1">
                   <option value="">Select category</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Amount (INR)</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Amount (INR)</label>
                 <div className="relative mt-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"><IndianRupee size={14} /></span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"><IndianRupee size={14} /></span>
                   <input type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} className="input pl-8" placeholder="0" />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Date</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Date</label>
                 <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="input mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Description</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Description</label>
                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} className="input mt-1" placeholder="Describe the expense..." />
               </div>
               {form.amount && (
-                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg">
+                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl">
                   <p className="text-sm text-indigo-600 dark:text-indigo-400 font-medium">Amount: {formatCurrency(Number(form.amount))}</p>
                 </div>
               )}
-              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
                 <p className="text-xs text-amber-700 dark:text-amber-400">Your expense claim will first go to your manager for approval, then to finance for final approval.</p>
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={() => setShowSubmit(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleSubmit} className="btn-primary" disabled={!form.category || !form.amount || !form.date}>Submit</button>
             </div>
@@ -460,21 +460,21 @@ export default function Expenses() {
       {remarkModal && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => { setRemarkModal(null); setRemark(''); }} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6">
             <h3 className="text-lg font-semibold dark:text-white mb-1">
               {remarkModal.action === 'approved' ? 'Approve' : 'Reject'} Expense Claim
             </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
               {remarkModal.expense.employeeName} - {remarkModal.expense.category} ({formatCurrency(remarkModal.expense.amount)})
             </p>
             <div>
-              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Remarks (optional)</label>
+              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Remarks (optional)</label>
               <textarea value={remark} onChange={e => setRemark(e.target.value)} rows={3} className="input mt-1" placeholder="Add your remarks..." />
             </div>
             <div className="flex justify-end gap-3 mt-4">
               <button onClick={() => { setRemarkModal(null); setRemark(''); }} className="btn-secondary">Cancel</button>
               <button onClick={submitRemarkAction}
-                className={`px-4 py-2 rounded-lg text-sm font-medium text-white transition ${remarkModal.action === 'approved' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`}>
+                className={`px-4 py-2 rounded-xl text-sm font-medium text-white transition ${remarkModal.action === 'approved' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-red-600 hover:bg-red-700'}`}>
                 {remarkModal.action === 'approved' ? 'Approve' : 'Reject'}
               </button>
             </div>

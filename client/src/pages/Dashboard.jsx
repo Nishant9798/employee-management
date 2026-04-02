@@ -5,7 +5,7 @@ import {
   Users, CalendarCheck, CalendarX, Clock, TrendingUp, TrendingDown,
   Megaphone, PartyPopper, ChevronRight, Receipt, DoorOpen, Cake,
   UserMinus, Zap, BarChart3, PieChart, Gift, Activity, CheckCircle2,
-  AlertCircle, LogIn, FileText, CreditCard, User, Calendar
+  AlertCircle, LogIn, FileText, CreditCard, User, Calendar, Inbox
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { AreaChart, Area, ResponsiveContainer } from 'recharts';
@@ -300,7 +300,7 @@ export default function Dashboard() {
             <h1>{getGreeting()}, {user?.name?.split(' ')[0]}!</h1>
             <p>{new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
-          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2">
             <Clock size={16} className="text-indigo-200" />
             <LiveClock />
           </div>
@@ -397,15 +397,15 @@ export default function Dashboard() {
       {isAdmin && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
           {statCards.map((s, i) => (
-            <div key={s.label} className={`group ${s.gradient} rounded-xl p-4 pb-2 border border-white/50 dark:border-gray-700 shadow-sm hover:shadow-lg hover:scale-[1.03] transition-all duration-300 animate-slide-up cursor-default relative overflow-hidden`} style={{ animationDelay: `${i * 80}ms` }}>
+            <div key={s.label} className={`group ${s.gradient} rounded-xl p-4 pb-2 border border-white/50 dark:border-slate-700 shadow-sm hover:shadow-lg hover:scale-[1.03] transition-all duration-300 animate-slide-up cursor-default relative overflow-hidden`} style={{ animationDelay: `${i * 80}ms` }}>
               <div className="flex items-start justify-between mb-1">
                 <div>
-                  <p className="text-2xl font-bold text-gray-800 dark:text-white">
+                  <p className="text-2xl font-bold text-slate-800 dark:text-white">
                     <AnimatedNumber value={s.value} />
                   </p>
-                  <p className="text-[10px] font-medium text-gray-600 dark:text-gray-300 mt-0.5">{s.label}</p>
+                  <p className="text-[10px] font-medium text-slate-600 dark:text-slate-300 mt-0.5">{s.label}</p>
                 </div>
-                <div className="p-2 rounded-lg bg-white/60 dark:bg-gray-800/60 group-hover:scale-110 transition-transform">
+                <div className="p-2 rounded-xl bg-white/60 dark:bg-slate-800/60 group-hover:scale-110 transition-transform">
                   <s.icon size={18} className={s.iconColor} />
                 </div>
               </div>
@@ -420,7 +420,7 @@ export default function Dashboard() {
                   <span className={`text-[10px] font-semibold ${s.trendUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
                     {s.trendUp ? '+' : '-'}{s.trend}%
                   </span>
-                  <span className="text-[9px] text-gray-400">vs last week</span>
+                  <span className="text-[9px] text-slate-400">vs last week</span>
                 </div>
               )}
               {/* Mini sparkline */}
@@ -441,8 +441,8 @@ export default function Dashboard() {
           </div>
           <div className="flex flex-wrap gap-2">
             {stats.onLeaveNames.map((e, i) => (
-              <span key={i} className="px-3 py-1 bg-white/60 dark:bg-gray-800/40 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-800/60 transition-colors">
-                {e.name} <span className="text-gray-400">· {e.department}</span>
+              <span key={i} className="px-3 py-1 bg-white/60 dark:bg-slate-800/40 rounded-full text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800/60 transition-colors">
+                {e.name} <span className="text-slate-400">· {e.department}</span>
               </span>
             ))}
           </div>
@@ -453,27 +453,27 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Attendance Card */}
         <div className="card card-interactive animate-slide-up">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
             <CalendarCheck size={20} className="text-indigo-600 dark:text-indigo-400" /> Today's Attendance
           </h2>
           <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Status</span>
+            <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl">
+              <span className="text-sm text-slate-500 dark:text-slate-400">Status</span>
               <span className={`badge ${myAttendance?.checkIn ? (myAttendance.status === 'late' ? 'badge-warning' : 'badge-success') : 'badge-gray'}`}>
                 {myAttendance?.checkIn ? myAttendance.status?.toUpperCase() : 'NOT CHECKED IN'}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Check In</span>
+            <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl">
+              <span className="text-sm text-slate-500 dark:text-slate-400">Check In</span>
               <span className="text-sm font-medium dark:text-white">{myAttendance?.checkIn || '--:--'}</span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Check Out</span>
+            <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl">
+              <span className="text-sm text-slate-500 dark:text-slate-400">Check Out</span>
               <span className="text-sm font-medium dark:text-white">{myAttendance?.checkOut || '--:--'}</span>
             </div>
             {myAttendance?.workHours && (
-              <div className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Work Hours</span>
+              <div className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl">
+                <span className="text-sm text-slate-500 dark:text-slate-400">Work Hours</span>
                 <span className="text-sm font-medium dark:text-white">{myAttendance.workHours}h</span>
               </div>
             )}
@@ -485,7 +485,7 @@ export default function Dashboard() {
                 <button onClick={handleCheckOut} className="btn-danger flex-1">Check Out</button>
               )}
               {myAttendance?.checkIn && myAttendance?.checkOut && (
-                <div className="flex-1 text-center py-2 text-sm text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                <div className="flex-1 text-center py-2 text-sm text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
                   Day Complete
                 </div>
               )}
@@ -496,7 +496,7 @@ export default function Dashboard() {
         {/* Recent Leaves */}
         <div className="card card-interactive animate-slide-up" style={{ animationDelay: '100ms' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
               <CalendarX size={20} className="text-indigo-600 dark:text-indigo-400" /> Recent Leaves
             </h2>
             <Link to="/leaves" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
@@ -506,15 +506,16 @@ export default function Dashboard() {
           {recentLeaves.length === 0 ? (
             <div className="empty-state py-8">
               <CalendarX size={48} />
-              <p className="text-sm">No leave applications</p>
+              <p>No leave applications</p>
+              <Link to="/leaves" className="mt-3 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline">Apply Leave</Link>
             </div>
           ) : (
             <div className="space-y-3">
               {recentLeaves.map(l => (
-                <div key={l.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                <div key={l.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/60 transition">
                   <div>
-                    {isAdmin && <p className="text-sm font-medium text-gray-800 dark:text-white">{l.employeeName}</p>}
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{l.leaveType} &middot; {l.fromDate} to {l.toDate}</p>
+                    {isAdmin && <p className="text-sm font-medium text-slate-800 dark:text-white">{l.employeeName}</p>}
+                    <p className="text-xs text-slate-500 dark:text-slate-400">{l.leaveType} &middot; {l.fromDate} to {l.toDate}</p>
                   </div>
                   <span className={`badge ${l.status === 'approved' ? 'badge-success' : l.status === 'rejected' ? 'badge-danger' : l.status === 'pending_hr' ? 'badge-info' : 'badge-warning'}`}>
                     {l.status === 'pending_manager' ? 'Pending Manager' : l.status === 'pending_hr' ? 'Pending HR' : l.status}
@@ -528,7 +529,7 @@ export default function Dashboard() {
         {/* Announcements Widget */}
         <div className="card card-interactive animate-slide-up" style={{ animationDelay: '200ms' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
               <Megaphone size={20} className="text-indigo-600 dark:text-indigo-400" /> Announcements
             </h2>
             <Link to="/announcements" className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
@@ -538,18 +539,18 @@ export default function Dashboard() {
           {announcements.length === 0 ? (
             <div className="empty-state py-8">
               <Megaphone size={48} />
-              <p className="text-sm">No announcements</p>
+              <p>No announcements</p>
             </div>
           ) : (
             <div className="space-y-3">
               {announcements.map(a => (
-                <div key={a.id} className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                <div key={a.id} className="p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/60 transition">
                   <div className="flex items-center gap-2 mb-1">
                     <span className={`badge text-[10px] ${priorityColor(a.priority)}`}>{a.priority}</span>
-                    <span className="text-[10px] text-gray-400">{new Date(a.createdAt).toLocaleDateString()}</span>
+                    <span className="text-[10px] text-slate-400">{new Date(a.createdAt).toLocaleDateString()}</span>
                   </div>
-                  <p className="text-sm font-medium text-gray-800 dark:text-white">{a.title}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">{a.content}</p>
+                  <p className="text-sm font-medium text-slate-800 dark:text-white">{a.title}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mt-1">{a.content}</p>
                 </div>
               ))}
             </div>
@@ -562,20 +563,20 @@ export default function Dashboard() {
         <div className="card animate-slide-up">
           <div className="flex items-center gap-2 mb-4">
             <Activity size={20} className="text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Activity Feed</h2>
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Activity Feed</h2>
           </div>
           <div className="relative">
             {/* Vertical timeline line */}
-            <div className="absolute left-4 top-2 bottom-2 w-px bg-gray-200 dark:bg-gray-700" />
+            <div className="absolute left-4 top-2 bottom-2 w-px bg-slate-200 dark:bg-slate-700" />
             <div className="space-y-3">
               {activityFeed.map((item, i) => (
                 <div key={i} className="flex items-start gap-4 pl-1 animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
-                  <div className="relative z-10 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0 ring-4 ring-white dark:ring-gray-900">
+                  <div className="relative z-10 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0 ring-4 ring-white dark:ring-slate-900">
                     <item.icon size={14} className={item.color} />
                   </div>
-                  <div className="flex-1 flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition min-w-0">
-                    <p className="text-sm text-gray-700 dark:text-gray-300 truncate">{item.text}</p>
-                    <span className="text-[10px] text-gray-400 ml-3 flex-shrink-0">{item.time || '--'}</span>
+                  <div className="flex-1 flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/40 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/60 transition min-w-0">
+                    <p className="text-sm text-slate-700 dark:text-slate-300 truncate">{item.text}</p>
+                    <span className="text-[10px] text-slate-400 ml-3 flex-shrink-0">{item.time || '--'}</span>
                   </div>
                 </div>
               ))}
@@ -593,16 +594,16 @@ export default function Dashboard() {
           </div>
           <div className="flex flex-wrap gap-3">
             {celebrations.todayBirthdays?.map((b, i) => (
-              <div key={'tb'+i} className="flex items-center gap-2 px-3 py-2 bg-white/70 dark:bg-gray-800/50 rounded-lg border border-pink-200 dark:border-pink-800/30">
+              <div key={'tb'+i} className="flex items-center gap-2 px-3 py-2 bg-white/70 dark:bg-slate-800/50 rounded-xl border border-pink-200 dark:border-pink-800/30">
                 <Cake size={16} className="text-pink-500" />
-                <span className="text-sm font-medium text-gray-800 dark:text-white">{b.name}</span>
+                <span className="text-sm font-medium text-slate-800 dark:text-white">{b.name}</span>
                 <span className="text-xs text-pink-500">Birthday</span>
               </div>
             ))}
             {celebrations.todayAnniversaries?.map((a, i) => (
-              <div key={'ta'+i} className="flex items-center gap-2 px-3 py-2 bg-white/70 dark:bg-gray-800/50 rounded-lg border border-amber-200 dark:border-amber-800/30">
+              <div key={'ta'+i} className="flex items-center gap-2 px-3 py-2 bg-white/70 dark:bg-slate-800/50 rounded-xl border border-amber-200 dark:border-amber-800/30">
                 <PartyPopper size={16} className="text-amber-500" />
-                <span className="text-sm font-medium text-gray-800 dark:text-white">{a.name}</span>
+                <span className="text-sm font-medium text-slate-800 dark:text-white">{a.name}</span>
                 <span className="text-xs text-amber-500">{a.years} yr{a.years > 1 ? 's' : ''}</span>
               </div>
             ))}
@@ -615,7 +616,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-up">
           {/* Department Distribution */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
               <PieChart size={20} className="text-indigo-600 dark:text-indigo-400" /> Department Distribution
             </h2>
             <div className="space-y-3">
@@ -625,13 +626,13 @@ export default function Dashboard() {
                 const colors = ['bg-indigo-500', 'bg-emerald-500', 'bg-amber-500', 'bg-purple-500', 'bg-pink-500', 'bg-cyan-500'];
                 return (
                   <div key={d.department} className="flex items-center gap-3">
-                    <span className="text-xs text-gray-500 dark:text-gray-400 w-24 truncate">{d.department}</span>
-                    <div className="flex-1 h-5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 w-24 truncate">{d.department}</span>
+                    <div className="flex-1 h-5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div className={`h-full ${colors[i % colors.length]} rounded-full transition-all duration-500 flex items-center justify-end pr-2`} style={{ width: `${pct}%` }}>
                         {pct > 15 && <span className="text-[10px] text-white font-medium">{d.count}</span>}
                       </div>
                     </div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300 w-10 text-right">{pct}%</span>
+                    <span className="text-xs font-medium text-slate-600 dark:text-slate-300 w-10 text-right">{pct}%</span>
                   </div>
                 );
               })}
@@ -640,7 +641,7 @@ export default function Dashboard() {
 
           {/* Leave Usage Overview */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
               <BarChart3 size={20} className="text-indigo-600 dark:text-indigo-400" /> Leave Usage Overview
             </h2>
             <div className="space-y-3">
@@ -650,10 +651,10 @@ export default function Dashboard() {
                 return (
                   <div key={l.name}>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-gray-600 dark:text-gray-400">{l.name}</span>
-                      <span className="text-gray-500">{l.used}/{l.total} used</span>
+                      <span className="text-slate-500 dark:text-slate-400">{l.name}</span>
+                      <span className="text-slate-500">{l.used}/{l.total} used</span>
                     </div>
-                    <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-4 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div className={`h-full bg-gradient-to-r ${colors[i % colors.length]} rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />
                     </div>
                   </div>
@@ -664,19 +665,19 @@ export default function Dashboard() {
 
           {/* Top Attendance */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
               <CalendarCheck size={20} className="text-emerald-600 dark:text-emerald-400" /> Top Attendance This Month
             </h2>
             <div className="space-y-2">
               {analytics.topAttendance?.map((a, i) => (
-                <div key={i} className="flex items-center justify-between p-2.5 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                <div key={i} className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-700/40 rounded-xl">
                   <div className="flex items-center gap-3">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${i === 0 ? 'bg-yellow-500' : i === 1 ? 'bg-gray-400' : i === 2 ? 'bg-amber-700' : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-300'}`}>
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${i === 0 ? 'bg-yellow-500' : i === 1 ? 'bg-slate-400' : i === 2 ? 'bg-amber-700' : 'bg-slate-300 dark:bg-slate-600 text-slate-600 dark:text-slate-300'}`}>
                       {i + 1}
                     </span>
                     <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white">{a.name}</p>
-                      <p className="text-[10px] text-gray-400">{a.department}</p>
+                      <p className="text-sm font-medium text-slate-800 dark:text-white">{a.name}</p>
+                      <p className="text-[10px] text-slate-400">{a.department}</p>
                     </div>
                   </div>
                   <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{a.presentDays} days</span>
@@ -687,7 +688,7 @@ export default function Dashboard() {
 
           {/* Expense by Category */}
           <div className="card">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
               <Receipt size={20} className="text-amber-600 dark:text-amber-400" /> Expense by Category
             </h2>
             <div className="space-y-3">
@@ -696,18 +697,18 @@ export default function Dashboard() {
                 const pct = max > 0 ? Math.round((e.total / max) * 100) : 0;
                 return (
                   <div key={e.category} className="flex items-center gap-3">
-                    <span className="text-xs text-gray-500 dark:text-gray-400 w-20 truncate">{e.category}</span>
-                    <div className="flex-1 h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 w-20 truncate">{e.category}</span>
+                    <div className="flex-1 h-4 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-amber-400 to-orange-500 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
                     </div>
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-300 w-16 text-right">
+                    <span className="text-xs font-medium text-slate-600 dark:text-slate-300 w-16 text-right">
                       {new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(e.total)}
                     </span>
                   </div>
                 );
               })}
               {analytics.expenseByCategory?.filter(e => e.total > 0).length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-4">No expense data yet</p>
+                <p className="text-sm text-slate-400 text-center py-4">No expense data yet</p>
               )}
             </div>
           </div>
@@ -717,28 +718,28 @@ export default function Dashboard() {
       {/* ───── Upcoming Celebrations (next 7 days) ───── */}
       {(celebrations.upcomingBirthdays?.length > 0 || celebrations.upcomingAnniversaries?.length > 0) && (
         <div className="card animate-slide-up bg-gradient-to-r from-violet-50 to-fuchsia-50 dark:from-violet-900/20 dark:to-fuchsia-900/20 border-violet-100 dark:border-violet-800/30">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
             <Gift size={20} className="text-violet-500" /> Upcoming This Week
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {celebrations.upcomingBirthdays?.map((b, i) => (
-              <div key={'ub'+i} className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/40 rounded-lg">
+              <div key={'ub'+i} className="flex items-center gap-3 p-3 bg-white/60 dark:bg-slate-800/40 rounded-xl">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-bold text-sm">
                   {b.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-800 dark:text-white">{b.name}</p>
+                  <p className="text-sm font-medium text-slate-800 dark:text-white">{b.name}</p>
                   <p className="text-xs text-pink-500">Birthday - {new Date(b.dateOfBirth).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
                 </div>
               </div>
             ))}
             {celebrations.upcomingAnniversaries?.map((a, i) => (
-              <div key={'ua'+i} className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/40 rounded-lg">
+              <div key={'ua'+i} className="flex items-center gap-3 p-3 bg-white/60 dark:bg-slate-800/40 rounded-xl">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm">
                   {a.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-800 dark:text-white">{a.name}</p>
+                  <p className="text-sm font-medium text-slate-800 dark:text-white">{a.name}</p>
                   <p className="text-xs text-amber-500">{a.years} yr{a.years > 1 ? 's' : ''} - {new Date(a.joiningDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
                 </div>
               </div>
@@ -750,18 +751,18 @@ export default function Dashboard() {
       {/* ───── Birthdays ───── */}
       {celebrations.birthdays?.length > 0 && (
         <div className="card animate-slide-up bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 border-pink-100 dark:border-pink-800/30">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
             <Cake size={20} className="text-pink-500" /> Birthdays This Month
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {celebrations.birthdays.map((b, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/40 rounded-lg hover:bg-white dark:hover:bg-gray-800/60 transition-colors">
+              <div key={i} className="flex items-center gap-3 p-3 bg-white/60 dark:bg-slate-800/40 rounded-xl hover:bg-white dark:hover:bg-slate-800/60 transition-colors">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white font-bold text-sm">
                   {b.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-800 dark:text-white">{b.name}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-sm font-medium text-slate-800 dark:text-white">{b.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {new Date(b.dateOfBirth).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} &middot; {b.department}
                   </p>
                 </div>
@@ -774,18 +775,18 @@ export default function Dashboard() {
       {/* ───── Work Anniversaries ───── */}
       {celebrations.anniversaries?.length > 0 && (
         <div className="card animate-slide-up">
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
             <PartyPopper size={20} className="text-amber-500" /> Work Anniversaries This Month
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {celebrations.anniversaries.map((a, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-lg border border-amber-100 dark:border-amber-800/30 hover:shadow-sm transition-all">
+              <div key={i} className="flex items-center gap-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl border border-amber-100 dark:border-amber-800/30 hover:shadow-sm transition-all">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white font-bold text-sm">
                   {a.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-800 dark:text-white">{a.name}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{a.years} year{a.years > 1 ? 's' : ''} &middot; {a.department}</p>
+                  <p className="text-sm font-medium text-slate-800 dark:text-white">{a.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{a.years} year{a.years > 1 ? 's' : ''} &middot; {a.department}</p>
                 </div>
               </div>
             ))}

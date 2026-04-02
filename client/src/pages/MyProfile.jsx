@@ -269,7 +269,7 @@ export default function MyProfile() {
       case 'expert': return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
       case 'advanced': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
       case 'intermediate': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
-      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
+      default: return 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
     }
   };
 
@@ -362,29 +362,29 @@ export default function MyProfile() {
         {summaryCards.map((card, i) => (
           <div
             key={card.label}
-            className="relative overflow-hidden rounded-xl p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in"
+            className="relative overflow-hidden rounded-xl p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in"
             style={{ animationDelay: `${i * 80}ms` }}
           >
             <div className={`absolute -top-3 -right-3 w-16 h-16 rounded-full bg-gradient-to-br ${summaryColorMap[card.color]} opacity-10 blur-lg`} />
-            <div className={`inline-flex p-2 rounded-lg bg-gradient-to-br ${summaryColorMap[card.color]} shadow-lg mb-3`}>
+            <div className={`inline-flex p-2 rounded-xl bg-gradient-to-br ${summaryColorMap[card.color]} shadow-lg mb-3`}>
               <card.icon size={18} className="text-white" />
             </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">{card.value}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{card.label}</p>
+            <p className="text-2xl font-bold text-slate-900 dark:text-white">{card.value}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{card.label}</p>
           </div>
         ))}
       </div>
 
       {/* ===== TAB NAVIGATION ===== */}
-      <div className="flex gap-1 p-1 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-x-auto">
+      <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl overflow-x-auto">
         {TABS.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 whitespace-nowrap ${
               activeTab === tab.id
-                ? 'bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-700/50'
+                ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-700/50'
             }`}
           >
             <tab.icon size={16} />
@@ -401,7 +401,7 @@ export default function MyProfile() {
           {/* Personal Info */}
           <div className="card animate-slide-up">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-gray-800 dark:text-white">Personal Information</h3>
+              <h3 className="font-semibold text-slate-800 dark:text-white">Personal Information</h3>
               {!editing ? (
                 <button onClick={() => setEditing(true)} className="btn-secondary text-xs flex items-center gap-1">
                   <Edit2 size={14} /> Edit Profile
@@ -421,13 +421,13 @@ export default function MyProfile() {
             {!editing ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {fields.map((f, i) => (
-                  <div key={f.label} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition animate-fade-in" style={{ animationDelay: `${i * 50}ms` }}>
-                    <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/30">
+                  <div key={f.label} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition animate-fade-in" style={{ animationDelay: `${i * 50}ms` }}>
+                    <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-900/30">
                       <f.icon size={18} className="text-indigo-500 dark:text-indigo-400 shrink-0" />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400">{f.label}</p>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white">{f.value || '-'}</p>
+                      <p className="text-xs text-slate-400">{f.label}</p>
+                      <p className="text-sm font-medium text-slate-800 dark:text-white">{f.value || '-'}</p>
                     </div>
                   </div>
                 ))}
@@ -435,22 +435,22 @@ export default function MyProfile() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Phone</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Phone</label>
                   <input value={editForm.phone || ''} onChange={e => setEditForm({...editForm, phone: e.target.value})} className="input mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Date of Birth</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Date of Birth</label>
                   <input type="date" value={editForm.dateOfBirth || ''} onChange={e => setEditForm({...editForm, dateOfBirth: e.target.value})} className="input mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Blood Group</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Blood Group</label>
                   <select value={editForm.bloodGroup || ''} onChange={e => setEditForm({...editForm, bloodGroup: e.target.value})} className="input mt-1">
                     <option value="">Select</option>
                     {['A+','A-','B+','B-','AB+','AB-','O+','O-'].map(bg => <option key={bg} value={bg}>{bg}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Gender</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Gender</label>
                   <select value={editForm.gender || ''} onChange={e => setEditForm({...editForm, gender: e.target.value})} className="input mt-1">
                     <option value="">Select</option>
                     <option value="Male">Male</option>
@@ -459,15 +459,15 @@ export default function MyProfile() {
                   </select>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Address</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Address</label>
                   <textarea value={editForm.address || ''} onChange={e => setEditForm({...editForm, address: e.target.value})} className="input mt-1" rows={2} />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Emergency Contact Name</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Emergency Contact Name</label>
                   <input value={editForm.emergencyContactName || ''} onChange={e => setEditForm({...editForm, emergencyContactName: e.target.value})} className="input mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Emergency Contact Phone</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Emergency Contact Phone</label>
                   <input value={editForm.emergencyContactPhone || ''} onChange={e => setEditForm({...editForm, emergencyContactPhone: e.target.value})} className="input mt-1" />
                 </div>
               </div>
@@ -477,7 +477,7 @@ export default function MyProfile() {
           {/* Skills */}
           {skills.length > 0 && (
             <div className="card animate-slide-up" style={{ animationDelay: '50ms' }}>
-              <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+              <h3 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                 <Zap size={18} className="text-indigo-500 dark:text-indigo-400" /> Skills
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -495,12 +495,12 @@ export default function MyProfile() {
       {/* --- TIMELINE TAB --- */}
       {activeTab === 'timeline' && (
         <div className="card animate-fade-in">
-          <h3 className="font-semibold text-gray-800 dark:text-white mb-6 flex items-center gap-2">
+          <h3 className="font-semibold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
             <BookOpen size={18} className="text-indigo-500 dark:text-indigo-400" /> Employee Journey
           </h3>
 
           {timelineEvents.length === 0 ? (
-            <div className="text-center py-12 text-gray-400 dark:text-gray-500">
+            <div className="text-center py-12 text-slate-400 dark:text-slate-500">
               <Clock size={40} className="mx-auto mb-3 opacity-50" />
               <p className="text-sm">No journey events to display yet.</p>
             </div>
@@ -520,20 +520,20 @@ export default function MyProfile() {
                       style={{ animationDelay: `${i * 60}ms` }}
                     >
                       {/* Dot / Icon */}
-                      <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full ${colors.dot} shadow-lg shrink-0 ring-4 ring-white dark:ring-gray-800`}>
+                      <div className={`relative z-10 flex items-center justify-center w-10 h-10 rounded-full ${colors.dot} shadow-lg shrink-0 ring-4 ring-white dark:ring-slate-800`}>
                         <IconComp size={16} className="text-white" />
                       </div>
 
                       {/* Content card */}
-                      <div className={`flex-1 rounded-xl p-4 ${colors.bg} border border-gray-100 dark:border-gray-700/50 hover:shadow-md transition-shadow duration-200`}>
+                      <div className={`flex-1 rounded-xl p-4 ${colors.bg} border border-slate-100 dark:border-slate-700/50 hover:shadow-md transition-shadow duration-200`}>
                         <div className="flex items-start justify-between gap-2 flex-wrap">
                           <h4 className={`text-sm font-semibold ${colors.text}`}>{event.title}</h4>
-                          <span className="text-[11px] text-gray-400 dark:text-gray-500 whitespace-nowrap flex items-center gap-1">
+                          <span className="text-[11px] text-slate-400 dark:text-slate-500 whitespace-nowrap flex items-center gap-1">
                             <Calendar size={11} />
                             {formatDate(event.date)}
                           </span>
                         </div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">{event.description}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">{event.description}</p>
                       </div>
                     </div>
                   );
@@ -547,27 +547,27 @@ export default function MyProfile() {
       {/* --- LEAVE BALANCE TAB --- */}
       {activeTab === 'leave' && (
         <div className="card animate-fade-in">
-          <h3 className="font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+          <h3 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
             <Calendar size={18} className="text-indigo-500 dark:text-indigo-400" /> Leave Balance
           </h3>
           {balances.length === 0 ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-8">No leave balance data available.</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500 text-center py-8">No leave balance data available.</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {balances.map(b => (
-                <div key={b.id} className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition border border-gray-100 dark:border-gray-600/50">
-                  <p className="text-xs text-gray-400 font-medium">{b.leaveType}</p>
+                <div key={b.id} className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl text-center hover:bg-slate-100 dark:hover:bg-slate-700 transition border border-slate-100 dark:border-slate-600/50">
+                  <p className="text-xs text-slate-400 font-medium">{b.leaveType}</p>
                   <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mt-1">
                     {b.total - b.used}
-                    <span className="text-sm text-gray-400 font-normal">/{b.total}</span>
+                    <span className="text-sm text-slate-400 font-normal">/{b.total}</span>
                   </p>
-                  <div className="mt-3 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                  <div className="mt-3 h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full transition-all duration-500"
                       style={{ width: `${b.total > 0 ? (b.used / b.total) * 100 : 0}%` }}
                     />
                   </div>
-                  <p className="text-[11px] text-gray-400 mt-1.5">{b.used} used</p>
+                  <p className="text-[11px] text-slate-400 mt-1.5">{b.used} used</p>
                 </div>
               ))}
             </div>
@@ -579,7 +579,7 @@ export default function MyProfile() {
       {activeTab === 'security' && (
         <div className="card animate-fade-in">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+            <h3 className="font-semibold text-slate-800 dark:text-white flex items-center gap-2">
               <Lock size={18} className="text-indigo-500 dark:text-indigo-400" /> Security
             </h3>
             <button onClick={() => setShowPw(!showPw)} className="btn-secondary text-xs">
@@ -588,13 +588,13 @@ export default function MyProfile() {
           </div>
 
           {!showPw ? (
-            <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
+            <div className="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
               <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/30">
                 <Shield size={20} className="text-emerald-500" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-800 dark:text-white">Password Protected</p>
-                <p className="text-xs text-gray-400">Your account is secured with a password. Click &quot;Change Password&quot; to update it.</p>
+                <p className="text-sm font-medium text-slate-800 dark:text-white">Password Protected</p>
+                <p className="text-xs text-slate-400">Your account is secured with a password. Click &quot;Change Password&quot; to update it.</p>
               </div>
             </div>
           ) : (

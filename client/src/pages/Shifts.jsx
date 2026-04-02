@@ -12,7 +12,7 @@ const shiftIcons = {
 };
 
 const getShiftIcon = (name) => {
-  if (!name) return <Clock size={20} className="text-gray-500" />;
+  if (!name) return <Clock size={20} className="text-slate-500" />;
   const lower = name.toLowerCase();
   if (lower.includes('morning')) return shiftIcons.Morning;
   if (lower.includes('evening')) return shiftIcons.Evening;
@@ -149,12 +149,12 @@ export default function Shifts() {
             <p>Manage shift schedules and overtime requests</p>
           </div>
           <div className="flex gap-2">
-            <button onClick={() => setShowOtForm(true)} className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition backdrop-blur-sm">
+            <button onClick={() => setShowOtForm(true)} className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-sm font-medium transition backdrop-blur-sm">
               <Timer size={16} /> Request Overtime
             </button>
             {isAdmin && (
               <button onClick={() => { setEditingShift(null); setShiftForm({ name: '', startTime: '', endTime: '', graceMinutes: 15 }); setShowShiftForm(true); }}
-                className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+                className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
                 <Plus size={16} /> Add Shift
               </button>
             )}
@@ -166,10 +166,10 @@ export default function Shifts() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit flex-wrap">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit flex-wrap">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'}`}>
+            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'}`}>
             {t.label}
           </button>
         ))}
@@ -185,22 +185,22 @@ export default function Shifts() {
                   {getShiftIcon(myShift.name)}
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-800 dark:text-white">{myShift.name}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Your current assigned shift</p>
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-white">{myShift.name}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Your current assigned shift</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4 mt-6">
                 <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl">
                   <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{myShift.startTime}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Start Time</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Start Time</p>
                 </div>
                 <div className="text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-xl">
                   <p className="text-lg font-bold text-red-600 dark:text-red-400">{myShift.endTime}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">End Time</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">End Time</p>
                 </div>
                 <div className="text-center p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
                   <p className="text-lg font-bold text-amber-600 dark:text-amber-400">{myShift.graceMinutes || 0}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Grace (min)</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Grace (min)</p>
                 </div>
               </div>
             </div>
@@ -226,19 +226,19 @@ export default function Shifts() {
                   <Clock size={18} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-800 dark:text-white">{shift.name}</h3>
-                  <p className="text-xs text-gray-400">Grace: {shift.graceMinutes || 0} min</p>
+                  <h3 className="font-semibold text-slate-800 dark:text-white">{shift.name}</h3>
+                  <p className="text-xs text-slate-400">Grace: {shift.graceMinutes || 0} min</p>
                 </div>
               </div>
               <div className="flex gap-4">
                 <div>
                   <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">{shift.startTime}</p>
-                  <p className="text-xs text-gray-400">Start</p>
+                  <p className="text-xs text-slate-400">Start</p>
                 </div>
-                <div className="text-gray-300 dark:text-gray-600 self-center">-</div>
+                <div className="text-slate-300 dark:text-slate-600 self-center">-</div>
                 <div>
-                  <p className="text-xl font-bold text-gray-600 dark:text-gray-300">{shift.endTime}</p>
-                  <p className="text-xs text-gray-400">End</p>
+                  <p className="text-xl font-bold text-slate-600 dark:text-slate-300">{shift.endTime}</p>
+                  <p className="text-xs text-slate-400">End</p>
                 </div>
               </div>
             </div>
@@ -259,23 +259,23 @@ export default function Shifts() {
         <div className="card p-0 overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Hours</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+              <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Date</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Hours</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Reason</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y dark:divide-gray-700">
+            <tbody className="divide-y dark:divide-slate-700">
               {overtimeRequests.map(r => (
                 <tr key={r.id}>
                   <td className="px-4 py-3 text-sm font-medium dark:text-white">{r.date}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{r.hours}h</td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 hidden sm:table-cell">{r.reason}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{r.hours}h</td>
+                  <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hidden sm:table-cell">{r.reason}</td>
                   <td className="px-4 py-3">{getStatusBadge(r.status)}</td>
                 </tr>
               ))}
-              {overtimeRequests.length === 0 && <tr><td colSpan={4} className="text-center py-8 text-gray-400 text-sm">No overtime requests</td></tr>}
+              {overtimeRequests.length === 0 && <tr><td colSpan={4} className="text-center py-8 text-slate-400 text-sm">No overtime requests</td></tr>}
             </tbody>
           </table>
         </div>
@@ -291,13 +291,13 @@ export default function Shifts() {
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${shiftColors[i % shiftColors.length]} flex items-center justify-center shadow-sm`}>
                     <Clock size={18} className="text-white" />
                   </div>
-                  <h3 className="font-semibold text-gray-800 dark:text-white">{shift.name}</h3>
+                  <h3 className="font-semibold text-slate-800 dark:text-white">{shift.name}</h3>
                 </div>
                 <div className="flex gap-1">
-                  <button onClick={() => openEditShift(shift)} className="p-1.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition">
+                  <button onClick={() => openEditShift(shift)} className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition">
                     <Edit2 size={15} />
                   </button>
-                  <button onClick={() => handleDeleteShift(shift.id)} className="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition">
+                  <button onClick={() => handleDeleteShift(shift.id)} className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition">
                     <Trash2 size={15} />
                   </button>
                 </div>
@@ -305,16 +305,16 @@ export default function Shifts() {
               <div className="flex gap-4">
                 <div>
                   <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">{shift.startTime}</p>
-                  <p className="text-xs text-gray-400">Start</p>
+                  <p className="text-xs text-slate-400">Start</p>
                 </div>
-                <div className="text-gray-300 dark:text-gray-600 self-center">-</div>
+                <div className="text-slate-300 dark:text-slate-600 self-center">-</div>
                 <div>
-                  <p className="text-xl font-bold text-gray-600 dark:text-gray-300">{shift.endTime}</p>
-                  <p className="text-xs text-gray-400">End</p>
+                  <p className="text-xl font-bold text-slate-600 dark:text-slate-300">{shift.endTime}</p>
+                  <p className="text-xs text-slate-400">End</p>
                 </div>
               </div>
-              <div className="mt-3 pt-3 border-t dark:border-gray-700">
-                <p className="text-xs text-gray-400">Grace period: {shift.graceMinutes || 0} minutes</p>
+              <div className="mt-3 pt-3 border-t dark:border-slate-700">
+                <p className="text-xs text-slate-400">Grace period: {shift.graceMinutes || 0} minutes</p>
               </div>
             </div>
           ))}
@@ -336,14 +336,14 @@ export default function Shifts() {
           <h3 className="text-lg font-semibold dark:text-white mb-4">Assign Shift to Employee</h3>
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Employee</label>
+              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Employee</label>
               <select value={assignForm.employeeId} onChange={e => setAssignForm({...assignForm, employeeId: e.target.value})} className="input mt-1">
                 <option value="">Select employee</option>
                 {employees.filter(e => e.status === 'active').map(e => <option key={e.id} value={e.id}>{e.name} ({e.employeeId})</option>)}
               </select>
             </div>
             <div>
-              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Shift</label>
+              <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Shift</label>
               <select value={assignForm.shiftId} onChange={e => setAssignForm({...assignForm, shiftId: e.target.value})} className="input mt-1">
                 <option value="">Select shift</option>
                 {allShifts.map(s => <option key={s.id} value={s.id}>{s.name} ({s.startTime} - {s.endTime})</option>)}
@@ -361,25 +361,25 @@ export default function Shifts() {
         <div className="card p-0 overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Date</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Hours</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Reason</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
-                <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Action</th>
+              <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Employee</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Date</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Hours</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Reason</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y dark:divide-gray-700">
+            <tbody className="divide-y dark:divide-slate-700">
               {allOvertimeRequests.map(r => (
                 <tr key={r.id}>
                   <td className="px-4 py-3">
                     <p className="text-sm font-medium dark:text-white">{r.employeeName}</p>
-                    <p className="text-xs text-gray-400">{r.department}</p>
+                    <p className="text-xs text-slate-400">{r.department}</p>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{r.date}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{r.hours}h</td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 hidden sm:table-cell max-w-[200px] truncate">{r.reason}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{r.date}</td>
+                  <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{r.hours}h</td>
+                  <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 hidden sm:table-cell max-w-[200px] truncate">{r.reason}</td>
                   <td className="px-4 py-3">{getStatusBadge(r.status)}</td>
                   <td className="px-4 py-3">
                     {r.status === 'pending' ? (
@@ -388,12 +388,12 @@ export default function Shifts() {
                         <button onClick={() => handleOvertimeAction(r.id, 'rejected')} className="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition" title="Reject"><X size={16} /></button>
                       </div>
                     ) : (
-                      <span className="text-xs text-gray-400">-</span>
+                      <span className="text-xs text-slate-400">-</span>
                     )}
                   </td>
                 </tr>
               ))}
-              {allOvertimeRequests.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-gray-400 text-sm">No overtime requests</td></tr>}
+              {allOvertimeRequests.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-slate-400 text-sm">No overtime requests</td></tr>}
             </tbody>
           </table>
         </div>
@@ -403,32 +403,32 @@ export default function Shifts() {
       {showShiftForm && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowShiftForm(false)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">{editingShift ? 'Edit Shift' : 'Create Shift'}</h2>
-              <button onClick={() => setShowShiftForm(false)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowShiftForm(false)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Shift Name</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Shift Name</label>
                 <input value={shiftForm.name} onChange={e => setShiftForm({...shiftForm, name: e.target.value})} className="input mt-1" placeholder="e.g. Morning Shift" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Start Time</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Start Time</label>
                   <input type="time" value={shiftForm.startTime} onChange={e => setShiftForm({...shiftForm, startTime: e.target.value})} className="input mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">End Time</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">End Time</label>
                   <input type="time" value={shiftForm.endTime} onChange={e => setShiftForm({...shiftForm, endTime: e.target.value})} className="input mt-1" />
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Grace Period (minutes)</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Grace Period (minutes)</label>
                 <input type="number" value={shiftForm.graceMinutes} onChange={e => setShiftForm({...shiftForm, graceMinutes: e.target.value})} className="input mt-1" min="0" />
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={() => setShowShiftForm(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleSaveShift} className="btn-primary" disabled={!shiftForm.name || !shiftForm.startTime || !shiftForm.endTime}>
                 {editingShift ? 'Update' : 'Create'}
@@ -442,32 +442,32 @@ export default function Shifts() {
       {showOtForm && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowOtForm(false)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">Request Overtime</h2>
-              <button onClick={() => setShowOtForm(false)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowOtForm(false)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Date</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Date</label>
                 <input type="date" value={otForm.date} onChange={e => setOtForm({...otForm, date: e.target.value})} className="input mt-1" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Hours</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Hours</label>
                 <input type="number" value={otForm.hours} onChange={e => setOtForm({...otForm, hours: e.target.value})} className="input mt-1" min="0.5" step="0.5" placeholder="e.g. 2" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Reason</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Reason</label>
                 <textarea value={otForm.reason} onChange={e => setOtForm({...otForm, reason: e.target.value})} rows={3} className="input mt-1" placeholder="Why do you need overtime?" />
               </div>
-              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
                 <p className="text-xs text-amber-700 dark:text-amber-400">
                   <AlertCircle size={12} className="inline mr-1" />
                   Overtime requests require admin approval before being processed.
                 </p>
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={() => setShowOtForm(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleSubmitOvertime} className="btn-primary" disabled={!otForm.date || !otForm.hours || !otForm.reason}>Submit</button>
             </div>

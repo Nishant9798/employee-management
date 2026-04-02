@@ -13,7 +13,7 @@ const categoryColors = {
 };
 
 const statusIcons = {
-  pending: <Circle size={18} className="text-gray-400" />,
+  pending: <Circle size={18} className="text-slate-400" />,
   in_progress: <Clock size={18} className="text-amber-500" />,
   completed: <Check size={18} className="text-emerald-500" />,
 };
@@ -94,10 +94,10 @@ export default function Onboarding() {
   const renderProgressBar = (percent) => (
     <div className="w-full">
       <div className="flex justify-between items-center mb-1">
-        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Progress</span>
+        <span className="text-xs font-medium text-slate-600 dark:text-slate-400">Progress</span>
         <span className={`text-xs font-bold ${percent === 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400'}`}>{percent}%</span>
       </div>
-      <div className="h-2.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div className="h-2.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
         <div className={`h-full rounded-full transition-all duration-500 ${percent === 100 ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-indigo-500 to-purple-500'}`}
           style={{ width: `${percent}%` }} />
       </div>
@@ -121,34 +121,34 @@ export default function Onboarding() {
             </button>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h4 className={`text-sm font-semibold ${task.progressStatus === 'completed' ? 'text-gray-400 line-through' : 'text-gray-800 dark:text-white'}`}>
+                <h4 className={`text-sm font-semibold ${task.progressStatus === 'completed' ? 'text-slate-400 line-through' : 'text-slate-800 dark:text-white'}`}>
                   {task.title}
                 </h4>
                 <span className={`badge ${getCatColor(task.category).bg}`}>{task.category}</span>
               </div>
               {task.description && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{task.description}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{task.description}</p>
               )}
               <div className="flex items-center gap-4 mt-2">
                 {task.assignTo && (
-                  <span className="text-xs text-gray-400 flex items-center gap-1">
+                  <span className="text-xs text-slate-400 flex items-center gap-1">
                     <User size={12} /> {task.assignTo}
                   </span>
                 )}
-                <span className={`text-xs font-medium ${task.progressStatus === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : task.progressStatus === 'in_progress' ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
+                <span className={`text-xs font-medium ${task.progressStatus === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : task.progressStatus === 'in_progress' ? 'text-amber-600 dark:text-amber-400' : 'text-slate-400'}`}>
                   {statusLabels[task.progressStatus]}
                 </span>
               </div>
               {task.notes && (
-                <div className="mt-2 p-2 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{task.notes}</p>
+                <div className="mt-2 p-2 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{task.notes}</p>
                 </div>
               )}
             </div>
             {isAdmin && (
               <div className="flex gap-1 shrink-0">
                 <button onClick={() => { setShowNoteModal({ taskId: task.id }); setNote(task.notes || ''); }}
-                  className="p-1.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition" title="Add note">
+                  className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition" title="Add note">
                   <MessageSquare size={15} />
                 </button>
               </div>
@@ -198,17 +198,17 @@ export default function Onboarding() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
                       <div>
-                        <h3 className="text-sm font-semibold text-gray-800 dark:text-white">{emp.name}</h3>
-                        <p className="text-xs text-gray-400">{emp.department} - {emp.designation}</p>
+                        <h3 className="text-sm font-semibold text-slate-800 dark:text-white">{emp.name}</h3>
+                        <p className="text-xs text-slate-400">{emp.department} - {emp.designation}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <span className={`text-sm font-bold ${progress === 100 ? 'text-emerald-600 dark:text-emerald-400' : 'text-indigo-600 dark:text-indigo-400'}`}>
                           {progress}%
                         </span>
-                        <ChevronRight size={16} className="text-gray-400" />
+                        <ChevronRight size={16} className="text-slate-400" />
                       </div>
                     </div>
-                    <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                       <div className={`h-full rounded-full transition-all duration-500 ${progress === 100 ? 'bg-gradient-to-r from-emerald-500 to-teal-500' : 'bg-gradient-to-r from-indigo-500 to-purple-500'}`}
                         style={{ width: `${progress}%` }} />
                     </div>
@@ -231,7 +231,7 @@ export default function Onboarding() {
         {showNoteModal && (
           <>
             <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => { setShowNoteModal(null); setNote(''); }} />
-            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6">
+            <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6">
               <h3 className="text-lg font-semibold dark:text-white mb-4">Add Note</h3>
               <textarea value={note} onChange={e => setNote(e.target.value)} rows={4} className="input" placeholder="Add a note to this task..." />
               <div className="flex justify-end gap-3 mt-4">
@@ -259,7 +259,7 @@ export default function Onboarding() {
             <p>{isAdmin && selectedEmployee ? `${selectedEmployee.name}'s onboarding checklist` : 'Your onboarding checklist'}</p>
           </div>
           {isAdmin && selectedEmployee && (
-            <button onClick={() => setSelectedEmployee(null)} className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-sm font-medium transition backdrop-blur-sm">
+            <button onClick={() => setSelectedEmployee(null)} className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-sm font-medium transition backdrop-blur-sm">
               <ArrowLeft size={16} /> Back to List
             </button>
           )}
@@ -273,7 +273,7 @@ export default function Onboarding() {
       <div className="card">
         {renderProgressBar(activeProgress)}
         <div className="flex gap-4 mt-3">
-          <span className="text-xs text-gray-400">{activeTasks.filter(t => t.status === 'completed').length} of {activeTasks.length} tasks completed</span>
+          <span className="text-xs text-slate-400">{activeTasks.filter(t => t.status === 'completed').length} of {activeTasks.length} tasks completed</span>
           {activeProgress === 100 && <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">All tasks completed!</span>}
         </div>
       </div>
@@ -283,7 +283,7 @@ export default function Onboarding() {
         {Object.entries(categoryColors).map(([cat, colors]) => (
           <div key={cat} className="flex items-center gap-1.5">
             <div className={`w-3 h-3 rounded-full ${colors.dot}`} />
-            <span className="text-xs text-gray-500 dark:text-gray-400 capitalize">{cat}</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400 capitalize">{cat}</span>
           </div>
         ))}
       </div>
@@ -295,7 +295,7 @@ export default function Onboarding() {
       {showNoteModal && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => { setShowNoteModal(null); setNote(''); }} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6">
             <h3 className="text-lg font-semibold dark:text-white mb-4">Add Note</h3>
             <textarea value={note} onChange={e => setNote(e.target.value)} rows={4} className="input" placeholder="Add a note to this task..." />
             <div className="flex justify-end gap-3 mt-4">

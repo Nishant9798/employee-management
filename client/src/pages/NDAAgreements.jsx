@@ -160,7 +160,7 @@ export default function NDAAgreements() {
             <p>Employment agreements, NDAs, and other legal documents</p>
           </div>
           {isAdmin && (
-            <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+            <button onClick={openCreate} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
               <Plus size={16} /> Upload Agreement
             </button>
           )}
@@ -174,17 +174,17 @@ export default function NDAAgreements() {
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="card text-center">
           <p className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{agreements.length}</p>
-          <p className="text-xs text-gray-500 mt-1">Total Agreements</p>
+          <p className="text-xs text-slate-500 mt-1">Total Agreements</p>
         </div>
         {!isAdmin && (
           <>
             <div className="card text-center">
               <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{submittedCount}</p>
-              <p className="text-xs text-gray-500 mt-1">Submitted</p>
+              <p className="text-xs text-slate-500 mt-1">Submitted</p>
             </div>
             <div className="card text-center">
               <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{agreements.length - submittedCount}</p>
-              <p className="text-xs text-gray-500 mt-1">Pending</p>
+              <p className="text-xs text-slate-500 mt-1">Pending</p>
             </div>
           </>
         )}
@@ -192,7 +192,7 @@ export default function NDAAgreements() {
 
       {/* Search */}
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-2.5 text-gray-400" />
+        <Search size={16} className="absolute left-3 top-2.5 text-slate-400" />
         <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search agreements..." className="input pl-9" />
       </div>
 
@@ -216,12 +216,12 @@ export default function NDAAgreements() {
                     <FileSignature size={24} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-800 dark:text-white">{agreement.title}</h3>
-                    {agreement.description && <p className="text-xs text-gray-400 mt-0.5">{agreement.description}</p>}
+                    <h3 className="text-sm font-semibold text-slate-800 dark:text-white">{agreement.title}</h3>
+                    {agreement.description && <p className="text-xs text-slate-400 mt-0.5">{agreement.description}</p>}
                     <div className="flex items-center gap-3 mt-2 flex-wrap">
-                      <span className="text-xs text-gray-400">Template: {agreement.templateName}</span>
-                      <span className="text-xs text-gray-400">{formatSize(agreement.templateSize)}</span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-slate-400">Template: {agreement.templateName}</span>
+                      <span className="text-xs text-slate-400">{formatSize(agreement.templateSize)}</span>
+                      <span className="text-xs text-slate-400">
                         Uploaded {agreement.createdAt ? new Date(agreement.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
                       </span>
                     </div>
@@ -233,24 +233,24 @@ export default function NDAAgreements() {
                   {/* Employee submission status */}
                   {!isAdmin && (
                     agreement.mySubmission ? (
-                      <span className="flex items-center gap-1 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded-lg text-xs font-medium">
+                      <span className="flex items-center gap-1 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 rounded-xl text-xs font-medium">
                         <CheckCircle size={14} /> Submitted
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1 px-3 py-1.5 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 rounded-lg text-xs font-medium">
+                      <span className="flex items-center gap-1 px-3 py-1.5 bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 rounded-xl text-xs font-medium">
                         <Clock size={14} /> Pending
                       </span>
                     )
                   )}
 
                   {/* Download template */}
-                  <button onClick={() => handleDownloadTemplate(agreement)} className="flex items-center gap-1 px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg text-xs font-medium transition" title="Download Template">
+                  <button onClick={() => handleDownloadTemplate(agreement)} className="flex items-center gap-1 px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl text-xs font-medium transition" title="Download Template">
                     <Download size={14} /> Download
                   </button>
 
                   {/* Employee: upload signed copy */}
                   {!isAdmin && (
-                    <button onClick={() => { setShowSubmit(agreement); setSubmitFile(null); }} className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg text-xs font-medium transition">
+                    <button onClick={() => { setShowSubmit(agreement); setSubmitFile(null); }} className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl text-xs font-medium transition">
                       <Upload size={14} /> {agreement.mySubmission ? 'Re-upload' : 'Upload Signed'}
                     </button>
                   )}
@@ -258,7 +258,7 @@ export default function NDAAgreements() {
                   {/* Admin: view submissions */}
                   {isAdmin && (
                     <>
-                      <button onClick={() => viewSubmissions(agreement)} className="flex items-center gap-1 px-3 py-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-lg text-xs font-medium transition" title="View Submissions">
+                      <button onClick={() => viewSubmissions(agreement)} className="flex items-center gap-1 px-3 py-1.5 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 rounded-xl text-xs font-medium transition" title="View Submissions">
                         <Users size={14} /> Submissions
                       </button>
                       <button onClick={() => openEdit(agreement)} className="p-1.5 text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded transition" title="Edit">
@@ -274,9 +274,9 @@ export default function NDAAgreements() {
 
               {/* Show own submission info */}
               {!isAdmin && agreement.mySubmission && (
-                <div className="mt-3 pt-3 border-t dark:border-gray-700 flex items-center justify-between">
-                  <div className="text-xs text-gray-400">
-                    Your submission: <span className="text-gray-600 dark:text-gray-300 font-medium">{agreement.mySubmission.fileName}</span>
+                <div className="mt-3 pt-3 border-t dark:border-slate-700 flex items-center justify-between">
+                  <div className="text-xs text-slate-400">
+                    Your submission: <span className="text-slate-600 dark:text-slate-300 font-medium">{agreement.mySubmission.fileName}</span>
                     {' '} - {new Date(agreement.mySubmission.uploadedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </div>
                   <button onClick={() => handleDownloadSubmission(agreement.mySubmission)} className="flex items-center gap-1 text-xs text-indigo-600 hover:text-indigo-800">
@@ -293,46 +293,46 @@ export default function NDAAgreements() {
       {showForm && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowForm(false)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">{editing ? 'Edit Agreement' : 'Upload New Agreement'}</h2>
-              <button onClick={() => setShowForm(false)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowForm(false)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Title *</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Title *</label>
                 <input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="input mt-1" placeholder="e.g. Non-Disclosure Agreement" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Description</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Description</label>
                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} rows={3} className="input mt-1" placeholder="Brief description of this agreement..." />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{editing ? 'Replace Template (optional)' : 'Word Document Template *'}</label>
-                <div className="mt-1 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-indigo-400 dark:hover:border-indigo-500 transition cursor-pointer"
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">{editing ? 'Replace Template (optional)' : 'Word Document Template *'}</label>
+                <div className="mt-1 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center hover:border-indigo-400 dark:hover:border-indigo-500 transition cursor-pointer"
                   onClick={() => document.getElementById('agreement-file-input').click()}>
                   <input id="agreement-file-input" type="file" className="hidden" accept=".doc,.docx,.pdf,.odt" onChange={e => setSelectedFile(e.target.files[0])} />
-                  <Upload size={32} className="mx-auto text-gray-400 mb-2" />
+                  <Upload size={32} className="mx-auto text-slate-400 mb-2" />
                   {selectedFile ? (
                     <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white">{selectedFile.name}</p>
-                      <p className="text-xs text-gray-400">{formatSize(selectedFile.size)}</p>
+                      <p className="text-sm font-medium text-slate-800 dark:text-white">{selectedFile.name}</p>
+                      <p className="text-xs text-slate-400">{formatSize(selectedFile.size)}</p>
                     </div>
                   ) : editing ? (
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Click to replace template</p>
-                      <p className="text-xs text-gray-400 mt-1">Current: {editing.templateName}</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">Click to replace template</p>
+                      <p className="text-xs text-slate-400 mt-1">Current: {editing.templateName}</p>
                     </div>
                   ) : (
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Click to upload Word document</p>
-                      <p className="text-xs text-gray-400 mt-1">.doc, .docx, .pdf, .odt up to 20MB</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">Click to upload Word document</p>
+                      <p className="text-xs text-slate-400 mt-1">.doc, .docx, .pdf, .odt up to 20MB</p>
                     </div>
                   )}
                 </div>
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={() => setShowForm(false)} className="btn-secondary">Cancel</button>
               <button onClick={handleSave} className="btn-primary" disabled={submitting}>
                 {submitting ? 'Saving...' : editing ? 'Update Agreement' : 'Upload Agreement'}
@@ -346,18 +346,18 @@ export default function NDAAgreements() {
       {showSubmit && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowSubmit(null)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">Submit Signed Agreement</h2>
-              <button onClick={() => setShowSubmit(null)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowSubmit(null)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
-              <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+              <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl">
                 <h3 className="text-sm font-semibold text-indigo-800 dark:text-indigo-300">{showSubmit.title}</h3>
                 <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1">{showSubmit.description}</p>
               </div>
 
-              <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+              <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
                 <p className="text-xs text-amber-800 dark:text-amber-300 font-medium">Instructions:</p>
                 <ol className="text-xs text-amber-700 dark:text-amber-400 mt-1 list-decimal list-inside space-y-1">
                   <li>Download the template using the "Download" button</li>
@@ -368,33 +368,33 @@ export default function NDAAgreements() {
               </div>
 
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Upload Signed PDF *</label>
-                <div className="mt-1 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-indigo-400 dark:hover:border-indigo-500 transition cursor-pointer"
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Upload Signed PDF *</label>
+                <div className="mt-1 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center hover:border-indigo-400 dark:hover:border-indigo-500 transition cursor-pointer"
                   onClick={() => document.getElementById('submit-file-input').click()}>
                   <input id="submit-file-input" type="file" className="hidden" accept=".pdf" onChange={e => setSubmitFile(e.target.files[0])} />
-                  <Upload size={32} className="mx-auto text-gray-400 mb-2" />
+                  <Upload size={32} className="mx-auto text-slate-400 mb-2" />
                   {submitFile ? (
                     <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white">{submitFile.name}</p>
-                      <p className="text-xs text-gray-400">{formatSize(submitFile.size)}</p>
+                      <p className="text-sm font-medium text-slate-800 dark:text-white">{submitFile.name}</p>
+                      <p className="text-xs text-slate-400">{formatSize(submitFile.size)}</p>
                     </div>
                   ) : (
                     <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Click to select your signed PDF</p>
-                      <p className="text-xs text-gray-400 mt-1">Only PDF files are accepted</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">Click to select your signed PDF</p>
+                      <p className="text-xs text-slate-400 mt-1">Only PDF files are accepted</p>
                     </div>
                   )}
                 </div>
               </div>
 
               {showSubmit.mySubmission && (
-                <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                  <p className="text-xs text-gray-500">Previous submission: <span className="font-medium text-gray-700 dark:text-gray-300">{showSubmit.mySubmission.fileName}</span></p>
-                  <p className="text-xs text-gray-400 mt-0.5">Uploading a new file will replace your previous submission.</p>
+                <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                  <p className="text-xs text-slate-500">Previous submission: <span className="font-medium text-slate-700 dark:text-slate-300">{showSubmit.mySubmission.fileName}</span></p>
+                  <p className="text-xs text-slate-400 mt-0.5">Uploading a new file will replace your previous submission.</p>
                 </div>
               )}
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={() => setShowSubmit(null)} className="btn-secondary">Cancel</button>
               <button onClick={() => handleSubmitAgreement(showSubmit.id)} className="btn-primary" disabled={!submitFile || submitting}>
                 {submitting ? 'Submitting...' : 'Submit Agreement'}
@@ -408,30 +408,30 @@ export default function NDAAgreements() {
       {showSubmissions && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowSubmissions(null)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <div>
                 <h2 className="text-lg font-semibold dark:text-white">Employee Submissions</h2>
-                <p className="text-xs text-gray-400 mt-0.5">{showSubmissions.title}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{showSubmissions.title}</p>
               </div>
-              <button onClick={() => setShowSubmissions(null)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowSubmissions(null)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5">
               {submissions.length === 0 ? (
                 <div className="text-center py-10">
-                  <Users size={48} className="mx-auto text-gray-300 dark:text-gray-600" />
-                  <p className="text-sm text-gray-500 mt-2">No submissions yet</p>
+                  <Users size={48} className="mx-auto text-slate-300 dark:text-slate-600" />
+                  <p className="text-sm text-slate-500 mt-2">No submissions yet</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {submissions.map(s => (
-                    <div key={s.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                    <div key={s.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                       <div>
-                        <p className="text-sm font-medium text-gray-800 dark:text-white">{s.employeeName}</p>
-                        <p className="text-xs text-gray-400">{s.empCode} - {s.department}</p>
-                        <p className="text-xs text-gray-400 mt-0.5">{s.fileName} - {new Date(s.uploadedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                        <p className="text-sm font-medium text-slate-800 dark:text-white">{s.employeeName}</p>
+                        <p className="text-xs text-slate-400">{s.empCode} - {s.department}</p>
+                        <p className="text-xs text-slate-400 mt-0.5">{s.fileName} - {new Date(s.uploadedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                       </div>
-                      <button onClick={() => handleDownloadSubmission(s)} className="flex items-center gap-1 px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg text-xs font-medium transition">
+                      <button onClick={() => handleDownloadSubmission(s)} className="flex items-center gap-1 px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl text-xs font-medium transition">
                         <Download size={14} /> Download
                       </button>
                     </div>

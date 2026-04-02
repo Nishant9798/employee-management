@@ -94,7 +94,7 @@ export default function Performance() {
     return (
       <div className="flex items-center gap-0.5">
         {[1, 2, 3, 4, 5].map(s => (
-          <Star key={s} size={size} className={s <= rating ? 'text-amber-400 fill-amber-400' : 'text-gray-300 dark:text-gray-600'} />
+          <Star key={s} size={size} className={s <= rating ? 'text-amber-400 fill-amber-400' : 'text-slate-300 dark:text-slate-600'} />
         ))}
       </div>
     );
@@ -139,7 +139,7 @@ export default function Performance() {
           </div>
           {(tab === 'goals' || tab === 'teamGoals') && (
             <button onClick={() => { setEditingGoal(null); setGoalForm({ title: '', description: '', category: 'performance', targetDate: '', progress: 0 }); setShowGoalModal(true); }}
-              className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+              className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
               <Plus size={16} /> Add Goal
             </button>
           )}
@@ -150,10 +150,10 @@ export default function Performance() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit flex-wrap">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit flex-wrap">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'}`}>
+            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'}`}>
             {t.label}
           </button>
         ))}
@@ -177,12 +177,12 @@ export default function Performance() {
                     <Star size={20} className="text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800 dark:text-white">{r.period || r.reviewPeriod || 'Performance Review'}</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">Reviewed by: {r.reviewerName || 'Pending'}</p>
+                    <h3 className="font-semibold text-slate-800 dark:text-white">{r.period || r.reviewPeriod || 'Performance Review'}</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">Reviewed by: {r.reviewerName || 'Pending'}</p>
                     {r.rating ? (
                       <div className="flex items-center gap-2 mt-2">
                         {renderStars(r.rating)}
-                        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{r.rating}/5</span>
+                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{r.rating}/5</span>
                       </div>
                     ) : (
                       <span className="badge badge-warning mt-2">Pending Review</span>
@@ -198,36 +198,36 @@ export default function Performance() {
               </div>
 
               {(r.strengths || r.improvements || r.comments) && (
-                <div className="mt-4 pt-4 border-t dark:border-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="mt-4 pt-4 border-t dark:border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-4">
                   {r.strengths && (
-                    <div className="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg">
+                    <div className="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl">
                       <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-1">Strengths</p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{r.strengths}</p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300">{r.strengths}</p>
                     </div>
                   )}
                   {r.improvements && (
-                    <div className="p-3 bg-amber-50 dark:bg-amber-900/10 rounded-lg">
+                    <div className="p-3 bg-amber-50 dark:bg-amber-900/10 rounded-xl">
                       <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 mb-1">Areas for Improvement</p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{r.improvements}</p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300">{r.improvements}</p>
                     </div>
                   )}
                   {r.comments && (
-                    <div className="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-lg md:col-span-2">
+                    <div className="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl md:col-span-2">
                       <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 mb-1">Comments</p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{r.comments}</p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300">{r.comments}</p>
                     </div>
                   )}
                 </div>
               )}
 
               {r.selfRating && (
-                <div className="mt-3 p-3 bg-indigo-50 dark:bg-indigo-900/10 rounded-lg">
+                <div className="mt-3 p-3 bg-indigo-50 dark:bg-indigo-900/10 rounded-xl">
                   <div className="flex items-center gap-2">
                     <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">Self Rating:</p>
                     {renderStars(r.selfRating, 14)}
-                    <span className="text-xs text-gray-500">({r.selfRating}/5)</span>
+                    <span className="text-xs text-slate-500">({r.selfRating}/5)</span>
                   </div>
-                  {r.selfComments && <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{r.selfComments}</p>}
+                  {r.selfComments && <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{r.selfComments}</p>}
                 </div>
               )}
             </div>
@@ -255,29 +255,29 @@ export default function Performance() {
                       <Target size={18} className="text-white" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-gray-800 dark:text-white">{g.title}</h3>
+                      <h3 className="font-semibold text-slate-800 dark:text-white">{g.title}</h3>
                       <div className="flex items-center gap-2 mt-1">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${cat.bg}`}>{cat.label}</span>
                         {getGoalStatusBadge(g.status)}
                       </div>
                     </div>
                   </div>
-                  <button onClick={() => openEditGoal(g)} className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition">
+                  <button onClick={() => openEditGoal(g)} className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition">
                     <Edit3 size={14} />
                   </button>
                 </div>
-                {g.description && <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{g.description}</p>}
+                {g.description && <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">{g.description}</p>}
                 <div className="mb-2">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Progress</span>
-                    <span className="text-xs font-semibold text-gray-700 dark:text-gray-300">{g.progress || 0}%</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">Progress</span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{g.progress || 0}%</span>
                   </div>
-                  <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div className={`h-full bg-gradient-to-r ${getProgressColor(g.progress || 0)} rounded-full transition-all duration-500`} style={{ width: `${g.progress || 0}%` }} />
                   </div>
                 </div>
                 {g.targetDate && (
-                  <p className="text-xs text-gray-400 flex items-center gap-1 mt-2">
+                  <p className="text-xs text-slate-400 flex items-center gap-1 mt-2">
                     <Target size={12} /> Target: {g.targetDate}
                   </p>
                 )}
@@ -305,12 +305,12 @@ export default function Performance() {
                     {(r.employeeName || '?')[0]}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800 dark:text-white">{r.employeeName}</h3>
-                    <p className="text-xs text-gray-400">{r.department} - {r.period || r.reviewPeriod || 'Review'}</p>
+                    <h3 className="font-semibold text-slate-800 dark:text-white">{r.employeeName}</h3>
+                    <p className="text-xs text-slate-400">{r.department} - {r.period || r.reviewPeriod || 'Review'}</p>
                     {r.rating ? (
                       <div className="flex items-center gap-2 mt-2">
                         {renderStars(r.rating)}
-                        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{r.rating}/5</span>
+                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{r.rating}/5</span>
                       </div>
                     ) : (
                       <span className="badge badge-warning mt-2">Needs Review</span>
@@ -328,28 +328,28 @@ export default function Performance() {
               </div>
 
               {r.selfRating && (
-                <div className="mt-3 p-3 bg-indigo-50 dark:bg-indigo-900/10 rounded-lg">
+                <div className="mt-3 p-3 bg-indigo-50 dark:bg-indigo-900/10 rounded-xl">
                   <div className="flex items-center gap-2">
                     <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">Self Rating:</p>
                     {renderStars(r.selfRating, 14)}
-                    <span className="text-xs text-gray-500">({r.selfRating}/5)</span>
+                    <span className="text-xs text-slate-500">({r.selfRating}/5)</span>
                   </div>
-                  {r.selfComments && <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{r.selfComments}</p>}
+                  {r.selfComments && <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{r.selfComments}</p>}
                 </div>
               )}
 
               {(r.strengths || r.improvements) && (
                 <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
                   {r.strengths && (
-                    <div className="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg">
+                    <div className="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl">
                       <p className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-1">Strengths</p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{r.strengths}</p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300">{r.strengths}</p>
                     </div>
                   )}
                   {r.improvements && (
-                    <div className="p-3 bg-amber-50 dark:bg-amber-900/10 rounded-lg">
+                    <div className="p-3 bg-amber-50 dark:bg-amber-900/10 rounded-xl">
                       <p className="text-xs font-semibold text-amber-600 dark:text-amber-400 mb-1">Improvements</p>
-                      <p className="text-sm text-gray-700 dark:text-gray-300">{r.improvements}</p>
+                      <p className="text-sm text-slate-700 dark:text-slate-300">{r.improvements}</p>
                     </div>
                   )}
                 </div>
@@ -372,45 +372,45 @@ export default function Performance() {
           <div className="card p-0 overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Goal</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Category</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Progress</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Target</th>
-                  <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Status</th>
+                <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Employee</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Goal</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Category</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Progress</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Target</th>
+                  <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y dark:divide-gray-700">
+              <tbody className="divide-y dark:divide-slate-700">
                 {teamGoals.map(g => {
                   const cat = getGoalCategory(g.category);
                   return (
                     <tr key={g.id}>
                       <td className="px-4 py-3">
                         <p className="text-sm font-medium dark:text-white">{g.employeeName}</p>
-                        <p className="text-xs text-gray-400">{g.department}</p>
+                        <p className="text-xs text-slate-400">{g.department}</p>
                       </td>
                       <td className="px-4 py-3">
                         <p className="text-sm font-medium dark:text-white">{g.title}</p>
-                        {g.description && <p className="text-xs text-gray-400 truncate max-w-[200px]">{g.description}</p>}
+                        {g.description && <p className="text-xs text-slate-400 truncate max-w-[200px]">{g.description}</p>}
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${cat.bg}`}>{cat.label}</span>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2 min-w-[120px]">
-                          <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                             <div className={`h-full bg-gradient-to-r ${getProgressColor(g.progress || 0)} rounded-full`} style={{ width: `${g.progress || 0}%` }} />
                           </div>
-                          <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{g.progress || 0}%</span>
+                          <span className="text-xs font-medium text-slate-600 dark:text-slate-400">{g.progress || 0}%</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">{g.targetDate || '-'}</td>
+                      <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 hidden sm:table-cell">{g.targetDate || '-'}</td>
                       <td className="px-4 py-3">{getGoalStatusBadge(g.status)}</td>
                     </tr>
                   );
                 })}
-                {teamGoals.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-gray-400 text-sm">No team goals found</td></tr>}
+                {teamGoals.length === 0 && <tr><td colSpan={6} className="text-center py-8 text-slate-400 text-sm">No team goals found</td></tr>}
               </tbody>
             </table>
           </div>
@@ -421,23 +421,23 @@ export default function Performance() {
       {selfReviewModal && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setSelfReviewModal(null)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6">
             <h3 className="text-lg font-semibold dark:text-white mb-1">Self Review</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{selfReviewModal.period || selfReviewModal.reviewPeriod || 'Performance Review'}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{selfReviewModal.period || selfReviewModal.reviewPeriod || 'Performance Review'}</p>
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 block">Self Rating</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2 block">Self Rating</label>
                 <div className="flex items-center gap-3">
                   <input type="range" min="1" max="5" step="1" value={selfForm.selfRating} onChange={e => setSelfForm({ ...selfForm, selfRating: Number(e.target.value) })}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-amber-500" />
+                    className="flex-1 h-2 bg-slate-200 rounded-xl appearance-none cursor-pointer dark:bg-slate-700 accent-amber-500" />
                   <div className="flex items-center gap-1">
                     {renderStars(selfForm.selfRating, 18)}
-                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">{selfForm.selfRating}/5</span>
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">{selfForm.selfRating}/5</span>
                   </div>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Comments</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Comments</label>
                 <textarea value={selfForm.selfComments} onChange={e => setSelfForm({ ...selfForm, selfComments: e.target.value })} rows={4} className="input mt-1" placeholder="Share your thoughts on your performance..." />
               </div>
             </div>
@@ -453,50 +453,50 @@ export default function Performance() {
       {managerReviewModal && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setManagerReviewModal(null)} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <div>
                 <h2 className="text-lg font-semibold dark:text-white">Review: {managerReviewModal.employeeName}</h2>
-                <p className="text-sm text-gray-400">{managerReviewModal.period || managerReviewModal.reviewPeriod || 'Performance Review'}</p>
+                <p className="text-sm text-slate-400">{managerReviewModal.period || managerReviewModal.reviewPeriod || 'Performance Review'}</p>
               </div>
-              <button onClick={() => setManagerReviewModal(null)}><XIcon size={20} className="text-gray-400" /></button>
+              <button onClick={() => setManagerReviewModal(null)}><XIcon size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4 overflow-y-auto max-h-[calc(100vh-180px)]">
               {managerReviewModal.selfRating && (
-                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl">
                   <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-1">Employee Self Rating: {managerReviewModal.selfRating}/5</p>
-                  {managerReviewModal.selfComments && <p className="text-sm text-gray-600 dark:text-gray-400">{managerReviewModal.selfComments}</p>}
+                  {managerReviewModal.selfComments && <p className="text-sm text-slate-600 dark:text-slate-400">{managerReviewModal.selfComments}</p>}
                 </div>
               )}
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 block">Rating</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2 block">Rating</label>
                 <div className="flex items-center gap-3">
                   <input type="range" min="1" max="5" step="1" value={managerForm.rating} onChange={e => setManagerForm({ ...managerForm, rating: Number(e.target.value) })}
-                    className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-amber-500" />
+                    className="flex-1 h-2 bg-slate-200 rounded-xl appearance-none cursor-pointer dark:bg-slate-700 accent-amber-500" />
                   <div className="flex items-center gap-1">
                     {renderStars(managerForm.rating, 18)}
-                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">{managerForm.rating}/5</span>
+                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-300 ml-1">{managerForm.rating}/5</span>
                   </div>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Strengths</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Strengths</label>
                 <textarea value={managerForm.strengths} onChange={e => setManagerForm({ ...managerForm, strengths: e.target.value })} rows={3} className="input mt-1" placeholder="Key strengths observed..." />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Areas for Improvement</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Areas for Improvement</label>
                 <textarea value={managerForm.improvements} onChange={e => setManagerForm({ ...managerForm, improvements: e.target.value })} rows={3} className="input mt-1" placeholder="Areas to work on..." />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Goals for Next Period</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Goals for Next Period</label>
                 <textarea value={managerForm.goals} onChange={e => setManagerForm({ ...managerForm, goals: e.target.value })} rows={2} className="input mt-1" placeholder="Goals and expectations..." />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Additional Comments</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Additional Comments</label>
                 <textarea value={managerForm.comments} onChange={e => setManagerForm({ ...managerForm, comments: e.target.value })} rows={2} className="input mt-1" placeholder="Any other feedback..." />
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={() => setManagerReviewModal(null)} className="btn-secondary">Cancel</button>
               <button onClick={handleManagerReview} className="btn-primary">Submit Review</button>
             </div>
@@ -508,34 +508,34 @@ export default function Performance() {
       {showGoalModal && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => { setShowGoalModal(false); setEditingGoal(null); }} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md p-6">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md p-6">
             <h3 className="text-lg font-semibold dark:text-white mb-4">{editingGoal ? 'Edit Goal' : 'Add New Goal'}</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Title</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Title</label>
                 <input value={goalForm.title} onChange={e => setGoalForm({ ...goalForm, title: e.target.value })} className="input mt-1" placeholder="Goal title" />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Description</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Description</label>
                 <textarea value={goalForm.description} onChange={e => setGoalForm({ ...goalForm, description: e.target.value })} rows={2} className="input mt-1" placeholder="Describe your goal..." />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Category</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Category</label>
                   <select value={goalForm.category} onChange={e => setGoalForm({ ...goalForm, category: e.target.value })} className="input mt-1">
                     {GOAL_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Target Date</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Target Date</label>
                   <input type="date" value={goalForm.targetDate} onChange={e => setGoalForm({ ...goalForm, targetDate: e.target.value })} className="input mt-1" />
                 </div>
               </div>
               {editingGoal && (
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 block">Progress: {goalForm.progress}%</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-2 block">Progress: {goalForm.progress}%</label>
                   <input type="range" min="0" max="100" step="5" value={goalForm.progress} onChange={e => setGoalForm({ ...goalForm, progress: Number(e.target.value) })}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-indigo-500" />
+                    className="w-full h-2 bg-slate-200 rounded-xl appearance-none cursor-pointer dark:bg-slate-700 accent-indigo-500" />
                 </div>
               )}
             </div>

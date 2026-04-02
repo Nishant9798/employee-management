@@ -40,9 +40,9 @@ function SummaryCard({ title, value, subtitle, icon: Icon, trend, color = 'indig
     <div className="card animate-slide-up p-4 relative overflow-hidden" style={{ animationDelay: `${delay}ms` }}>
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{title}</p>
-          <p className="text-2xl font-bold text-gray-800 dark:text-white mt-1">{value}</p>
-          {subtitle && <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{subtitle}</p>}
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{title}</p>
+          <p className="text-2xl font-bold text-slate-800 dark:text-white mt-1">{value}</p>
+          {subtitle && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{subtitle}</p>}
           {trend !== undefined && trend !== null && (
             <div className={`flex items-center gap-1 mt-1 text-xs font-medium ${trend >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500 dark:text-red-400'}`}>
               {trend >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
@@ -293,17 +293,17 @@ export default function Reports() {
 
         {/* Tab Bar + Filters */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 no-print">
-          <div className="flex flex-wrap gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+          <div className="flex flex-wrap gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
             {TABS.map(tab => {
               const Icon = tab.icon;
               return (
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                     activeTab === tab.key
-                      ? 'bg-white dark:bg-gray-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                      ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                   }`}
                 >
                   <Icon size={16} />
@@ -314,19 +314,19 @@ export default function Reports() {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2">
-              <Filter size={14} className="text-gray-400" />
+            <div className="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2">
+              <Filter size={14} className="text-slate-400" />
               <select
                 value={selectedMonth}
                 onChange={e => setSelectedMonth(Number(e.target.value))}
-                className="bg-transparent text-sm text-gray-700 dark:text-gray-300 border-none outline-none cursor-pointer"
+                className="bg-transparent text-sm text-slate-700 dark:text-slate-300 border-none outline-none cursor-pointer"
               >
                 {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
               </select>
               <select
                 value={selectedYear}
                 onChange={e => setSelectedYear(Number(e.target.value))}
-                className="bg-transparent text-sm text-gray-700 dark:text-gray-300 border-none outline-none cursor-pointer"
+                className="bg-transparent text-sm text-slate-700 dark:text-slate-300 border-none outline-none cursor-pointer"
               >
                 {[...Array(5)].map((_, i) => {
                   const y = new Date().getFullYear() - 2 + i;
@@ -366,7 +366,7 @@ export default function Reports() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Department Distribution */}
                 <div className="card animate-slide-up">
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <PieChart size={18} className="text-indigo-600 dark:text-indigo-400" /> Department Distribution
                   </h3>
                   <div className="h-64">
@@ -383,7 +383,7 @@ export default function Reports() {
 
                 {/* Gender Distribution */}
                 <div className="card animate-slide-up" style={{ animationDelay: '50ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <Users size={18} className="text-indigo-600 dark:text-indigo-400" /> Gender Distribution
                   </h3>
                   <div className="h-64">
@@ -400,7 +400,7 @@ export default function Reports() {
 
                 {/* Role Distribution */}
                 <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <BarChart3 size={18} className="text-indigo-600 dark:text-indigo-400" /> Role Distribution
                   </h3>
                   <div className="h-64">
@@ -418,7 +418,7 @@ export default function Reports() {
 
                 {/* Attendance Trend */}
                 <div className="card animate-slide-up" style={{ animationDelay: '200ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <TrendingUp size={18} className="text-indigo-600 dark:text-indigo-400" /> Attendance Trend (This Month)
                   </h3>
                   <div className="h-64">
@@ -439,7 +439,7 @@ export default function Reports() {
 
                 {/* Leave Usage */}
                 <div className="card animate-slide-up" style={{ animationDelay: '300ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <BarChart3 size={18} className="text-indigo-600 dark:text-indigo-400" /> Leave Usage by Type
                   </h3>
                   <div className="h-64">
@@ -460,7 +460,7 @@ export default function Reports() {
                 {/* Expense by Category */}
                 {analytics.expenseByCategory?.length > 0 && (
                   <div className="card animate-slide-up" style={{ animationDelay: '350ms' }}>
-                    <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                       <BarChart3 size={18} className="text-indigo-600 dark:text-indigo-400" /> Expenses by Category
                     </h3>
                     <div className="h-64">
@@ -481,18 +481,18 @@ export default function Reports() {
               {/* Top Attendance */}
               {analytics.topAttendance?.length > 0 && (
                 <div className="card animate-slide-up" style={{ animationDelay: '400ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <Award size={18} className="text-amber-500" /> Top Attendance This Month
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
                     {analytics.topAttendance.map((emp, i) => (
-                      <div key={i} className={`flex items-center gap-3 p-3 rounded-xl ${i === 0 ? 'bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800/30' : 'bg-gray-50 dark:bg-gray-700/50'}`}>
-                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i === 0 ? 'bg-amber-500 text-white' : i === 1 ? 'bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300' : 'bg-orange-200 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'}`}>
+                      <div key={i} className={`flex items-center gap-3 p-3 rounded-xl ${i === 0 ? 'bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800/30' : 'bg-slate-50 dark:bg-slate-700/50'}`}>
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${i === 0 ? 'bg-amber-500 text-white' : i === 1 ? 'bg-slate-300 dark:bg-slate-600 text-slate-700 dark:text-slate-300' : 'bg-orange-200 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'}`}>
                           {i + 1}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-800 dark:text-white">{emp.name}</p>
-                          <p className="text-xs text-gray-400">{emp.presentDays} days &middot; {emp.department}</p>
+                          <p className="text-sm font-medium text-slate-800 dark:text-white">{emp.name}</p>
+                          <p className="text-xs text-slate-400">{emp.presentDays} days &middot; {emp.department}</p>
                         </div>
                       </div>
                     ))}
@@ -503,7 +503,7 @@ export default function Reports() {
               {/* Joining Trend */}
               {analytics.joiningTrend?.length > 0 && (
                 <div className="card animate-slide-up" style={{ animationDelay: '500ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <TrendingUp size={18} className="text-indigo-600 dark:text-indigo-400" /> Employee Joining Trend
                   </h3>
                   <div className="h-64">
@@ -533,32 +533,32 @@ export default function Reports() {
 
               {/* Department-wise headcount table */}
               <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
-                <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                   <Briefcase size={18} className="text-indigo-600 dark:text-indigo-400" /> Department-wise Headcount
                 </h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-200 dark:border-gray-700">
-                        <th className="text-left py-3 px-4 font-semibold text-gray-600 dark:text-gray-300">Department</th>
-                        <th className="text-right py-3 px-4 font-semibold text-gray-600 dark:text-gray-300">Headcount</th>
-                        <th className="text-right py-3 px-4 font-semibold text-gray-600 dark:text-gray-300">% of Total</th>
+                      <tr className="border-b border-slate-200 dark:border-slate-700">
+                        <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-300">Department</th>
+                        <th className="text-right py-3 px-4 font-semibold text-slate-600 dark:text-slate-300">Headcount</th>
+                        <th className="text-right py-3 px-4 font-semibold text-slate-600 dark:text-slate-300">% of Total</th>
                       </tr>
                     </thead>
                     <tbody>
                       {deptHeadcountData.sort((a, b) => b.count - a.count).map((d, i) => (
-                        <tr key={i} className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                          <td className="py-3 px-4 text-gray-800 dark:text-gray-200 font-medium">{d.department}</td>
-                          <td className="py-3 px-4 text-right text-gray-700 dark:text-gray-300">{d.count}</td>
-                          <td className="py-3 px-4 text-right text-gray-500 dark:text-gray-400">{totalEmployees > 0 ? ((d.count / totalEmployees) * 100).toFixed(1) : 0}%</td>
+                        <tr key={i} className="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                          <td className="py-3 px-4 text-slate-800 dark:text-slate-200 font-medium">{d.department}</td>
+                          <td className="py-3 px-4 text-right text-slate-700 dark:text-slate-300">{d.count}</td>
+                          <td className="py-3 px-4 text-right text-slate-500 dark:text-slate-400">{totalEmployees > 0 ? ((d.count / totalEmployees) * 100).toFixed(1) : 0}%</td>
                         </tr>
                       ))}
                     </tbody>
                     <tfoot>
-                      <tr className="bg-gray-50 dark:bg-gray-700/30 font-semibold">
-                        <td className="py-3 px-4 text-gray-800 dark:text-gray-200">Total</td>
-                        <td className="py-3 px-4 text-right text-gray-800 dark:text-gray-200">{totalEmployees}</td>
-                        <td className="py-3 px-4 text-right text-gray-800 dark:text-gray-200">100%</td>
+                      <tr className="bg-slate-50 dark:bg-slate-700/30 font-semibold">
+                        <td className="py-3 px-4 text-slate-800 dark:text-slate-200">Total</td>
+                        <td className="py-3 px-4 text-right text-slate-800 dark:text-slate-200">{totalEmployees}</td>
+                        <td className="py-3 px-4 text-right text-slate-800 dark:text-slate-200">100%</td>
                       </tr>
                     </tfoot>
                   </table>
@@ -568,7 +568,7 @@ export default function Reports() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Gender Ratio Pie Chart */}
                 <div className="card animate-slide-up" style={{ animationDelay: '150ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <PieChart size={18} className="text-indigo-600 dark:text-indigo-400" /> Gender Ratio
                   </h3>
                   <div className="h-64">
@@ -585,7 +585,7 @@ export default function Reports() {
 
                 {/* Role Distribution Bar Chart */}
                 <div className="card animate-slide-up" style={{ animationDelay: '200ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <BarChart3 size={18} className="text-indigo-600 dark:text-indigo-400" /> Role Distribution
                   </h3>
                   <div className="h-64">
@@ -604,7 +604,7 @@ export default function Reports() {
 
               {/* Joining Trend Line Chart */}
               <div className="card animate-slide-up" style={{ animationDelay: '250ms' }}>
-                <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                   <TrendingUp size={18} className="text-indigo-600 dark:text-indigo-400" /> Joining Trend (Last 12 Months)
                 </h3>
                 <div className="h-72">
@@ -640,10 +640,10 @@ export default function Reports() {
 
               {/* Attendance Rate Progress */}
               <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
-                <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4">Overall Attendance Rate</h3>
+                <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4">Overall Attendance Rate</h3>
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-6 overflow-hidden">
+                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-6 overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full transition-all duration-1000 flex items-center justify-end pr-2"
                         style={{ width: `${overallAttendanceRate}%` }}
@@ -661,37 +661,37 @@ export default function Reports() {
               {/* Monthly Attendance Summary Table */}
               {attendanceSummary.length > 0 && (
                 <div className="card animate-slide-up" style={{ animationDelay: '150ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <ClipboardList size={18} className="text-indigo-600 dark:text-indigo-400" /> Monthly Attendance Summary
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-200 dark:border-gray-700">
-                          <th className="text-left py-3 px-4 font-semibold text-gray-600 dark:text-gray-300">Employee</th>
+                        <tr className="border-b border-slate-200 dark:border-slate-700">
+                          <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-300">Employee</th>
                           <th className="text-center py-3 px-4 font-semibold text-emerald-600">Present</th>
                           <th className="text-center py-3 px-4 font-semibold text-red-500">Absent</th>
                           <th className="text-center py-3 px-4 font-semibold text-amber-500">Late</th>
                           <th className="text-center py-3 px-4 font-semibold text-blue-500">Half Day</th>
-                          <th className="text-center py-3 px-4 font-semibold text-gray-600 dark:text-gray-300">Working Days</th>
+                          <th className="text-center py-3 px-4 font-semibold text-slate-600 dark:text-slate-300">Working Days</th>
                         </tr>
                       </thead>
                       <tbody>
                         {attendanceSummary.slice(0, 20).map((a, i) => (
-                          <tr key={i} className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                            <td className="py-3 px-4 text-gray-800 dark:text-gray-200 font-medium">{a.employeeName || a.name || a.employee?.name || `Employee ${i + 1}`}</td>
-                            <td className="py-3 px-4 text-center"><span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-semibold text-xs">{a.present || a.presentDays || 0}</span></td>
-                            <td className="py-3 px-4 text-center"><span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 font-semibold text-xs">{a.absent || a.absentDays || 0}</span></td>
-                            <td className="py-3 px-4 text-center"><span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 font-semibold text-xs">{a.late || a.lateDays || 0}</span></td>
-                            <td className="py-3 px-4 text-center"><span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-500 font-semibold text-xs">{a.halfDay || a.halfDays || 0}</span></td>
-                            <td className="py-3 px-4 text-center text-gray-700 dark:text-gray-300 font-medium">{a.totalWorkingDays || a.total || 22}</td>
+                          <tr key={i} className="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                            <td className="py-3 px-4 text-slate-800 dark:text-slate-200 font-medium">{a.employeeName || a.name || a.employee?.name || `Employee ${i + 1}`}</td>
+                            <td className="py-3 px-4 text-center"><span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-semibold text-xs">{a.present || a.presentDays || 0}</span></td>
+                            <td className="py-3 px-4 text-center"><span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-500 font-semibold text-xs">{a.absent || a.absentDays || 0}</span></td>
+                            <td className="py-3 px-4 text-center"><span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 font-semibold text-xs">{a.late || a.lateDays || 0}</span></td>
+                            <td className="py-3 px-4 text-center"><span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-500 font-semibold text-xs">{a.halfDay || a.halfDays || 0}</span></td>
+                            <td className="py-3 px-4 text-center text-slate-700 dark:text-slate-300 font-medium">{a.totalWorkingDays || a.total || 22}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
                   {attendanceSummary.length > 20 && (
-                    <p className="text-xs text-gray-400 mt-3 text-center">Showing 20 of {attendanceSummary.length} employees</p>
+                    <p className="text-xs text-slate-400 mt-3 text-center">Showing 20 of {attendanceSummary.length} employees</p>
                   )}
                 </div>
               )}
@@ -700,7 +700,7 @@ export default function Reports() {
                 {/* Department-wise Attendance */}
                 {deptAttendanceData.length > 0 && (
                   <div className="card animate-slide-up" style={{ animationDelay: '200ms' }}>
-                    <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                       <BarChart3 size={18} className="text-indigo-600 dark:text-indigo-400" /> Department-wise Attendance
                     </h3>
                     <div className="h-64">
@@ -720,7 +720,7 @@ export default function Reports() {
                 {/* Daily Attendance Trend */}
                 {analytics.attendanceTrend?.length > 0 && (
                   <div className="card animate-slide-up" style={{ animationDelay: '250ms' }}>
-                    <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                       <TrendingUp size={18} className="text-indigo-600 dark:text-indigo-400" /> Daily Attendance Trend
                     </h3>
                     <div className="h-64">
@@ -749,7 +749,7 @@ export default function Reports() {
 
               {attendanceSummary.length === 0 && (
                 <div className="card">
-                  <div className="text-center py-12 text-gray-400 dark:text-gray-500">
+                  <div className="text-center py-12 text-slate-400 dark:text-slate-500">
                     <Clock size={48} className="mx-auto mb-3 opacity-50" />
                     <p className="font-medium">No attendance data available for {MONTHS[selectedMonth - 1]} {selectedYear}</p>
                     <p className="text-sm mt-1">Try selecting a different month or year</p>
@@ -773,7 +773,7 @@ export default function Reports() {
                 {/* Department-wise Salary Pie */}
                 {deptSalaryPieData.length > 0 && (
                   <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
-                    <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                       <PieChart size={18} className="text-indigo-600 dark:text-indigo-400" /> Department Salary Distribution
                     </h3>
                     <div className="h-72">
@@ -792,7 +792,7 @@ export default function Reports() {
                 {/* Average Salary by Department */}
                 {avgSalaryByDept.length > 0 && (
                   <div className="card animate-slide-up" style={{ animationDelay: '150ms' }}>
-                    <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                       <BarChart3 size={18} className="text-indigo-600 dark:text-indigo-400" /> Average Salary by Department
                     </h3>
                     <div className="h-72">
@@ -813,17 +813,17 @@ export default function Reports() {
               {/* Salary Component Breakdown */}
               {salaryBreakdown.length > 0 && (
                 <div className="card animate-slide-up" style={{ animationDelay: '200ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <DollarSign size={18} className="text-indigo-600 dark:text-indigo-400" /> Salary Component Breakdown
                   </h3>
                   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     {salaryBreakdown.map((item, i) => (
-                      <div key={i} className="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                      <div key={i} className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                          <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{item.name}</span>
+                          <span className="text-sm font-medium text-slate-600 dark:text-slate-300">{item.name}</span>
                         </div>
-                        <p className="text-xl font-bold text-gray-800 dark:text-white">₹{item.value.toLocaleString('en-IN')}</p>
+                        <p className="text-xl font-bold text-slate-800 dark:text-white">₹{item.value.toLocaleString('en-IN')}</p>
                       </div>
                     ))}
                   </div>
@@ -842,7 +842,7 @@ export default function Reports() {
 
               {payslips.length === 0 && (
                 <div className="card">
-                  <div className="text-center py-12 text-gray-400 dark:text-gray-500">
+                  <div className="text-center py-12 text-slate-400 dark:text-slate-500">
                     <DollarSign size={48} className="mx-auto mb-3 opacity-50" />
                     <p className="font-medium">No payroll data available</p>
                     <p className="text-sm mt-1">Payslip data will appear here once generated</p>
@@ -866,7 +866,7 @@ export default function Reports() {
                 {/* Leave Usage by Type */}
                 {leaveByTypeData.length > 0 && (
                   <div className="card animate-slide-up" style={{ animationDelay: '100ms' }}>
-                    <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                       <BarChart3 size={18} className="text-indigo-600 dark:text-indigo-400" /> Leave Usage by Type
                     </h3>
                     <div className="h-64">
@@ -886,23 +886,23 @@ export default function Reports() {
                 {/* Top Leave Takers */}
                 {topLeaveTakers.length > 0 && (
                   <div className="card animate-slide-up" style={{ animationDelay: '150ms' }}>
-                    <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                    <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                       <Users size={18} className="text-indigo-600 dark:text-indigo-400" /> Top Leave Takers
                     </h3>
                     <div className="space-y-2">
                       {topLeaveTakers.map((emp, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                             i === 0 ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
                             : i < 3 ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
-                            : 'bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300'
+                            : 'bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300'
                           }`}>
                             {i + 1}
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-800 dark:text-white">{emp.name}</p>
+                            <p className="text-sm font-medium text-slate-800 dark:text-white">{emp.name}</p>
                           </div>
-                          <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">{emp.days} days</div>
+                          <div className="text-sm font-semibold text-slate-700 dark:text-slate-300">{emp.days} days</div>
                         </div>
                       ))}
                     </div>
@@ -913,7 +913,7 @@ export default function Reports() {
               {/* Monthly Leave Trend */}
               {monthlyLeaveTrend.length > 0 && (
                 <div className="card animate-slide-up" style={{ animationDelay: '200ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <TrendingUp size={18} className="text-indigo-600 dark:text-indigo-400" /> Monthly Leave Trend
                   </h3>
                   <div className="h-72">
@@ -939,17 +939,17 @@ export default function Reports() {
               {/* Leave Balance Summary Table */}
               {leaveApplications.length > 0 && (
                 <div className="card animate-slide-up" style={{ animationDelay: '250ms' }}>
-                  <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                     <ClipboardList size={18} className="text-indigo-600 dark:text-indigo-400" /> Leave Applications Summary
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="border-b border-gray-200 dark:border-gray-700">
-                          <th className="text-left py-3 px-4 font-semibold text-gray-600 dark:text-gray-300">Employee</th>
-                          <th className="text-left py-3 px-4 font-semibold text-gray-600 dark:text-gray-300">Type</th>
-                          <th className="text-center py-3 px-4 font-semibold text-gray-600 dark:text-gray-300">Days</th>
-                          <th className="text-center py-3 px-4 font-semibold text-gray-600 dark:text-gray-300">Status</th>
+                        <tr className="border-b border-slate-200 dark:border-slate-700">
+                          <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-300">Employee</th>
+                          <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-300">Type</th>
+                          <th className="text-center py-3 px-4 font-semibold text-slate-600 dark:text-slate-300">Days</th>
+                          <th className="text-center py-3 px-4 font-semibold text-slate-600 dark:text-slate-300">Status</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -959,10 +959,10 @@ export default function Reports() {
                             : status === 'rejected' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
                             : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400';
                           return (
-                            <tr key={i} className="border-b border-gray-100 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                              <td className="py-3 px-4 text-gray-800 dark:text-gray-200 font-medium">{l.employeeName || l.employee?.name || 'Unknown'}</td>
-                              <td className="py-3 px-4 text-gray-600 dark:text-gray-400">{l.leaveType || l.type || 'N/A'}</td>
-                              <td className="py-3 px-4 text-center text-gray-700 dark:text-gray-300 font-medium">{l.days || l.numberOfDays || 1}</td>
+                            <tr key={i} className="border-b border-slate-100 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                              <td className="py-3 px-4 text-slate-800 dark:text-slate-200 font-medium">{l.employeeName || l.employee?.name || 'Unknown'}</td>
+                              <td className="py-3 px-4 text-slate-600 dark:text-slate-400">{l.leaveType || l.type || 'N/A'}</td>
+                              <td className="py-3 px-4 text-center text-slate-700 dark:text-slate-300 font-medium">{l.days || l.numberOfDays || 1}</td>
                               <td className="py-3 px-4 text-center">
                                 <span className={`inline-flex px-2.5 py-1 rounded-full text-xs font-medium ${statusColor}`}>
                                   {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -975,14 +975,14 @@ export default function Reports() {
                     </table>
                   </div>
                   {leaveApplications.length > 15 && (
-                    <p className="text-xs text-gray-400 mt-3 text-center">Showing 15 of {leaveApplications.length} applications</p>
+                    <p className="text-xs text-slate-400 mt-3 text-center">Showing 15 of {leaveApplications.length} applications</p>
                   )}
                 </div>
               )}
 
               {leaveApplications.length === 0 && (
                 <div className="card">
-                  <div className="text-center py-12 text-gray-400 dark:text-gray-500">
+                  <div className="text-center py-12 text-slate-400 dark:text-slate-500">
                     <ClipboardList size={48} className="mx-auto mb-3 opacity-50" />
                     <p className="font-medium">No leave data available</p>
                     <p className="text-sm mt-1">Leave applications will appear here once submitted</p>

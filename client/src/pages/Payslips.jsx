@@ -140,10 +140,10 @@ export default function Payslips() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit flex-wrap">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit flex-wrap">
         {tabs.map(t => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:text-gray-800'}`}>
+            className={`px-4 py-2 rounded-md text-sm font-medium transition ${tab === t.id ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-800'}`}>
             {t.label}
           </button>
         ))}
@@ -168,9 +168,9 @@ export default function Payslips() {
                     <Calendar size={20} className="text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800 dark:text-white">{monthNames[(p.month || 1) - 1]} {p.year}</h3>
+                    <h3 className="font-semibold text-slate-800 dark:text-white">{monthNames[(p.month || 1) - 1]} {p.year}</h3>
                     <div className="flex items-center gap-2">
-                      <p className="text-xs text-gray-400">Payslip #{p.id}</p>
+                      <p className="text-xs text-slate-400">Payslip #{p.id}</p>
                       {p.pdfPath && <span className="badge badge-success text-[10px]">PDF Available</span>}
                     </div>
                   </div>
@@ -179,25 +179,25 @@ export default function Payslips() {
                   {p.grossSalary && (
                     <>
                       <div className="text-right hidden sm:block">
-                        <p className="text-xs text-gray-400">Gross</p>
-                        <p className="text-sm font-medium text-gray-600 dark:text-gray-300">{formatCurrency(p.grossSalary)}</p>
+                        <p className="text-xs text-slate-400">Gross</p>
+                        <p className="text-sm font-medium text-slate-600 dark:text-slate-300">{formatCurrency(p.grossSalary)}</p>
                       </div>
                       <div className="text-right hidden sm:block">
-                        <p className="text-xs text-gray-400">Deductions</p>
+                        <p className="text-xs text-slate-400">Deductions</p>
                         <p className="text-sm font-medium text-red-500">{formatCurrency(p.totalDeductions)}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-gray-400">Net Salary</p>
+                        <p className="text-xs text-slate-400">Net Salary</p>
                         <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(p.netSalary)}</p>
                       </div>
                     </>
                   )}
                   {p.pdfPath && (
-                    <button onClick={() => handleDownloadPdf(p.id)} className="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition" title="Download PDF">
+                    <button onClick={() => handleDownloadPdf(p.id)} className="p-2 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-xl transition" title="Download PDF">
                       <Download size={18} />
                     </button>
                   )}
-                  <button onClick={() => setExpandedId(expandedId === p.id ? null : p.id)} className="p-1 text-gray-400 hover:text-gray-600 transition">
+                  <button onClick={() => setExpandedId(expandedId === p.id ? null : p.id)} className="p-1 text-slate-400 hover:text-slate-600 transition">
                     {expandedId === p.id ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </button>
                 </div>
@@ -205,17 +205,17 @@ export default function Payslips() {
 
               {/* Expanded Details */}
               {expandedId === p.id && p.grossSalary && (
-                <div className="mt-6 pt-6 border-t dark:border-gray-700">
+                <div className="mt-6 pt-6 border-t dark:border-slate-700">
                   <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
+                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-center">
                       <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Working Days</p>
                       <p className="text-xl font-bold text-blue-700 dark:text-blue-300">{p.workingDays || '-'}</p>
                     </div>
-                    <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-center">
+                    <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl text-center">
                       <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Present Days</p>
                       <p className="text-xl font-bold text-emerald-700 dark:text-emerald-300">{p.presentDays || '-'}</p>
                     </div>
-                    <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg text-center">
+                    <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl text-center">
                       <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">Leave Days</p>
                       <p className="text-xl font-bold text-amber-700 dark:text-amber-300">{p.leaveDays || 0}</p>
                     </div>
@@ -235,8 +235,8 @@ export default function Payslips() {
                           { label: 'Special Allowance', value: p.specialAllowance },
                         ].map(item => (
                           <div key={item.label} className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">{item.label}</span>
-                            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{formatCurrency(item.value)}</span>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">{item.label}</span>
+                            <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{formatCurrency(item.value)}</span>
                           </div>
                         ))}
                         <div className="pt-3 mt-3 border-t border-emerald-200 dark:border-emerald-700 flex justify-between items-center">
@@ -257,7 +257,7 @@ export default function Payslips() {
                           { label: 'Income Tax (IT)', value: p.incomeTax },
                         ].map(item => (
                           <div key={item.label} className="flex justify-between items-center">
-                            <span className="text-sm text-gray-600 dark:text-gray-400">{item.label}</span>
+                            <span className="text-sm text-slate-600 dark:text-slate-400">{item.label}</span>
                             <span className="text-sm font-medium text-red-600 dark:text-red-400">-{formatCurrency(item.value)}</span>
                           </div>
                         ))}
@@ -276,7 +276,7 @@ export default function Payslips() {
                     </div>
                     <div className="flex items-center gap-3">
                       {p.pdfPath && (
-                        <button onClick={() => handleDownloadPdf(p.id)} className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <button onClick={() => handleDownloadPdf(p.id)} className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-medium flex items-center gap-2 transition">
                           <Download size={16} /> Download PDF
                         </button>
                       )}
@@ -288,10 +288,10 @@ export default function Payslips() {
 
               {/* If only PDF uploaded (no generated data) */}
               {expandedId === p.id && !p.grossSalary && p.pdfPath && (
-                <div className="mt-6 pt-6 border-t dark:border-gray-700">
-                  <div className="p-6 bg-gray-50 dark:bg-gray-700/50 rounded-xl text-center">
+                <div className="mt-6 pt-6 border-t dark:border-slate-700">
+                  <div className="p-6 bg-slate-50 dark:bg-slate-700/50 rounded-xl text-center">
                     <FileText size={48} className="mx-auto text-indigo-400 mb-3" />
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Payslip PDF available for download</p>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">Payslip PDF available for download</p>
                     <button onClick={() => handleDownloadPdf(p.id)} className="btn-primary flex items-center gap-2 mx-auto">
                       <Download size={16} /> Download Payslip PDF
                     </button>
@@ -313,13 +313,13 @@ export default function Payslips() {
                 <Upload size={18} className="text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-800 dark:text-white">Upload Single Payslip</h3>
-                <p className="text-xs text-gray-400">Upload a payslip PDF for one employee</p>
+                <h3 className="font-semibold text-slate-800 dark:text-white">Upload Single Payslip</h3>
+                <p className="text-xs text-slate-400">Upload a payslip PDF for one employee</p>
               </div>
             </div>
             <div className="space-y-4">
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Employee</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Employee</label>
                 <select value={uploadEmpId} onChange={e => setUploadEmpId(e.target.value)} className="input mt-1">
                   <option value="">Select employee</option>
                   {employees.map(e => <option key={e.id} value={e.id}>{e.name} ({e.employeeId}) - {e.department}</option>)}
@@ -327,33 +327,33 @@ export default function Payslips() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Month</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Month</label>
                   <select value={uploadMonth} onChange={e => setUploadMonth(Number(e.target.value))} className="input mt-1">
                     {monthNames.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Year</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Year</label>
                   <select value={uploadYear} onChange={e => setUploadYear(Number(e.target.value))} className="input mt-1">
                     {[2024, 2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Payslip PDF</label>
-                <div className="mt-1 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-indigo-400 transition cursor-pointer"
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Payslip PDF</label>
+                <div className="mt-1 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 text-center hover:border-indigo-400 transition cursor-pointer"
                   onClick={() => document.getElementById('single-payslip-input').click()}>
                   <input id="single-payslip-input" type="file" accept=".pdf" className="hidden" onChange={e => setUploadFile(e.target.files[0])} />
                   {uploadFile ? (
                     <div className="flex items-center justify-center gap-2">
                       <FileText size={18} className="text-indigo-500" />
                       <span className="text-sm font-medium dark:text-white">{uploadFile.name}</span>
-                      <button onClick={e => { e.stopPropagation(); setUploadFile(null); }}><X size={14} className="text-gray-400" /></button>
+                      <button onClick={e => { e.stopPropagation(); setUploadFile(null); }}><X size={14} className="text-slate-400" /></button>
                     </div>
                   ) : (
                     <div>
-                      <FilePlus size={24} className="mx-auto text-gray-400 mb-1" />
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Click to select PDF file</p>
+                      <FilePlus size={24} className="mx-auto text-slate-400 mb-1" />
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Click to select PDF file</p>
                     </div>
                   )}
                 </div>
@@ -371,42 +371,42 @@ export default function Payslips() {
                 <FilePlus size={18} className="text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-800 dark:text-white">Bulk Upload Payslips</h3>
-                <p className="text-xs text-gray-400">Upload multiple payslip PDFs at once</p>
+                <h3 className="font-semibold text-slate-800 dark:text-white">Bulk Upload Payslips</h3>
+                <p className="text-xs text-slate-400">Upload multiple payslip PDFs at once</p>
               </div>
             </div>
             <div className="space-y-4">
-              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
                 <p className="text-xs text-amber-700 dark:text-amber-400">Name each file with the Employee ID (e.g., <span className="font-mono font-bold">EMP001_March_2026.pdf</span>). The system will auto-match files to employees.</p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Month</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Month</label>
                   <select value={uploadMonth} onChange={e => setUploadMonth(Number(e.target.value))} className="input mt-1">
                     {monthNames.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Year</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Year</label>
                   <select value={uploadYear} onChange={e => setUploadYear(Number(e.target.value))} className="input mt-1">
                     {[2024, 2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Payslip PDFs</label>
-                <div className="mt-1 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4 text-center hover:border-purple-400 transition cursor-pointer"
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Payslip PDFs</label>
+                <div className="mt-1 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 text-center hover:border-purple-400 transition cursor-pointer"
                   onClick={() => document.getElementById('bulk-payslip-input').click()}>
                   <input id="bulk-payslip-input" type="file" accept=".pdf" multiple className="hidden" onChange={e => setBulkFiles(e.target.files)} />
                   {bulkFiles && bulkFiles.length > 0 ? (
                     <div>
                       <p className="text-sm font-medium dark:text-white">{bulkFiles.length} file(s) selected</p>
-                      <p className="text-xs text-gray-400 mt-1">{Array.from(bulkFiles).map(f => f.name).join(', ')}</p>
+                      <p className="text-xs text-slate-400 mt-1">{Array.from(bulkFiles).map(f => f.name).join(', ')}</p>
                     </div>
                   ) : (
                     <div>
-                      <FilePlus size={24} className="mx-auto text-gray-400 mb-1" />
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Click to select multiple PDF files</p>
+                      <FilePlus size={24} className="mx-auto text-slate-400 mb-1" />
+                      <p className="text-xs text-slate-500 dark:text-slate-400">Click to select multiple PDF files</p>
                     </div>
                   )}
                 </div>
@@ -428,26 +428,26 @@ export default function Payslips() {
                 <Briefcase size={18} className="text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-800 dark:text-white">Generate Payslips</h3>
-                <p className="text-xs text-gray-400">Auto-generate payslips from salary structures</p>
+                <h3 className="font-semibold text-slate-800 dark:text-white">Generate Payslips</h3>
+                <p className="text-xs text-slate-400">Auto-generate payslips from salary structures</p>
               </div>
             </div>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Month</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Month</label>
                   <select value={genMonth} onChange={e => setGenMonth(Number(e.target.value))} className="input mt-1">
                     {monthNames.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Year</label>
+                  <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Year</label>
                   <select value={genYear} onChange={e => setGenYear(Number(e.target.value))} className="input mt-1">
                     {[2024, 2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
                 </div>
               </div>
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
                 <p className="text-xs text-blue-700 dark:text-blue-400">This will generate payslips for <span className="font-semibold">{monthNames[genMonth - 1]} {genYear}</span> for all active employees based on their salary structures and attendance records.</p>
               </div>
               <button onClick={handleGenerate} disabled={generating} className="btn-primary w-full flex items-center justify-center gap-2">
@@ -466,21 +466,21 @@ export default function Payslips() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-50 dark:bg-gray-700/50 border-b dark:border-gray-700 text-left">
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Employee</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Basic</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">HRA</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Transport</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden sm:table-cell">Medical</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">Special</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Gross</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">PF</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden md:table-cell">PT</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400 hidden lg:table-cell">IT</th>
-                    <th className="px-4 py-3 text-xs font-semibold text-gray-500 dark:text-gray-400">Net</th>
+                  <tr className="bg-slate-50 dark:bg-slate-700/50 border-b dark:border-slate-700 text-left">
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Employee</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Basic</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">HRA</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Transport</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden sm:table-cell">Medical</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden md:table-cell">Special</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Gross</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden md:table-cell">PF</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden md:table-cell">PT</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400 hidden lg:table-cell">IT</th>
+                    <th className="px-4 py-3 text-xs font-semibold text-slate-500 dark:text-slate-400">Net</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y dark:divide-gray-700">
+                <tbody className="divide-y dark:divide-slate-700">
                   {salaryStructures.map(s => {
                     const gross = (s.basicSalary || 0) + (s.hra || 0) + (s.transportAllowance || 0) + (s.medicalAllowance || 0) + (s.specialAllowance || 0);
                     const deductions = (s.providentFund || 0) + (s.professionalTax || 0) + (s.incomeTax || 0);
@@ -488,14 +488,14 @@ export default function Payslips() {
                       <tr key={s.id}>
                         <td className="px-4 py-3">
                           <p className="text-sm font-medium dark:text-white">{s.name}</p>
-                          <p className="text-xs text-gray-400">{s.department}</p>
+                          <p className="text-xs text-slate-400">{s.department}</p>
                         </td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatCurrency(s.basicSalary)}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">{formatCurrency(s.hra)}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">{formatCurrency(s.transportAllowance)}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden sm:table-cell">{formatCurrency(s.medicalAllowance)}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 hidden md:table-cell">{formatCurrency(s.specialAllowance)}</td>
-                        <td className="px-4 py-3 text-sm font-semibold text-gray-800 dark:text-gray-200">{formatCurrency(gross)}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{formatCurrency(s.basicSalary)}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400">{formatCurrency(s.hra)}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 hidden sm:table-cell">{formatCurrency(s.transportAllowance)}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 hidden sm:table-cell">{formatCurrency(s.medicalAllowance)}</td>
+                        <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">{formatCurrency(s.specialAllowance)}</td>
+                        <td className="px-4 py-3 text-sm font-semibold text-slate-800 dark:text-slate-200">{formatCurrency(gross)}</td>
                         <td className="px-4 py-3 text-sm text-red-500 hidden md:table-cell">{formatCurrency(s.providentFund)}</td>
                         <td className="px-4 py-3 text-sm text-red-500 hidden md:table-cell">{formatCurrency(s.professionalTax)}</td>
                         <td className="px-4 py-3 text-sm text-red-500 hidden lg:table-cell">{formatCurrency(s.incomeTax)}</td>
@@ -503,7 +503,7 @@ export default function Payslips() {
                       </tr>
                     );
                   })}
-                  {salaryStructures.length === 0 && <tr><td colSpan={11} className="text-center py-8 text-gray-400 text-sm">No salary structures found</td></tr>}
+                  {salaryStructures.length === 0 && <tr><td colSpan={11} className="text-center py-8 text-slate-400 text-sm">No salary structures found</td></tr>}
                 </tbody>
               </table>
             </div>

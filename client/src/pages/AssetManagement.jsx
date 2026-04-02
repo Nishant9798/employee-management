@@ -17,7 +17,7 @@ const categoryColors = {
   Furniture: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
   Vehicle: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400',
   Accessory: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400',
-  Other: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300',
+  Other: 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300',
 };
 
 const statusColors = {
@@ -264,16 +264,16 @@ export default function AssetManagement() {
                     {categoryIcon(asset.category)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-semibold text-gray-800 dark:text-white truncate">{asset.name}</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">ID: {asset.assetId}</p>
+                    <h3 className="text-sm font-semibold text-slate-800 dark:text-white truncate">{asset.name}</h3>
+                    <p className="text-xs text-slate-400 mt-0.5">ID: {asset.assetId}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className={`badge ${categoryColors[asset.category] || categoryColors.Other}`}>{asset.category}</span>
-                      <span className={`badge ${statusColors[asset.condition] || 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'}`}>{asset.condition}</span>
+                      <span className={`badge ${statusColors[asset.condition] || 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300'}`}>{asset.condition}</span>
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center justify-between mt-4 pt-3 border-t dark:border-gray-700">
-                  <div className="text-xs text-gray-400">
+                <div className="flex items-center justify-between mt-4 pt-3 border-t dark:border-slate-700">
+                  <div className="text-xs text-slate-400">
                     Assigned: {asset.assignedDate ? new Date(asset.assignedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
                   </div>
                 </div>
@@ -295,7 +295,7 @@ export default function AssetManagement() {
             <h1>Asset Management</h1>
             <p>Track and manage company assets</p>
           </div>
-          <button onClick={openCreateForm} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+          <button onClick={openCreateForm} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
             <Plus size={16} /> Add Asset
           </button>
         </div>
@@ -309,56 +309,56 @@ export default function AssetManagement() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="card animate-slide-up" style={{ animationDelay: '0ms' }}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+              <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                 <Package size={20} />
               </div>
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Assets</p>
-                <p className="text-xl font-bold text-gray-800 dark:text-white">{stats.total || 0}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Total Assets</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-white">{stats.total || 0}</p>
               </div>
             </div>
           </div>
           <div className="card animate-slide-up" style={{ animationDelay: '60ms' }}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
                 <UserPlus size={20} />
               </div>
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Assigned</p>
-                <p className="text-xl font-bold text-gray-800 dark:text-white">{stats.assigned || 0}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Assigned</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-white">{stats.assigned || 0}</p>
               </div>
             </div>
           </div>
           <div className="card animate-slide-up" style={{ animationDelay: '120ms' }}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
+              <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
                 <CheckCircle size={20} />
               </div>
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Available</p>
-                <p className="text-xl font-bold text-gray-800 dark:text-white">{stats.available || 0}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Available</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-white">{stats.available || 0}</p>
               </div>
             </div>
           </div>
           <div className="card animate-slide-up" style={{ animationDelay: '180ms' }}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
+              <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
                 <AlertTriangle size={20} />
               </div>
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Maintenance</p>
-                <p className="text-xl font-bold text-gray-800 dark:text-white">{stats.maintenance || 0}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Maintenance</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-white">{stats.maintenance || 0}</p>
               </div>
             </div>
           </div>
           <div className="card animate-slide-up" style={{ animationDelay: '240ms' }}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
                 <DollarSign size={20} />
               </div>
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Value</p>
-                <p className="text-lg font-bold text-gray-800 dark:text-white">{formatCurrency(stats.totalValue)}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Total Value</p>
+                <p className="text-lg font-bold text-slate-800 dark:text-white">{formatCurrency(stats.totalValue)}</p>
               </div>
             </div>
           </div>
@@ -368,7 +368,7 @@ export default function AssetManagement() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-2.5 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-2.5 text-slate-400" />
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search assets by name, ID, serial number..." className="input pl-9" />
         </div>
         <select value={catFilter} onChange={e => setCatFilter(e.target.value)} className="input w-auto">
@@ -391,43 +391,43 @@ export default function AssetManagement() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Asset</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Serial Number</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Assigned To</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Condition</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Cost</th>
-                  <th className="text-right px-4 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                <tr className="border-b dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Asset</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Category</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Serial Number</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Assigned To</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Condition</th>
+                  <th className="text-left px-4 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Cost</th>
+                  <th className="text-right px-4 py-3 text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y dark:divide-gray-700">
+              <tbody className="divide-y dark:divide-slate-700">
                 {filteredAssets.map((asset, i) => (
-                  <tr key={asset._id || asset.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition animate-slide-up" style={{ animationDelay: `${i * 40}ms` }}>
+                  <tr key={asset._id || asset.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition animate-slide-up" style={{ animationDelay: `${i * 40}ms` }}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
                           {categoryIcon(asset.category)}
                         </div>
                         <div>
-                          <p className="font-medium text-gray-800 dark:text-white">{asset.name}</p>
-                          <p className="text-xs text-gray-400">{asset.assetId}</p>
+                          <p className="font-medium text-slate-800 dark:text-white">{asset.name}</p>
+                          <p className="text-xs text-slate-400">{asset.assetId}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`badge ${categoryColors[asset.category] || categoryColors.Other}`}>{asset.category}</span>
                     </td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{asset.serialNumber || '-'}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{asset.serialNumber || '-'}</td>
                     <td className="px-4 py-3">
                       <span className={`badge ${statusColors[asset.status] || statusColors.Available}`}>{asset.status || 'Available'}</span>
                     </td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">
                       {asset.assignedTo?.name || asset.assignedToName || '-'}
                     </td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{asset.condition || '-'}</td>
-                    <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{formatCurrency(asset.purchaseCost)}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{asset.condition || '-'}</td>
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{formatCurrency(asset.purchaseCost)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         {(!asset.status || asset.status === 'Available') && (
@@ -460,14 +460,14 @@ export default function AssetManagement() {
       {showForm && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={closeForm} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">{editingAsset ? 'Edit Asset' : 'Add New Asset'}</h2>
-              <button onClick={closeForm}><X size={20} className="text-gray-400" /></button>
+              <button onClick={closeForm}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 140px)' }}>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Asset ID <span className="text-red-500">*</span></label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Asset ID <span className="text-red-500">*</span></label>
                 <input
                   value={form.assetId}
                   onChange={e => setForm({ ...form, assetId: e.target.value })}
@@ -476,7 +476,7 @@ export default function AssetManagement() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Name <span className="text-red-500">*</span></label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Name <span className="text-red-500">*</span></label>
                 <input
                   value={form.name}
                   onChange={e => setForm({ ...form, name: e.target.value })}
@@ -485,7 +485,7 @@ export default function AssetManagement() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Category <span className="text-red-500">*</span></label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Category <span className="text-red-500">*</span></label>
                 <select
                   value={form.category}
                   onChange={e => setForm({ ...form, category: e.target.value })}
@@ -496,7 +496,7 @@ export default function AssetManagement() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Serial Number</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Serial Number</label>
                 <input
                   value={form.serialNumber}
                   onChange={e => setForm({ ...form, serialNumber: e.target.value })}
@@ -505,7 +505,7 @@ export default function AssetManagement() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Purchase Date</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Purchase Date</label>
                 <input
                   type="date"
                   value={form.purchaseDate}
@@ -514,7 +514,7 @@ export default function AssetManagement() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Purchase Cost</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Purchase Cost</label>
                 <input
                   type="number"
                   value={form.purchaseCost}
@@ -524,7 +524,7 @@ export default function AssetManagement() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Condition</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Condition</label>
                 <select
                   value={form.condition}
                   onChange={e => setForm({ ...form, condition: e.target.value })}
@@ -534,7 +534,7 @@ export default function AssetManagement() {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Notes</label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Notes</label>
                 <textarea
                   value={form.notes}
                   onChange={e => setForm({ ...form, notes: e.target.value })}
@@ -544,7 +544,7 @@ export default function AssetManagement() {
                 />
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={closeForm} className="btn-secondary">Cancel</button>
               <button onClick={handleSubmit} className="btn-primary" disabled={submitting}>
                 {submitting ? 'Saving...' : editingAsset ? 'Update Asset' : 'Create Asset'}
@@ -558,25 +558,25 @@ export default function AssetManagement() {
       {showAssign && selectedAsset && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={closeAssign} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">Assign Asset</h2>
-              <button onClick={closeAssign}><X size={20} className="text-gray-400" /></button>
+              <button onClick={closeAssign}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
-              <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                     {categoryIcon(selectedAsset.category)}
                   </div>
                   <div>
-                    <p className="font-medium text-gray-800 dark:text-white">{selectedAsset.name}</p>
-                    <p className="text-xs text-gray-400">{selectedAsset.assetId} | {selectedAsset.category}</p>
+                    <p className="font-medium text-slate-800 dark:text-white">{selectedAsset.name}</p>
+                    <p className="text-xs text-slate-400">{selectedAsset.assetId} | {selectedAsset.category}</p>
                   </div>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Assign to Employee <span className="text-red-500">*</span></label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Assign to Employee <span className="text-red-500">*</span></label>
                 <select
                   value={assignEmployeeId}
                   onChange={e => setAssignEmployeeId(e.target.value)}
@@ -591,7 +591,7 @@ export default function AssetManagement() {
                 </select>
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={closeAssign} className="btn-secondary">Cancel</button>
               <button onClick={handleAssign} className="btn-primary" disabled={!assignEmployeeId || submitting}>
                 {submitting ? 'Assigning...' : 'Assign Asset'}
@@ -605,25 +605,25 @@ export default function AssetManagement() {
       {showReturn && selectedAsset && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={closeReturn} />
-          <div className="slide-panel slide-panel-active bg-white dark:bg-gray-800 shadow-2xl z-50">
-            <div className="flex justify-between items-center p-5 border-b dark:border-gray-700">
+          <div className="slide-panel slide-panel-active bg-white dark:bg-slate-800 shadow-2xl z-50">
+            <div className="flex justify-between items-center p-5 border-b dark:border-slate-700">
               <h2 className="text-lg font-semibold dark:text-white">Return Asset</h2>
-              <button onClick={closeReturn}><X size={20} className="text-gray-400" /></button>
+              <button onClick={closeReturn}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-5 space-y-4">
-              <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+              <div className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
                     {categoryIcon(selectedAsset.category)}
                   </div>
                   <div>
-                    <p className="font-medium text-gray-800 dark:text-white">{selectedAsset.name}</p>
-                    <p className="text-xs text-gray-400">{selectedAsset.assetId} | Currently assigned to {selectedAsset.assignedTo?.name || selectedAsset.assignedToName || 'employee'}</p>
+                    <p className="font-medium text-slate-800 dark:text-white">{selectedAsset.name}</p>
+                    <p className="text-xs text-slate-400">{selectedAsset.assetId} | Currently assigned to {selectedAsset.assignedTo?.name || selectedAsset.assignedToName || 'employee'}</p>
                   </div>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Condition on Return <span className="text-red-500">*</span></label>
+                <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Condition on Return <span className="text-red-500">*</span></label>
                 <select
                   value={returnCondition}
                   onChange={e => setReturnCondition(e.target.value)}
@@ -632,14 +632,14 @@ export default function AssetManagement() {
                   {CONDITIONS.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
-              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl">
                 <div className="flex items-start gap-2">
                   <AlertTriangle size={16} className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
                   <p className="text-sm text-amber-700 dark:text-amber-300">This will unassign the asset from the current employee and mark it as available.</p>
                 </div>
               </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t dark:border-gray-700">
+            <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
               <button onClick={closeReturn} className="btn-secondary">Cancel</button>
               <button onClick={handleReturn} className="btn-primary" disabled={submitting}>
                 {submitting ? 'Returning...' : 'Return Asset'}

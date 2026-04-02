@@ -124,7 +124,7 @@ export default function Messages() {
             <h1>Messages</h1>
             <p>Chat with your team members</p>
           </div>
-          <button onClick={() => setShowNewChat(true)} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-lg text-sm font-medium hover:bg-white/90 transition shadow-lg">
+          <button onClick={() => setShowNewChat(true)} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
             <Plus size={16} /> New Conversation
           </button>
         </div>
@@ -138,15 +138,15 @@ export default function Messages() {
         <div className="flex h-full">
 
           {/* Left Panel: Conversation List */}
-          <div className={`w-full sm:w-80 border-r dark:border-gray-700 flex flex-col shrink-0 ${mobileShowChat ? 'hidden sm:flex' : 'flex'}`}>
+          <div className={`w-full sm:w-80 border-r dark:border-slate-700 flex flex-col shrink-0 ${mobileShowChat ? 'hidden sm:flex' : 'flex'}`}>
             {/* Channel/DM Tabs */}
-            <div className="flex gap-1 bg-gray-50 dark:bg-gray-700/50 p-1.5 m-3 rounded-lg">
+            <div className="flex gap-1 bg-slate-50 dark:bg-slate-700/50 p-1.5 m-3 rounded-xl">
               <button onClick={() => setTab('direct')}
-                className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition ${tab === 'direct' ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}>
+                className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition ${tab === 'direct' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400'}`}>
                 <Users size={12} className="inline mr-1" /> Direct
               </button>
               <button onClick={() => setTab('channels')}
-                className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition ${tab === 'channels' ? 'bg-white dark:bg-gray-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}>
+                className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition ${tab === 'channels' ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400'}`}>
                 <Hash size={12} className="inline mr-1" /> Channels
               </button>
             </div>
@@ -154,7 +154,7 @@ export default function Messages() {
             {/* Search */}
             <div className="px-3 pb-2">
               <div className="relative">
-                <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
+                <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
                 <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." className="input pl-8 py-2 text-xs" />
               </div>
             </div>
@@ -164,16 +164,16 @@ export default function Messages() {
               {tab === 'direct' && filteredConversations.map(conv => (
                 <div key={conv.id || conv.recipientId}
                   onClick={() => openConversation(conv)}
-                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition hover:bg-gray-50 dark:hover:bg-gray-700/50 ${activeConversation?.id === conv.id ? 'bg-indigo-50 dark:bg-indigo-900/20 border-r-2 border-indigo-600' : ''}`}>
+                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition hover:bg-slate-50 dark:hover:bg-slate-700/50 ${activeConversation?.id === conv.id ? 'bg-indigo-50 dark:bg-indigo-900/20 border-r-2 border-indigo-600' : ''}`}>
                   <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-xs shrink-0">
                     {conv.name?.split(' ').map(n => n[0]).join('').slice(0, 2)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-center">
-                      <p className="text-sm font-medium text-gray-800 dark:text-white truncate">{conv.name}</p>
-                      <span className="text-[10px] text-gray-400 shrink-0">{formatTime(conv.lastMessageAt)}</span>
+                      <p className="text-sm font-medium text-slate-800 dark:text-white truncate">{conv.name}</p>
+                      <span className="text-[10px] text-slate-400 shrink-0">{formatTime(conv.lastMessageAt)}</span>
                     </div>
-                    <p className="text-xs text-gray-400 truncate">{conv.lastMessage || 'Start a conversation'}</p>
+                    <p className="text-xs text-slate-400 truncate">{conv.lastMessage || 'Start a conversation'}</p>
                   </div>
                   {conv.unreadCount > 0 && (
                     <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
@@ -186,23 +186,23 @@ export default function Messages() {
               {tab === 'channels' && channels.map(channel => (
                 <div key={channel.channel}
                   onClick={() => openChannel({ id: channel.channel, name: channel.channel, type: 'channel', channel: channel.channel })}
-                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition hover:bg-gray-50 dark:hover:bg-gray-700/50 ${activeConversation?.id === channel.channel && activeConversation?.type === 'channel' ? 'bg-indigo-50 dark:bg-indigo-900/20 border-r-2 border-indigo-600' : ''}`}>
+                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition hover:bg-slate-50 dark:hover:bg-slate-700/50 ${activeConversation?.id === channel.channel && activeConversation?.type === 'channel' ? 'bg-indigo-50 dark:bg-indigo-900/20 border-r-2 border-indigo-600' : ''}`}>
                   <div className="w-9 h-9 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white shrink-0">
                     <Hash size={16} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 dark:text-white truncate">#{channel.channel}</p>
-                    <p className="text-xs text-gray-400 truncate">{channel.messageCount || 0} messages</p>
+                    <p className="text-sm font-medium text-slate-800 dark:text-white truncate">#{channel.channel}</p>
+                    <p className="text-xs text-slate-400 truncate">{channel.messageCount || 0} messages</p>
                   </div>
-                  <ChevronRight size={14} className="text-gray-400 shrink-0" />
+                  <ChevronRight size={14} className="text-slate-400 shrink-0" />
                 </div>
               ))}
 
               {tab === 'direct' && filteredConversations.length === 0 && (
-                <div className="text-center py-8 text-gray-400 text-sm">No conversations yet</div>
+                <div className="text-center py-8 text-slate-400 text-sm">No conversations yet</div>
               )}
               {tab === 'channels' && channels.length === 0 && (
-                <div className="text-center py-8 text-gray-400 text-sm">No channels available</div>
+                <div className="text-center py-8 text-slate-400 text-sm">No channels available</div>
               )}
             </div>
           </div>
@@ -212,23 +212,23 @@ export default function Messages() {
             {activeConversation ? (
               <>
                 {/* Chat Header */}
-                <div className="flex items-center gap-3 px-4 py-3 border-b dark:border-gray-700 bg-white dark:bg-gray-800">
-                  <button onClick={() => setMobileShowChat(false)} className="sm:hidden p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
-                    <ArrowLeft size={18} className="text-gray-600 dark:text-gray-400" />
+                <div className="flex items-center gap-3 px-4 py-3 border-b dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <button onClick={() => setMobileShowChat(false)} className="sm:hidden p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <ArrowLeft size={18} className="text-slate-600 dark:text-slate-400" />
                   </button>
                   <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold text-xs shrink-0 ${activeConversation.type === 'channel' ? 'bg-gradient-to-br from-emerald-500 to-teal-500' : 'bg-gradient-to-br from-indigo-500 to-purple-500'}`}>
                     {activeConversation.type === 'channel' ? <Hash size={16} /> : activeConversation.name?.split(' ').map(n => n[0]).join('').slice(0, 2)}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-white">{activeConversation.name}</p>
-                    <p className="text-xs text-gray-400">{activeConversation.type === 'channel' ? 'Channel' : 'Direct message'}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-white">{activeConversation.name}</p>
+                    <p className="text-xs text-slate-400">{activeConversation.type === 'channel' ? 'Channel' : 'Direct message'}</p>
                   </div>
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900/50">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
                   {messages.length === 0 && (
-                    <div className="text-center py-12 text-gray-400 text-sm">
+                    <div className="text-center py-12 text-slate-400 text-sm">
                       <MessageCircle size={40} className="mx-auto mb-2 opacity-50" />
                       <p>No messages yet. Start the conversation!</p>
                     </div>
@@ -240,15 +240,15 @@ export default function Messages() {
                       <div key={msg.id || i} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
                         <div className={`max-w-[75%] ${isMe ? 'order-2' : ''}`}>
                           {showSender && (
-                            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 ml-1">{msg.senderName}</p>
+                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1 ml-1">{msg.senderName}</p>
                           )}
                           <div className={`px-4 py-2.5 rounded-2xl text-sm ${isMe
                             ? 'bg-indigo-600 text-white rounded-br-md'
-                            : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-md shadow-sm border dark:border-gray-700'
+                            : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-bl-md shadow-sm border dark:border-slate-700'
                           }`}>
                             <p className="whitespace-pre-wrap break-words">{msg.content}</p>
                           </div>
-                          <p className={`text-[10px] text-gray-400 mt-1 ${isMe ? 'text-right mr-1' : 'ml-1'}`}>
+                          <p className={`text-[10px] text-slate-400 mt-1 ${isMe ? 'text-right mr-1' : 'ml-1'}`}>
                             {formatTime(msg.createdAt)}
                           </p>
                         </div>
@@ -259,7 +259,7 @@ export default function Messages() {
                 </div>
 
                 {/* Message Input */}
-                <div className="p-3 border-t dark:border-gray-700 bg-white dark:bg-gray-800">
+                <div className="p-3 border-t dark:border-slate-700 bg-white dark:bg-slate-800">
                   <div className="flex items-end gap-2">
                     <textarea
                       value={messageInput}
@@ -271,18 +271,18 @@ export default function Messages() {
                       style={{ minHeight: '40px', maxHeight: '120px' }}
                     />
                     <button onClick={handleSend} disabled={!messageInput.trim()}
-                      className="p-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 shrink-0">
+                      className="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition disabled:opacity-50 shrink-0">
                       <Send size={18} />
                     </button>
                   </div>
                 </div>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900/50">
+              <div className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-900/50">
                 <div className="text-center">
-                  <MessageCircle size={64} className="mx-auto text-gray-300 dark:text-gray-600 mb-3" />
-                  <p className="text-gray-500 dark:text-gray-400 font-medium">Select a conversation</p>
-                  <p className="text-sm text-gray-400 mt-1">Choose from your existing conversations or start a new one</p>
+                  <MessageCircle size={64} className="mx-auto text-slate-300 dark:text-slate-600 mb-3" />
+                  <p className="text-slate-500 dark:text-slate-400 font-medium">Select a conversation</p>
+                  <p className="text-sm text-slate-400 mt-1">Choose from your existing conversations or start a new one</p>
                 </div>
               </div>
             )}
@@ -294,31 +294,31 @@ export default function Messages() {
       {showNewChat && (
         <>
           <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setShowNewChat(false)} />
-          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md">
-            <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md">
+            <div className="flex justify-between items-center p-4 border-b dark:border-slate-700">
               <h3 className="text-lg font-semibold dark:text-white">New Conversation</h3>
-              <button onClick={() => setShowNewChat(false)}><X size={20} className="text-gray-400" /></button>
+              <button onClick={() => setShowNewChat(false)}><X size={20} className="text-slate-400" /></button>
             </div>
             <div className="p-4">
               <div className="relative mb-3">
-                <Search size={14} className="absolute left-3 top-2.5 text-gray-400" />
+                <Search size={14} className="absolute left-3 top-2.5 text-slate-400" />
                 <input value={contactSearch} onChange={e => setContactSearch(e.target.value)} placeholder="Search contacts..." className="input pl-8" autoFocus />
               </div>
               <div className="max-h-80 overflow-y-auto space-y-1">
                 {filteredContacts.map(contact => (
                   <div key={contact.id} onClick={() => startConversation(contact)}
-                    className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                    className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
                     <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold text-xs shrink-0">
                       {contact.name?.split(' ').map(n => n[0]).join('').slice(0, 2)}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-white">{contact.name}</p>
-                      <p className="text-xs text-gray-400">{contact.department} - {contact.designation}</p>
+                      <p className="text-sm font-medium text-slate-800 dark:text-white">{contact.name}</p>
+                      <p className="text-xs text-slate-400">{contact.department} - {contact.designation}</p>
                     </div>
                   </div>
                 ))}
                 {filteredContacts.length === 0 && (
-                  <p className="text-center py-4 text-gray-400 text-sm">No contacts found</p>
+                  <p className="text-center py-4 text-slate-400 text-sm">No contacts found</p>
                 )}
               </div>
             </div>

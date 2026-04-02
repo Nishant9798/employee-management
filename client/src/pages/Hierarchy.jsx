@@ -68,16 +68,16 @@ function TreeNode({ node, level }) {
   return (
     <div style={{ marginLeft: level * 24 }} className="animate-fade-in">
       <div
-        className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50 ${hasChildren ? '' : ''}`}
+        className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-slate-700/50 ${hasChildren ? '' : ''}`}
         onClick={() => hasChildren && setOpen(!open)}
       >
         <div className="w-5 flex items-center justify-center shrink-0">
           {hasChildren ? (
             <div className={`transition-transform duration-200 ${open ? 'rotate-0' : '-rotate-90'}`}>
-              <ChevronDown size={16} className="text-gray-400" />
+              <ChevronDown size={16} className="text-slate-400" />
             </div>
           ) : (
-            <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600" />
+            <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600" />
           )}
         </div>
 
@@ -87,16 +87,16 @@ function TreeNode({ node, level }) {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-gray-800 dark:text-white text-sm">{node.name}</span>
+            <span className="font-semibold text-slate-800 dark:text-white text-sm">{node.name}</span>
             <span className={`badge ${roleColor}`}>
               {node.role}
             </span>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400">{node.designation} &middot; {node.department}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">{node.designation} &middot; {node.department}</p>
         </div>
 
         {hasChildren && (
-          <div className="flex items-center gap-1 text-xs text-gray-400 shrink-0 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+          <div className="flex items-center gap-1 text-xs text-slate-400 shrink-0 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full">
             <Users size={12} />
             {node.children.length}
           </div>

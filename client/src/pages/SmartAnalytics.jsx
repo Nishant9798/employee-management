@@ -52,13 +52,13 @@ function SeverityBadge({ level }) {
 function StatCard({ icon: Icon, label, value, suffix, trend, trendLabel, gradient, delay = 0 }) {
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/10 dark:border-gray-700/50 transition-all duration-500 hover:scale-[1.03] hover:shadow-xl ${gradient}`}
+      className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/10 dark:border-slate-700/50 transition-all duration-500 hover:scale-[1.03] hover:shadow-xl ${gradient}`}
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</p>
-          <p className="mt-1 text-3xl font-bold text-gray-900 dark:text-white">
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
+          <p className="mt-1 text-3xl font-bold text-slate-900 dark:text-white">
             <AnimatedNumber value={value} />
             {suffix && <span className="text-lg ml-1">{suffix}</span>}
           </p>
@@ -69,7 +69,7 @@ function StatCard({ icon: Icon, label, value, suffix, trend, trendLabel, gradien
             </div>
           )}
         </div>
-        <div className="p-3 rounded-xl bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm shadow-inner">
+        <div className="p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm shadow-inner">
           <Icon className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
         </div>
       </div>
@@ -80,10 +80,10 @@ function StatCard({ icon: Icon, label, value, suffix, trend, trendLabel, gradien
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-3 text-sm">
-      <p className="font-semibold text-gray-900 dark:text-white mb-1">{label}</p>
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl p-3 text-sm">
+      <p className="font-semibold text-slate-900 dark:text-white mb-1">{label}</p>
       {payload.map((entry, i) => (
-        <p key={i} className="text-gray-600 dark:text-gray-300" style={{ color: entry.color }}>
+        <p key={i} className="text-slate-600 dark:text-slate-300" style={{ color: entry.color }}>
           {entry.name}: <span className="font-medium">{typeof entry.value === 'number' ? entry.value.toFixed(1) : entry.value}</span>
         </p>
       ))}
@@ -474,7 +474,7 @@ export default function SmartAnalytics() {
   }, [employees, leaveData]);
 
   const getHeatmapColor = (rate) => {
-    if (rate === null) return 'bg-gray-100 dark:bg-gray-800';
+    if (rate === null) return 'bg-slate-100 dark:bg-slate-800';
     if (rate >= 90) return 'bg-emerald-500 dark:bg-emerald-600';
     if (rate >= 75) return 'bg-emerald-300 dark:bg-emerald-700';
     if (rate >= 60) return 'bg-amber-300 dark:bg-amber-600';
@@ -488,12 +488,12 @@ export default function SmartAnalytics() {
         <div className="h-36 rounded-2xl bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30" />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-28 rounded-2xl bg-gray-200 dark:bg-gray-700" />
+            <div key={i} className="h-28 rounded-2xl bg-slate-200 dark:bg-slate-700" />
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-72 rounded-2xl bg-gray-200 dark:bg-gray-700" />
+            <div key={i} className="h-72 rounded-2xl bg-slate-200 dark:bg-slate-700" />
           ))}
         </div>
       </div>
@@ -534,21 +534,21 @@ export default function SmartAnalytics() {
           value={workforceOverview.total}
           trend={workforceOverview.growthPercent}
           trendLabel="growth (6 mo)"
-          gradient="bg-white dark:bg-gray-800"
+          gradient="bg-white dark:bg-slate-800"
           delay={0}
         />
         <StatCard
           icon={UserCheck}
           label="Active Employees"
           value={workforceOverview.active}
-          gradient="bg-white dark:bg-gray-800"
+          gradient="bg-white dark:bg-slate-800"
           delay={100}
         />
         <StatCard
           icon={UserMinus}
           label="Inactive / Exited"
           value={workforceOverview.inactive}
-          gradient="bg-white dark:bg-gray-800"
+          gradient="bg-white dark:bg-slate-800"
           delay={200}
         />
         <StatCard
@@ -556,18 +556,18 @@ export default function SmartAnalytics() {
           label="Avg. Tenure"
           value={workforceOverview.avgTenure}
           suffix="yrs"
-          gradient="bg-white dark:bg-gray-800"
+          gradient="bg-white dark:bg-slate-800"
           delay={300}
         />
       </div>
 
       {/* Smart Recommendations */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 p-6">
         <div className="flex items-center gap-3 mb-5">
-          <div className="p-2 bg-amber-100 dark:bg-amber-900/40 rounded-lg">
+          <div className="p-2 bg-amber-100 dark:bg-amber-900/40 rounded-xl">
             <Zap className="w-5 h-5 text-amber-600 dark:text-amber-400" />
           </div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Smart Recommendations</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Smart Recommendations</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {smartRecommendations.map(rec => {
@@ -575,7 +575,7 @@ export default function SmartAnalytics() {
             return (
               <div
                 key={rec.id}
-                className="flex items-start gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600/50 hover:shadow-md transition-all duration-200"
+                className="flex items-start gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50 hover:shadow-md transition-all duration-200"
               >
                 <div className={`p-2.5 rounded-xl shrink-0 ${
                   rec.severity === 'critical' ? 'bg-red-100 dark:bg-red-900/40' :
@@ -592,10 +592,10 @@ export default function SmartAnalytics() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{rec.title}</h3>
+                    <h3 className="text-sm font-semibold text-slate-900 dark:text-white">{rec.title}</h3>
                     <SeverityBadge level={rec.severity} />
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{rec.description}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-2">{rec.description}</p>
                   <Link
                     to={rec.link}
                     className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
@@ -612,21 +612,21 @@ export default function SmartAnalytics() {
       {/* Department Health + Radar Chart */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Department Health Score Cards */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/40 rounded-lg">
+            <div className="p-2 bg-emerald-100 dark:bg-emerald-900/40 rounded-xl">
               <Activity className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Department Health Scores</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Department Health Scores</h2>
           </div>
           <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
             {departmentHealthScores.length === 0 ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center py-8">No department data available</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 text-center py-8">No department data available</p>
             ) : (
               departmentHealthScores.map(dept => (
                 <div
                   key={dept.department}
-                  className="flex items-center gap-4 p-3.5 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600/50"
+                  className="flex items-center gap-4 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50"
                 >
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0"
@@ -636,10 +636,10 @@ export default function SmartAnalytics() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">{dept.department}</h3>
-                      <span className="text-xs text-gray-500 dark:text-gray-400 shrink-0">{dept.count} employees</span>
+                      <h3 className="text-sm font-semibold text-slate-900 dark:text-white truncate">{dept.department}</h3>
+                      <span className="text-xs text-slate-500 dark:text-slate-400 shrink-0">{dept.count} employees</span>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                    <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2">
                       <div
                         className="h-2 rounded-full transition-all duration-700"
                         style={{
@@ -648,7 +648,7 @@ export default function SmartAnalytics() {
                         }}
                       />
                     </div>
-                    <div className="flex gap-3 mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+                    <div className="flex gap-3 mt-1.5 text-xs text-slate-500 dark:text-slate-400">
                       <span>Att: {dept.attendanceRate}%</span>
                       <span>Perf: {dept.performance}%</span>
                       <span>Eff: {dept.expenseEfficiency}%</span>
@@ -661,12 +661,12 @@ export default function SmartAnalytics() {
         </div>
 
         {/* Radar Chart */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 bg-indigo-100 dark:bg-indigo-900/40 rounded-lg">
+            <div className="p-2 bg-indigo-100 dark:bg-indigo-900/40 rounded-xl">
               <Shield className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Department Comparison</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Department Comparison</h2>
           </div>
           {radarData.length > 0 ? (
             <ResponsiveContainer width="100%" height={350}>
@@ -682,7 +682,7 @@ export default function SmartAnalytics() {
               </RadarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex items-center justify-center h-[350px] text-gray-400 dark:text-gray-500 text-sm">
+            <div className="flex items-center justify-center h-[350px] text-slate-400 dark:text-slate-500 text-sm">
               No data available for radar chart
             </div>
           )}
@@ -690,12 +690,12 @@ export default function SmartAnalytics() {
       </div>
 
       {/* Department Headcount Bar Chart */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 p-6">
         <div className="flex items-center gap-3 mb-5">
-          <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
+          <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-xl">
             <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Department-wise Headcount</h2>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Department-wise Headcount</h2>
         </div>
         {workforceOverview.deptHeadcount.length > 0 ? (
           <ResponsiveContainer width="100%" height={300}>
@@ -712,31 +712,31 @@ export default function SmartAnalytics() {
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex items-center justify-center h-[300px] text-gray-400 text-sm">No department data</div>
+          <div className="flex items-center justify-center h-[300px] text-slate-400 text-sm">No department data</div>
         )}
       </div>
 
       {/* Attrition Risk + Attendance Heatmap */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {/* Attrition Risk */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 bg-red-100 dark:bg-red-900/40 rounded-lg">
+            <div className="p-2 bg-red-100 dark:bg-red-900/40 rounded-xl">
               <TriangleAlert className="w-5 h-5 text-red-600 dark:text-red-400" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">Attrition Risk Indicators</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Attrition Risk Indicators</h2>
           </div>
           <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
             {attritionRiskEmployees.length === 0 ? (
               <div className="text-center py-10">
                 <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto mb-3" />
-                <p className="text-sm text-gray-500 dark:text-gray-400">No significant attrition risks detected</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">No significant attrition risks detected</p>
               </div>
             ) : (
               attritionRiskEmployees.map(emp => (
                 <div
                   key={emp._id || emp.id}
-                  className="flex items-start gap-3 p-3.5 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-100 dark:border-gray-600/50 hover:shadow-sm transition-shadow"
+                  className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-100 dark:border-slate-600/50 hover:shadow-sm transition-shadow"
                 >
                   <div
                     className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
@@ -746,7 +746,7 @@ export default function SmartAnalytics() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                      <h3 className="text-sm font-semibold text-slate-900 dark:text-white truncate">
                         {emp.firstName ? `${emp.firstName} ${emp.lastName || ''}`.trim() : emp.name || 'Unknown'}
                       </h3>
                       <span
@@ -759,13 +759,13 @@ export default function SmartAnalytics() {
                         {emp.riskLevel} Risk
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       {emp.department || 'No dept'} &middot; Rating: {emp.avgRating} &middot; Leaves: {emp.leaveCount}
                     </p>
                     {emp.factors.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1.5">
                         {emp.factors.map((f, i) => (
-                          <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300">
+                          <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300">
                             {f}
                           </span>
                         ))}
@@ -779,14 +779,14 @@ export default function SmartAnalytics() {
         </div>
 
         {/* Attendance Heatmap */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 p-6">
           <div className="flex items-center gap-3 mb-5">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/40 rounded-lg">
+            <div className="p-2 bg-purple-100 dark:bg-purple-900/40 rounded-xl">
               <Calendar className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">
               Attendance Heatmap
-              <span className="text-sm font-normal text-gray-500 dark:text-gray-400 ml-2">
+              <span className="text-sm font-normal text-slate-500 dark:text-slate-400 ml-2">
                 {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
               </span>
             </h2>
@@ -796,7 +796,7 @@ export default function SmartAnalytics() {
               {/* Week headers */}
               <div className="flex gap-2 mb-2 ml-12">
                 {attendanceHeatmap.map((_, wi) => (
-                  <div key={wi} className="flex-1 text-center text-xs text-gray-400 dark:text-gray-500 font-medium">
+                  <div key={wi} className="flex-1 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">
                     W{wi + 1}
                   </div>
                 ))}
@@ -804,15 +804,15 @@ export default function SmartAnalytics() {
               {/* Rows for Mon-Fri */}
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((dayName, di) => (
                 <div key={dayName} className="flex items-center gap-2 mb-2">
-                  <span className="w-10 text-xs text-gray-500 dark:text-gray-400 font-medium text-right">{dayName}</span>
+                  <span className="w-10 text-xs text-slate-500 dark:text-slate-400 font-medium text-right">{dayName}</span>
                   <div className="flex gap-2 flex-1">
                     {attendanceHeatmap.map((week, wi) => {
                       const cell = week.find(d => d.dow === di + 1);
                       return (
                         <div
                           key={wi}
-                          className={`flex-1 h-10 rounded-lg flex items-center justify-center text-xs font-medium transition-colors ${
-                            cell ? `${getHeatmapColor(cell.rate)} ${cell.rate !== null ? 'text-white' : 'text-gray-400 dark:text-gray-500'}` : 'bg-transparent'
+                          className={`flex-1 h-10 rounded-xl flex items-center justify-center text-xs font-medium transition-colors ${
+                            cell ? `${getHeatmapColor(cell.rate)} ${cell.rate !== null ? 'text-white' : 'text-slate-400 dark:text-slate-500'}` : 'bg-transparent'
                           }`}
                           title={cell ? `Day ${cell.day}: ${cell.rate !== null ? cell.rate + '%' : 'No data'}` : ''}
                         >
@@ -825,11 +825,11 @@ export default function SmartAnalytics() {
               ))}
               {/* Legend */}
               <div className="flex items-center gap-3 mt-4 justify-center">
-                <span className="text-xs text-gray-400">Low</span>
+                <span className="text-xs text-slate-400">Low</span>
                 {['bg-red-400', 'bg-orange-400', 'bg-amber-300', 'bg-emerald-300', 'bg-emerald-500'].map((c, i) => (
                   <div key={i} className={`w-6 h-4 rounded ${c}`} />
                 ))}
-                <span className="text-xs text-gray-400">High</span>
+                <span className="text-xs text-slate-400">High</span>
               </div>
             </div>
           </div>
@@ -837,13 +837,13 @@ export default function SmartAnalytics() {
       </div>
 
       {/* Monthly Trends */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-6">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 p-6">
         <div className="flex items-center gap-3 mb-5">
-          <div className="p-2 bg-cyan-100 dark:bg-cyan-900/40 rounded-lg">
+          <div className="p-2 bg-cyan-100 dark:bg-cyan-900/40 rounded-xl">
             <TrendingUp className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
           </div>
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Monthly Trends</h2>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Last 6 months</span>
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Monthly Trends</h2>
+          <span className="text-sm text-slate-500 dark:text-slate-400">Last 6 months</span>
         </div>
         <ResponsiveContainer width="100%" height={320}>
           <AreaChart data={monthlyTrends}>
@@ -874,7 +874,7 @@ export default function SmartAnalytics() {
       </div>
 
       {/* Footer note */}
-      <div className="text-center text-xs text-gray-400 dark:text-gray-500 py-2">
+      <div className="text-center text-xs text-slate-400 dark:text-slate-500 py-2">
         <Info className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
         Insights are calculated client-side from available data. Some metrics use heuristics and may not reflect exact values.
       </div>
