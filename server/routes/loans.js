@@ -53,9 +53,11 @@ router.get('/stats/summary', adminOnly, (req, res) => {
 router.post('/apply', (req, res) => {
   try {
     const { type, amount, reason, emiMonths } = req.body;
-    if (!amount || amount <= 0) return res.status(400).json({ error: 'Valid amount required' });
+    if (!amount || isNaN(amount) || Number(amount) <= 0) return res.status(400).json({ error: 'Valid amount required' });
+    if (Number(amount) > 5000000) return res.status(400).json({ error: 'Loan amount cannot exceed ₹50,00,000' });
 
     const months = emiMonths || 1;
+    if (isNaN(months) || months < 1 || months > 60) return res.status(400).json({ error: 'EMI months must be between 1 and 60' });
     const emiAmount = Math.ceil(amount / months);
 
     const result = db.prepare(

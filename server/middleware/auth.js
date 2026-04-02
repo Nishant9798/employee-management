@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const SECRET = 'emp-mgmt-secret-key-2026';
+const SECRET = process.env.JWT_SECRET || 'emp-mgmt-secret-key-2026';
 
 function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1];

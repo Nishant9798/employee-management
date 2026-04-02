@@ -7,89 +7,109 @@ router.use(authMiddleware);
 
 // Get my attendance for a month
 router.get('/my', (req, res) => {
-  const { month, year } = req.query;
-  const m = month || (new Date().getMonth() + 1);
-  const y = year || new Date().getFullYear();
-  const startDate = `${y}-${String(m).padStart(2, '0')}-01`;
-  const endDate = `${y}-${String(m).padStart(2, '0')}-31`;
+  try {
+    const { month, year } = req.query;
+    const m = month || (new Date().getMonth() + 1);
+    const y = year || new Date().getFullYear();
+    const startDate = `${y}-${String(m).padStart(2, '0')}-01`;
+    const endDate = `${y}-${String(m).padStart(2, '0')}-31`;
 
-  const records = db.prepare(`
-    SELECT * FROM attendance WHERE employeeId = ? AND date BETWEEN ? AND ? ORDER BY date
-  `).all(req.user.id, startDate, endDate);
+    const records = db.prepare(`
+      SELECT * FROM attendance WHERE employeeId = ? AND date BETWEEN ? AND ? ORDER BY date
+    `).all(req.user.id, startDate, endDate);
 
-  res.json(records);
+    res.json(records);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get attendance for an employee (admin/manager)
 router.get('/employee/:id', adminOnly, (req, res) => {
-  const { month, year } = req.query;
-  const m = month || (new Date().getMonth() + 1);
-  const y = year || new Date().getFullYear();
-  const startDate = `${y}-${String(m).padStart(2, '0')}-01`;
-  const endDate = `${y}-${String(m).padStart(2, '0')}-31`;
+  try {
+    const { month, year } = req.query;
+    const m = month || (new Date().getMonth() + 1);
+    const y = year || new Date().getFullYear();
+    const startDate = `${y}-${String(m).padStart(2, '0')}-01`;
+    const endDate = `${y}-${String(m).padStart(2, '0')}-31`;
 
-  const records = db.prepare(`
-    SELECT * FROM attendance WHERE employeeId = ? AND date BETWEEN ? AND ? ORDER BY date
-  `).all(req.params.id, startDate, endDate);
+    const records = db.prepare(`
+      SELECT * FROM attendance WHERE employeeId = ? AND date BETWEEN ? AND ? ORDER BY date
+    `).all(req.params.id, startDate, endDate);
 
-  res.json(records);
+    res.json(records);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get today's attendance for all employees (admin)
 router.get('/today', adminOnly, (req, res) => {
-  const today = req.query.date || new Date().toISOString().split('T')[0];
-  const records = db.prepare(`
-    SELECT a.*, e.name, e.employeeId as empCode, e.department, e.designation
-    FROM attendance a JOIN employees e ON a.employeeId = e.id
-    WHERE a.date = ? AND e.status = 'active'
-    ORDER BY e.name
-  `).all(today);
+  try {
+    const today = req.query.date || new Date().toISOString().split('T')[0];
+    const records = db.prepare(`
+      SELECT a.*, e.name, e.employeeId as empCode, e.department, e.designation
+      FROM attendance a JOIN employees e ON a.employeeId = e.id
+      WHERE a.date = ? AND e.status = 'active'
+      ORDER BY e.name
+    `).all(today);
 
-  // Also get employees with no record (absent)
-  const allActive = db.prepare("SELECT id, employeeId as empCode, name, department, designation FROM employees WHERE status='active'").all();
-  const markedIds = new Set(records.map(r => r.employeeId));
-  const absent = allActive.filter(e => !markedIds.has(e.id)).map(e => ({
-    ...e, employeeId: e.id, date: today, status: 'absent', checkIn: null, checkOut: null, workHours: 0
-  }));
+    // Also get employees with no record (absent)
+    const allActive = db.prepare("SELECT id, employeeId as empCode, name, department, designation FROM employees WHERE status='active'").all();
+    const markedIds = new Set(records.map(r => r.employeeId));
+    const absent = allActive.filter(e => !markedIds.has(e.id)).map(e => ({
+      ...e, employeeId: e.id, date: today, status: 'absent', checkIn: null, checkOut: null, workHours: 0
+    }));
 
-  res.json([...records, ...absent]);
+    res.json([...records, ...absent]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Check in
 router.post('/checkin', (req, res) => {
-  const today = new Date().toISOString().split('T')[0];
-  const now = new Date().toTimeString().slice(0, 5);
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const now = new Date().toTimeString().slice(0, 5);
 
-  const existing = db.prepare('SELECT * FROM attendance WHERE employeeId = ? AND date = ?').get(req.user.id, today);
-  if (existing?.checkIn) return res.status(400).json({ error: 'Already checked in today' });
+    const existing = db.prepare('SELECT * FROM attendance WHERE employeeId = ? AND date = ?').get(req.user.id, today);
+    if (existing?.checkIn) return res.status(400).json({ error: 'Already checked in today' });
 
-  const status = parseInt(now.split(':')[0]) >= 10 ? 'late' : 'present';
+    const status = parseInt(now.split(':')[0]) >= 10 ? 'late' : 'present';
 
-  if (existing) {
-    db.prepare('UPDATE attendance SET checkIn = ?, status = ? WHERE id = ?').run(now, status, existing.id);
-  } else {
-    db.prepare('INSERT INTO attendance (employeeId, date, checkIn, status) VALUES (?, ?, ?, ?)').run(req.user.id, today, now, status);
+    if (existing) {
+      db.prepare('UPDATE attendance SET checkIn = ?, status = ? WHERE id = ?').run(now, status, existing.id);
+    } else {
+      db.prepare('INSERT INTO attendance (employeeId, date, checkIn, status) VALUES (?, ?, ?, ?)').run(req.user.id, today, now, status);
+    }
+
+    res.json({ message: 'Checked in at ' + now, status });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  res.json({ message: 'Checked in at ' + now, status });
 });
 
 // Check out
 router.post('/checkout', (req, res) => {
-  const today = new Date().toISOString().split('T')[0];
-  const now = new Date().toTimeString().slice(0, 5);
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const now = new Date().toTimeString().slice(0, 5);
 
-  const existing = db.prepare('SELECT * FROM attendance WHERE employeeId = ? AND date = ?').get(req.user.id, today);
-  if (!existing?.checkIn) return res.status(400).json({ error: 'You need to check in first' });
-  if (existing.checkOut) return res.status(400).json({ error: 'Already checked out' });
+    const existing = db.prepare('SELECT * FROM attendance WHERE employeeId = ? AND date = ?').get(req.user.id, today);
+    if (!existing?.checkIn) return res.status(400).json({ error: 'You need to check in first' });
+    if (existing.checkOut) return res.status(400).json({ error: 'Already checked out' });
 
-  const checkInParts = existing.checkIn.split(':');
-  const checkOutParts = now.split(':');
-  const workHours = (parseInt(checkOutParts[0]) - parseInt(checkInParts[0])) + (parseInt(checkOutParts[1]) - parseInt(checkInParts[1])) / 60;
-  const status = workHours < 5 ? 'halfday' : existing.status;
+    const checkInParts = existing.checkIn.split(':');
+    const checkOutParts = now.split(':');
+    const workHours = (parseInt(checkOutParts[0]) - parseInt(checkInParts[0])) + (parseInt(checkOutParts[1]) - parseInt(checkInParts[1])) / 60;
+    const status = workHours < 5 ? 'halfday' : existing.status;
 
-  db.prepare('UPDATE attendance SET checkOut = ?, workHours = ?, status = ? WHERE id = ?').run(now, Math.round(workHours * 10) / 10, status, existing.id);
-  res.json({ message: 'Checked out at ' + now, workHours: Math.round(workHours * 10) / 10 });
+    db.prepare('UPDATE attendance SET checkOut = ?, workHours = ?, status = ? WHERE id = ?').run(now, Math.round(workHours * 10) / 10, status, existing.id);
+    res.json({ message: 'Checked out at ' + now, workHours: Math.round(workHours * 10) / 10 });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Mark attendance (admin)
@@ -109,27 +129,31 @@ router.post('/mark', adminOnly, (req, res) => {
 
 // Attendance summary for a month (admin only)
 router.get('/summary', adminOnly, (req, res) => {
-  const { month, year } = req.query;
-  const m = month || (new Date().getMonth() + 1);
-  const y = year || new Date().getFullYear();
-  const startDate = `${y}-${String(m).padStart(2, '0')}-01`;
-  const endDate = `${y}-${String(m).padStart(2, '0')}-31`;
+  try {
+    const { month, year } = req.query;
+    const m = month || (new Date().getMonth() + 1);
+    const y = year || new Date().getFullYear();
+    const startDate = `${y}-${String(m).padStart(2, '0')}-01`;
+    const endDate = `${y}-${String(m).padStart(2, '0')}-31`;
 
-  const summary = db.prepare(`
-    SELECT e.id, e.employeeId as empCode, e.name, e.department,
-      SUM(CASE WHEN a.status = 'present' THEN 1 ELSE 0 END) as present,
-      SUM(CASE WHEN a.status = 'absent' THEN 1 ELSE 0 END) as absent,
-      SUM(CASE WHEN a.status = 'late' THEN 1 ELSE 0 END) as late,
-      SUM(CASE WHEN a.status = 'halfday' THEN 1 ELSE 0 END) as halfday,
-      ROUND(AVG(CASE WHEN a.workHours > 0 THEN a.workHours END), 1) as avgHours
-    FROM employees e
-    LEFT JOIN attendance a ON e.id = a.employeeId AND a.date BETWEEN ? AND ?
-    WHERE e.status = 'active'
-    GROUP BY e.id
-    ORDER BY e.name
-  `).all(startDate, endDate);
+    const summary = db.prepare(`
+      SELECT e.id, e.employeeId as empCode, e.name, e.department,
+        SUM(CASE WHEN a.status = 'present' THEN 1 ELSE 0 END) as present,
+        SUM(CASE WHEN a.status = 'absent' THEN 1 ELSE 0 END) as absent,
+        SUM(CASE WHEN a.status = 'late' THEN 1 ELSE 0 END) as late,
+        SUM(CASE WHEN a.status = 'halfday' THEN 1 ELSE 0 END) as halfday,
+        ROUND(AVG(CASE WHEN a.workHours > 0 THEN a.workHours END), 1) as avgHours
+      FROM employees e
+      LEFT JOIN attendance a ON e.id = a.employeeId AND a.date BETWEEN ? AND ?
+      WHERE e.status = 'active'
+      GROUP BY e.id
+      ORDER BY e.name
+    `).all(startDate, endDate);
 
-  res.json(summary);
+    res.json(summary);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 
@@ -163,27 +187,31 @@ router.post('/bulk-mark', adminOnly, (req, res) => {
 
 // Export attendance CSV
 router.get('/export/csv', adminOnly, (req, res) => {
-  const { month, year } = req.query;
-  const m = month || (new Date().getMonth() + 1);
-  const y = year || new Date().getFullYear();
-  const startDate = `${y}-${String(m).padStart(2, '0')}-01`;
-  const endDate = `${y}-${String(m).padStart(2, '0')}-31`;
+  try {
+    const { month, year } = req.query;
+    const m = month || (new Date().getMonth() + 1);
+    const y = year || new Date().getFullYear();
+    const startDate = `${y}-${String(m).padStart(2, '0')}-01`;
+    const endDate = `${y}-${String(m).padStart(2, '0')}-31`;
 
-  const records = db.prepare(`
-    SELECT e.employeeId, e.name, e.department, a.date, a.checkIn, a.checkOut, a.status, a.workHours
-    FROM attendance a JOIN employees e ON a.employeeId = e.id
-    WHERE a.date BETWEEN ? AND ? AND e.status = 'active'
-    ORDER BY e.name, a.date
-  `).all(startDate, endDate);
+    const records = db.prepare(`
+      SELECT e.employeeId, e.name, e.department, a.date, a.checkIn, a.checkOut, a.status, a.workHours
+      FROM attendance a JOIN employees e ON a.employeeId = e.id
+      WHERE a.date BETWEEN ? AND ? AND e.status = 'active'
+      ORDER BY e.name, a.date
+    `).all(startDate, endDate);
 
-  const headers = 'Employee ID,Name,Department,Date,Check In,Check Out,Status,Work Hours\n';
-  const csv = headers + records.map(r =>
-    `${r.employeeId},${r.name},${r.department || ''},${r.date},${r.checkIn || ''},${r.checkOut || ''},${r.status},${r.workHours || ''}`
-  ).join('\n');
+    const headers = 'Employee ID,Name,Department,Date,Check In,Check Out,Status,Work Hours\n';
+    const csv = headers + records.map(r =>
+      `${r.employeeId},${r.name},${r.department || ''},${r.date},${r.checkIn || ''},${r.checkOut || ''},${r.status},${r.workHours || ''}`
+    ).join('\n');
 
-  res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', `attachment; filename=attendance-${y}-${m}.csv`);
-  res.send(csv);
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename=attendance-${y}-${m}.csv`);
+    res.send(csv);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

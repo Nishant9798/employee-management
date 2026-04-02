@@ -7,37 +7,53 @@ router.use(authMiddleware);
 
 // Get all announcements
 router.get('/', (req, res) => {
-  const announcements = db.prepare(`
-    SELECT a.*, e.name as authorName
-    FROM announcements a LEFT JOIN employees e ON a.createdBy = e.id
-    ORDER BY a.createdAt DESC
-  `).all();
-  res.json(announcements);
+  try {
+    const announcements = db.prepare(`
+      SELECT a.*, e.name as authorName
+      FROM announcements a LEFT JOIN employees e ON a.createdBy = e.id
+      ORDER BY a.createdAt DESC
+    `).all();
+    res.json(announcements);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Create announcement (admin only)
 router.post('/', adminOnly, (req, res) => {
-  const { title, content, priority } = req.body;
-  if (!title || !content) return res.status(400).json({ error: 'Title and content are required' });
+  try {
+    const { title, content, priority } = req.body;
+    if (!title || !content) return res.status(400).json({ error: 'Title and content are required' });
 
-  const result = db.prepare('INSERT INTO announcements (title, content, priority, createdBy) VALUES (?, ?, ?, ?)')
-    .run(title, content, priority || 'normal', req.user.id);
+    const result = db.prepare('INSERT INTO announcements (title, content, priority, createdBy) VALUES (?, ?, ?, ?)')
+      .run(title, content, priority || 'normal', req.user.id);
 
-  res.status(201).json({ id: result.lastInsertRowid, message: 'Announcement created' });
+    res.status(201).json({ id: result.lastInsertRowid, message: 'Announcement created' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Update announcement (admin only)
 router.put('/:id', adminOnly, (req, res) => {
-  const { title, content, priority } = req.body;
-  db.prepare('UPDATE announcements SET title=?, content=?, priority=? WHERE id=?')
-    .run(title, content, priority, req.params.id);
-  res.json({ message: 'Announcement updated' });
+  try {
+    const { title, content, priority } = req.body;
+    db.prepare('UPDATE announcements SET title=?, content=?, priority=? WHERE id=?')
+      .run(title, content, priority, req.params.id);
+    res.json({ message: 'Announcement updated' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Delete announcement (admin only)
 router.delete('/:id', adminOnly, (req, res) => {
-  db.prepare('DELETE FROM announcements WHERE id=?').run(req.params.id);
-  res.json({ message: 'Announcement deleted' });
+  try {
+    db.prepare('DELETE FROM announcements WHERE id=?').run(req.params.id);
+    res.json({ message: 'Announcement deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

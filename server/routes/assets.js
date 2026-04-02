@@ -9,22 +9,32 @@ const CATEGORIES = ['Hardware', 'Software', 'Furniture', 'Vehicle', 'Accessory',
 
 // Get all assets (admin sees all, employee sees own)
 router.get('/', (req, res) => {
-  if (req.user.role === 'admin') {
+  try {
+    if (req.user.role === 'admin') {
+      const assets = db.prepare(`
+        SELECT a.*, e.name as assignedToName, e.employeeId as assignedToEmpId, e.department
+        FROM assets a LEFT JOIN employees e ON a.assignedTo = e.id
+        ORDER BY a.createdAt DESC
+      `).all();
+      return res.json(assets);
+    }
     const assets = db.prepare(`
-      SELECT a.*, e.name as assignedToName, e.employeeId as assignedToEmpId, e.department
-      FROM assets a LEFT JOIN employees e ON a.assignedTo = e.id
-      ORDER BY a.createdAt DESC
-    `).all();
-    return res.json(assets);
+      SELECT * FROM assets WHERE assignedTo = ? AND status = 'assigned' ORDER BY assignedDate DESC
+    `).all(req.user.id);
+    res.json(assets);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  const assets = db.prepare(`
-    SELECT * FROM assets WHERE assignedTo = ? AND status = 'assigned' ORDER BY assignedDate DESC
-  `).all(req.user.id);
-  res.json(assets);
 });
 
 // Get categories
-router.get('/categories', (req, res) => res.json(CATEGORIES));
+router.get('/categories', (req, res) => {
+  try {
+    res.json(CATEGORIES);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Create asset (admin)
 router.post('/', adminOnly, (req, res) => {
@@ -43,42 +53,62 @@ router.post('/', adminOnly, (req, res) => {
 
 // Update asset (admin)
 router.put('/:id', adminOnly, (req, res) => {
-  const { name, category, serialNumber, purchaseDate, purchaseCost, condition, notes } = req.body;
-  db.prepare('UPDATE assets SET name=?, category=?, serialNumber=?, purchaseDate=?, purchaseCost=?, condition=?, notes=? WHERE id=?')
-    .run(name, category, serialNumber, purchaseDate, purchaseCost, condition, notes, req.params.id);
-  res.json({ message: 'Asset updated' });
+  try {
+    const { name, category, serialNumber, purchaseDate, purchaseCost, condition, notes } = req.body;
+    db.prepare('UPDATE assets SET name=?, category=?, serialNumber=?, purchaseDate=?, purchaseCost=?, condition=?, notes=? WHERE id=?')
+      .run(name, category, serialNumber, purchaseDate, purchaseCost, condition, notes, req.params.id);
+    res.json({ message: 'Asset updated' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Assign asset to employee (admin)
 router.put('/:id/assign', adminOnly, (req, res) => {
-  const { employeeId } = req.body;
-  db.prepare("UPDATE assets SET assignedTo=?, assignedDate=date('now'), returnDate=NULL, status='assigned' WHERE id=?")
-    .run(employeeId, req.params.id);
-  res.json({ message: 'Asset assigned' });
+  try {
+    const { employeeId } = req.body;
+    db.prepare("UPDATE assets SET assignedTo=?, assignedDate=date('now'), returnDate=NULL, status='assigned' WHERE id=?")
+      .run(employeeId, req.params.id);
+    res.json({ message: 'Asset assigned' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Return asset (admin)
 router.put('/:id/return', adminOnly, (req, res) => {
-  const { condition } = req.body;
-  db.prepare("UPDATE assets SET assignedTo=NULL, returnDate=date('now'), status='available', condition=? WHERE id=?")
-    .run(condition || 'good', req.params.id);
-  res.json({ message: 'Asset returned' });
+  try {
+    const { condition } = req.body;
+    db.prepare("UPDATE assets SET assignedTo=NULL, returnDate=date('now'), status='available', condition=? WHERE id=?")
+      .run(condition || 'good', req.params.id);
+    res.json({ message: 'Asset returned' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Delete asset (admin)
 router.delete('/:id', adminOnly, (req, res) => {
-  db.prepare(`UPDATE assets SET status = 'retired' WHERE id = ?`).run(req.params.id);
-  res.json({ message: 'Asset retired' });
+  try {
+    db.prepare(`UPDATE assets SET status = 'retired' WHERE id = ?`).run(req.params.id);
+    res.json({ message: 'Asset retired' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Stats
 router.get('/stats', adminOnly, (req, res) => {
-  const total = db.prepare(`SELECT COUNT(*) as c FROM assets WHERE status != 'retired'`).get().c;
-  const assigned = db.prepare(`SELECT COUNT(*) as c FROM assets WHERE status = 'assigned'`).get().c;
-  const available = db.prepare(`SELECT COUNT(*) as c FROM assets WHERE status = 'available'`).get().c;
-  const maintenance = db.prepare(`SELECT COUNT(*) as c FROM assets WHERE status = 'maintenance'`).get().c;
-  const totalValue = db.prepare(`SELECT COALESCE(SUM(purchaseCost), 0) as v FROM assets WHERE status != 'retired'`).get().v;
-  res.json({ total, assigned, available, maintenance, totalValue });
+  try {
+    const total = db.prepare(`SELECT COUNT(*) as c FROM assets WHERE status != 'retired'`).get().c;
+    const assigned = db.prepare(`SELECT COUNT(*) as c FROM assets WHERE status = 'assigned'`).get().c;
+    const available = db.prepare(`SELECT COUNT(*) as c FROM assets WHERE status = 'available'`).get().c;
+    const maintenance = db.prepare(`SELECT COUNT(*) as c FROM assets WHERE status = 'maintenance'`).get().c;
+    const totalValue = db.prepare(`SELECT COALESCE(SUM(purchaseCost), 0) as v FROM assets WHERE status != 'retired'`).get().v;
+    res.json({ total, assigned, available, maintenance, totalValue });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

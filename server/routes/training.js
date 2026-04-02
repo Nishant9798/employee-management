@@ -8,32 +8,48 @@ router.use(authMiddleware);
 
 // Get all programs
 router.get('/programs', (req, res) => {
-  const programs = db.prepare(`
-    SELECT tp.*, e.name as createdByName,
-      (SELECT COUNT(*) FROM training_enrollments WHERE programId = tp.id) as enrolled
-    FROM training_programs tp LEFT JOIN employees e ON tp.createdBy = e.id ORDER BY tp.startDate DESC
-  `).all();
-  res.json(programs);
+  try {
+    const programs = db.prepare(`
+      SELECT tp.*, e.name as createdByName,
+        (SELECT COUNT(*) FROM training_enrollments WHERE programId = tp.id) as enrolled
+      FROM training_programs tp LEFT JOIN employees e ON tp.createdBy = e.id ORDER BY tp.startDate DESC
+    `).all();
+    res.json(programs);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get my enrollments
 router.get('/my-enrollments', (req, res) => {
-  const enrollments = db.prepare(`
-    SELECT te.*, tp.title, tp.description, tp.startDate, tp.endDate, tp.instructor, tp.mode, tp.category, tp.status as programStatus
-    FROM training_enrollments te JOIN training_programs tp ON te.programId = tp.id
-    WHERE te.employeeId = ? ORDER BY te.enrolledAt DESC
-  `).all(req.user.id);
-  res.json(enrollments);
+  try {
+    const enrollments = db.prepare(`
+      SELECT te.*, tp.title, tp.description, tp.startDate, tp.endDate, tp.instructor, tp.mode, tp.category, tp.status as programStatus
+      FROM training_enrollments te JOIN training_programs tp ON te.programId = tp.id
+      WHERE te.employeeId = ? ORDER BY te.enrolledAt DESC
+    `).all(req.user.id);
+    res.json(enrollments);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get my skills
 router.get('/my-skills', (req, res) => {
-  res.json(db.prepare('SELECT * FROM skills WHERE employeeId = ? ORDER BY name').all(req.user.id));
+  try {
+    res.json(db.prepare('SELECT * FROM skills WHERE employeeId = ? ORDER BY name').all(req.user.id));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get skills for employee
 router.get('/skills/:employeeId', (req, res) => {
-  res.json(db.prepare('SELECT * FROM skills WHERE employeeId = ? ORDER BY name').all(req.params.employeeId));
+  try {
+    res.json(db.prepare('SELECT * FROM skills WHERE employeeId = ? ORDER BY name').all(req.params.employeeId));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Add/update skill
@@ -49,16 +65,24 @@ router.post('/skills', (req, res) => {
 
 // Delete skill
 router.delete('/skills/:id', (req, res) => {
-  db.prepare('DELETE FROM skills WHERE id = ? AND employeeId = ?').run(req.params.id, req.user.id);
-  res.json({ message: 'Skill removed' });
+  try {
+    db.prepare('DELETE FROM skills WHERE id = ? AND employeeId = ?').run(req.params.id, req.user.id);
+    res.json({ message: 'Skill removed' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Create program (admin)
 router.post('/programs', adminOnly, (req, res) => {
-  const { title, description, instructor, startDate, endDate, maxParticipants, category, mode } = req.body;
-  const result = db.prepare('INSERT INTO training_programs (title, description, instructor, startDate, endDate, maxParticipants, category, mode, createdBy) VALUES (?,?,?,?,?,?,?,?,?)')
-    .run(title, description, instructor, startDate, endDate, maxParticipants, category, mode || 'online', req.user.id);
-  res.status(201).json({ id: result.lastInsertRowid });
+  try {
+    const { title, description, instructor, startDate, endDate, maxParticipants, category, mode } = req.body;
+    const result = db.prepare('INSERT INTO training_programs (title, description, instructor, startDate, endDate, maxParticipants, category, mode, createdBy) VALUES (?,?,?,?,?,?,?,?,?)')
+      .run(title, description, instructor, startDate, endDate, maxParticipants, category, mode || 'online', req.user.id);
+    res.status(201).json({ id: result.lastInsertRowid });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Enroll in program
@@ -74,20 +98,28 @@ router.post('/enroll/:programId', (req, res) => {
 
 // Complete enrollment (admin)
 router.put('/complete-enrollment/:id', adminOnly, (req, res) => {
-  const { feedback, rating } = req.body;
-  db.prepare(`UPDATE training_enrollments SET status = ?, completionDate = datetime('now'), feedback = ?, rating = ? WHERE id = ?`)
-    .run('completed', feedback, rating, req.params.id);
-  res.json({ message: 'Marked as completed' });
+  try {
+    const { feedback, rating } = req.body;
+    db.prepare(`UPDATE training_enrollments SET status = ?, completionDate = datetime('now'), feedback = ?, rating = ? WHERE id = ?`)
+      .run('completed', feedback, rating, req.params.id);
+    res.json({ message: 'Marked as completed' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Get enrollments for a program (admin)
 router.get('/program-enrollments/:programId', (req, res) => {
-  const enrollments = db.prepare(`
-    SELECT te.*, e.name, e.department, e.employeeId as empCode
-    FROM training_enrollments te JOIN employees e ON te.employeeId = e.id
-    WHERE te.programId = ? ORDER BY e.name
-  `).all(req.params.programId);
-  res.json(enrollments);
+  try {
+    const enrollments = db.prepare(`
+      SELECT te.*, e.name, e.department, e.employeeId as empCode
+      FROM training_enrollments te JOIN employees e ON te.employeeId = e.id
+      WHERE te.programId = ? ORDER BY e.name
+    `).all(req.params.programId);
+    res.json(enrollments);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

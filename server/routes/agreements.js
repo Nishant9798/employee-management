@@ -44,144 +44,176 @@ const submissionUpload = multer({
 
 // Get all agreements (with employee's submission status)
 router.get('/', (req, res) => {
-  const agreements = db.prepare(`
-    SELECT a.*, u.name as uploadedByName
-    FROM nda_agreements a
-    LEFT JOIN employees u ON a.uploadedBy = u.id
-    ORDER BY a.createdAt DESC
-  `).all();
+  try {
+    const agreements = db.prepare(`
+      SELECT a.*, u.name as uploadedByName
+      FROM nda_agreements a
+      LEFT JOIN employees u ON a.uploadedBy = u.id
+      ORDER BY a.createdAt DESC
+    `).all();
 
-  // Get current user's submissions
-  const submissions = db.prepare(
-    'SELECT * FROM employee_agreements WHERE employeeId = ?'
-  ).all(req.user.id);
+    // Get current user's submissions
+    const submissions = db.prepare(
+      'SELECT * FROM employee_agreements WHERE employeeId = ?'
+    ).all(req.user.id);
 
-  const submissionMap = {};
-  submissions.forEach(s => { submissionMap[s.agreementId] = s; });
+    const submissionMap = {};
+    submissions.forEach(s => { submissionMap[s.agreementId] = s; });
 
-  const result = agreements.map(a => ({
-    ...a,
-    mySubmission: submissionMap[a.id] || null
-  }));
+    const result = agreements.map(a => ({
+      ...a,
+      mySubmission: submissionMap[a.id] || null
+    }));
 
-  res.json(result);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Download agreement template (all employees) - MUST be before /:id routes
 router.get('/download/:id', (req, res) => {
-  const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
-  if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
+  try {
+    const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
+    if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
 
-  const filePath = path.join(templatesDir, agreement.templatePath);
-  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
-  res.download(filePath, agreement.templateName);
+    const filePath = path.join(templatesDir, agreement.templatePath);
+    if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
+    res.download(filePath, agreement.templateName);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Download employee's submitted agreement
 router.get('/submission/:submissionId/download', (req, res) => {
-  const submission = db.prepare('SELECT * FROM employee_agreements WHERE id = ?').get(req.params.submissionId);
-  if (!submission) return res.status(404).json({ error: 'Submission not found' });
+  try {
+    const submission = db.prepare('SELECT * FROM employee_agreements WHERE id = ?').get(req.params.submissionId);
+    if (!submission) return res.status(404).json({ error: 'Submission not found' });
 
-  if (submission.employeeId !== req.user.id && req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Access denied' });
+    if (submission.employeeId !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    const filePath = path.join(submissionsDir, submission.filePath);
+    if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
+    res.download(filePath, submission.fileName);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  const filePath = path.join(submissionsDir, submission.filePath);
-  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
-  res.download(filePath, submission.fileName);
 });
 
 // Get all submissions for an agreement (admin only)
 router.get('/:id/submissions', adminOnly, (req, res) => {
-  const submissions = db.prepare(`
-    SELECT ea.*, e.name as employeeName, e.employeeId as empCode, e.department
-    FROM employee_agreements ea
-    JOIN employees e ON ea.employeeId = e.id
-    WHERE ea.agreementId = ?
-    ORDER BY ea.uploadedAt DESC
-  `).all(req.params.id);
-  res.json(submissions);
+  try {
+    const submissions = db.prepare(`
+      SELECT ea.*, e.name as employeeName, e.employeeId as empCode, e.department
+      FROM employee_agreements ea
+      JOIN employees e ON ea.employeeId = e.id
+      WHERE ea.agreementId = ?
+      ORDER BY ea.uploadedAt DESC
+    `).all(req.params.id);
+    res.json(submissions);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Upload new agreement template (admin only)
 router.post('/', adminOnly, templateUpload.single('file'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  const { title, description } = req.body;
-  if (!title) return res.status(400).json({ error: 'Title is required' });
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const { title, description } = req.body;
+    if (!title) return res.status(400).json({ error: 'Title is required' });
 
-  const result = db.prepare(
-    'INSERT INTO nda_agreements (title, description, templatePath, templateName, templateSize, uploadedBy) VALUES (?,?,?,?,?,?)'
-  ).run(title, description || '', req.file.filename, req.file.originalname, req.file.size, req.user.id);
+    const result = db.prepare(
+      'INSERT INTO nda_agreements (title, description, templatePath, templateName, templateSize, uploadedBy) VALUES (?,?,?,?,?,?)'
+    ).run(title, description || '', req.file.filename, req.file.originalname, req.file.size, req.user.id);
 
-  res.status(201).json({ id: result.lastInsertRowid, message: 'Agreement uploaded successfully' });
+    res.status(201).json({ id: result.lastInsertRowid, message: 'Agreement uploaded successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Update agreement template (admin only)
 router.put('/:id', adminOnly, templateUpload.single('file'), (req, res) => {
-  const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
-  if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
+  try {
+    const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
+    if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
 
-  const { title, description } = req.body;
+    const { title, description } = req.body;
 
-  if (req.file) {
-    const oldPath = path.join(templatesDir, agreement.templatePath);
-    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    if (req.file) {
+      const oldPath = path.join(templatesDir, agreement.templatePath);
+      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
 
-    db.prepare(
-      `UPDATE nda_agreements SET title=?, description=?, templatePath=?, templateName=?, templateSize=?, updatedAt=datetime('now') WHERE id=?`
-    ).run(title || agreement.title, description ?? agreement.description, req.file.filename, req.file.originalname, req.file.size, req.params.id);
-  } else {
-    db.prepare(
-      `UPDATE nda_agreements SET title=?, description=?, updatedAt=datetime('now') WHERE id=?`
-    ).run(title || agreement.title, description ?? agreement.description, req.params.id);
+      db.prepare(
+        `UPDATE nda_agreements SET title=?, description=?, templatePath=?, templateName=?, templateSize=?, updatedAt=datetime('now') WHERE id=?`
+      ).run(title || agreement.title, description ?? agreement.description, req.file.filename, req.file.originalname, req.file.size, req.params.id);
+    } else {
+      db.prepare(
+        `UPDATE nda_agreements SET title=?, description=?, updatedAt=datetime('now') WHERE id=?`
+      ).run(title || agreement.title, description ?? agreement.description, req.params.id);
+    }
+
+    res.json({ message: 'Agreement updated successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  res.json({ message: 'Agreement updated successfully' });
 });
 
 // Employee uploads signed agreement (PDF only)
 router.post('/:id/submit', submissionUpload.single('file'), (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  try {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
 
-  const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
-  if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
+    const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
+    if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
 
-  // Upsert: delete old submission file if re-uploading
-  const existing = db.prepare('SELECT * FROM employee_agreements WHERE agreementId = ? AND employeeId = ?').get(req.params.id, req.user.id);
-  if (existing) {
-    const oldPath = path.join(submissionsDir, existing.filePath);
-    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-    db.prepare(
-      `UPDATE employee_agreements SET filePath=?, fileName=?, fileSize=?, uploadedAt=datetime('now') WHERE id=?`
-    ).run(req.file.filename, req.file.originalname, req.file.size, existing.id);
-  } else {
-    db.prepare(
-      'INSERT INTO employee_agreements (agreementId, employeeId, filePath, fileName, fileSize) VALUES (?,?,?,?,?)'
-    ).run(req.params.id, req.user.id, req.file.filename, req.file.originalname, req.file.size);
+    // Upsert: delete old submission file if re-uploading
+    const existing = db.prepare('SELECT * FROM employee_agreements WHERE agreementId = ? AND employeeId = ?').get(req.params.id, req.user.id);
+    if (existing) {
+      const oldPath = path.join(submissionsDir, existing.filePath);
+      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      db.prepare(
+        `UPDATE employee_agreements SET filePath=?, fileName=?, fileSize=?, uploadedAt=datetime('now') WHERE id=?`
+      ).run(req.file.filename, req.file.originalname, req.file.size, existing.id);
+    } else {
+      db.prepare(
+        'INSERT INTO employee_agreements (agreementId, employeeId, filePath, fileName, fileSize) VALUES (?,?,?,?,?)'
+      ).run(req.params.id, req.user.id, req.file.filename, req.file.originalname, req.file.size);
+    }
+
+    res.json({ message: 'Agreement submitted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  res.json({ message: 'Agreement submitted successfully' });
 });
 
 // Delete agreement (admin only)
 router.delete('/:id', adminOnly, (req, res) => {
-  const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
-  if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
+  try {
+    const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
+    if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
 
-  // Delete template file
-  const templateFile = path.join(templatesDir, agreement.templatePath);
-  if (fs.existsSync(templateFile)) fs.unlinkSync(templateFile);
+    // Delete template file
+    const templateFile = path.join(templatesDir, agreement.templatePath);
+    if (fs.existsSync(templateFile)) fs.unlinkSync(templateFile);
 
-  // Delete all submissions
-  const submissions = db.prepare('SELECT * FROM employee_agreements WHERE agreementId = ?').all(req.params.id);
-  submissions.forEach(s => {
-    const subFile = path.join(submissionsDir, s.filePath);
-    if (fs.existsSync(subFile)) fs.unlinkSync(subFile);
-  });
-  db.prepare('DELETE FROM employee_agreements WHERE agreementId = ?').run(req.params.id);
-  db.prepare('DELETE FROM nda_agreements WHERE id = ?').run(req.params.id);
+    // Delete all submissions
+    const submissions = db.prepare('SELECT * FROM employee_agreements WHERE agreementId = ?').all(req.params.id);
+    submissions.forEach(s => {
+      const subFile = path.join(submissionsDir, s.filePath);
+      if (fs.existsSync(subFile)) fs.unlinkSync(subFile);
+    });
+    db.prepare('DELETE FROM employee_agreements WHERE agreementId = ?').run(req.params.id);
+    db.prepare('DELETE FROM nda_agreements WHERE id = ?').run(req.params.id);
 
-  res.json({ message: 'Agreement deleted successfully' });
+    res.json({ message: 'Agreement deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;
