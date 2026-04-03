@@ -114,7 +114,7 @@ const adminGroup = {
   ],
 };
 
-const STORAGE_KEY = 'sidebar-expanded-groups';
+const STORAGE_KEY = 'ems:sidebar-expanded-groups';
 
 function getInitialExpandedGroups() {
   try {
@@ -359,7 +359,7 @@ export default function Sidebar({ onClose, collapsed, onToggleCollapse }) {
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5" aria-label="Main navigation">
         {groups.map(group => (
           <SidebarGroup
             key={group.key}
@@ -386,14 +386,14 @@ export default function Sidebar({ onClose, collapsed, onToggleCollapse }) {
       {/* Theme toggle + Logout + Collapse */}
       <div className="p-3 border-t border-slate-100 dark:border-slate-800 space-y-1 bg-slate-50/50 dark:bg-slate-800/30">
         <div className={collapsed ? 'tooltip-wrapper' : ''}>
-          <button onClick={toggleTheme} className={`sidebar-link text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 w-full ${collapsed ? 'justify-center px-2' : ''}`}>
+          <button onClick={toggleTheme} aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'} className={`sidebar-link text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 w-full ${collapsed ? 'justify-center px-2' : ''}`}>
             {dark ? <Sun size={18} className="shrink-0 text-amber-500" /> : <Moon size={18} className="shrink-0 text-indigo-500" />}
             {!collapsed && <span>{dark ? 'Light Mode' : 'Dark Mode'}</span>}
           </button>
           {collapsed && <div className="tooltip">{dark ? 'Light Mode' : 'Dark Mode'}</div>}
         </div>
         <div className={collapsed ? 'tooltip-wrapper' : ''}>
-          <button onClick={logout} className={`sidebar-link text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 w-full ${collapsed ? 'justify-center px-2' : ''}`}>
+          <button onClick={logout} aria-label="Logout" className={`sidebar-link text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 w-full ${collapsed ? 'justify-center px-2' : ''}`}>
             <LogOut size={18} className="shrink-0" />
             {!collapsed && 'Logout'}
           </button>

@@ -131,6 +131,8 @@ router.post('/', (req, res) => {
   try {
     const { title, description, category, priority } = req.body;
     if (!title || !description) return res.status(400).json({ error: 'Title and description are required' });
+    if (title.length > 200) return res.status(400).json({ error: 'Title too long (max 200 characters)' });
+    if (description.length > 5000) return res.status(400).json({ error: 'Description too long (max 5000 characters)' });
 
     const ticketId = nextTicketId();
     const result = db.prepare(`

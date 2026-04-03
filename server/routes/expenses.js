@@ -34,25 +34,45 @@ router.get('/my', (req, res) => {
   }
 });
 
-// Get all expenses (manager/admin)
+// Get all expenses (manager/admin, supports pagination via ?page=1&limit=20)
 router.get('/all', managerOrAdmin, (req, res) => {
   try {
-    let query = `
-      SELECT e.*, ec.name as categoryName, emp.name as employeeName, emp.department, emp.employeeId as empCode,
-             m.name as managerApprovedByName, f.name as financeApprovedByName
+    const { page, limit: limitParam, status: statusFilter } = req.query;
+
+    let whereClause = '';
+    const params = [];
+    if (req.user.role === 'manager') {
+      whereClause += ` WHERE e.employeeId IN (SELECT id FROM employees WHERE managerId = ?)`;
+      params.push(req.user.id);
+    }
+    if (statusFilter) {
+      whereClause += whereClause ? ` AND e.status = ?` : ` WHERE e.status = ?`;
+      params.push(statusFilter);
+    }
+
+    const baseQuery = `
       FROM expenses e
       JOIN expense_categories ec ON e.categoryId = ec.id
       JOIN employees emp ON e.employeeId = emp.id
       LEFT JOIN employees m ON e.managerApprovedBy = m.id
       LEFT JOIN employees f ON e.financeApprovedBy = f.id
+      ${whereClause}
     `;
-    const params = [];
-    if (req.user.role === 'manager') {
-      query += ` WHERE e.employeeId IN (SELECT id FROM employees WHERE managerId = ?)`;
-      params.push(req.user.id);
+
+    const selectFields = `e.*, ec.name as categoryName, emp.name as employeeName, emp.department, emp.employeeId as empCode,
+             m.name as managerApprovedByName, f.name as financeApprovedByName`;
+
+    if (page) {
+      const pageNum = Math.max(1, parseInt(page) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(limitParam) || 20));
+      const offset = (pageNum - 1) * limit;
+
+      const { total } = db.prepare(`SELECT COUNT(*) as total ${baseQuery}`).get(...params);
+      const expenses = db.prepare(`SELECT ${selectFields} ${baseQuery} ORDER BY e.submittedOn DESC LIMIT ? OFFSET ?`).all(...params, limit, offset);
+      res.json({ data: expenses, pagination: { page: pageNum, limit, total, totalPages: Math.ceil(total / limit) } });
+    } else {
+      res.json(db.prepare(`SELECT ${selectFields} ${baseQuery} ORDER BY e.submittedOn DESC`).all(...params));
     }
-    query += ' ORDER BY e.submittedOn DESC';
-    res.json(db.prepare(query).all(...params));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -133,6 +153,22 @@ router.put('/finance-action/:id', (req, res) => {
       `Your expense of ₹${exp.amount} was ${status} by finance`, 'expense', '/expenses');
 
     res.json({ message: `Expense ${status}` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete pending expense (employee can delete own pending expense)
+router.delete('/:id', (req, res) => {
+  try {
+    const exp = db.prepare('SELECT * FROM expenses WHERE id = ? AND employeeId = ?').get(req.params.id, req.user.id);
+    if (!exp) return res.status(404).json({ error: 'Expense not found' });
+    if (exp.status !== 'pending_manager') {
+      return res.status(400).json({ error: 'Only pending expenses can be deleted' });
+    }
+
+    db.prepare('DELETE FROM expenses WHERE id = ?').run(req.params.id);
+    res.json({ message: 'Expense deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

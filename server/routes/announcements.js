@@ -24,9 +24,11 @@ router.post('/', adminOnly, (req, res) => {
   try {
     const { title, content, priority } = req.body;
     if (!title || !content) return res.status(400).json({ error: 'Title and content are required' });
+    if (title.length > 200) return res.status(400).json({ error: 'Title too long (max 200 characters)' });
+    if (content.length > 10000) return res.status(400).json({ error: 'Content too long (max 10000 characters)' });
 
     const result = db.prepare('INSERT INTO announcements (title, content, priority, createdBy) VALUES (?, ?, ?, ?)')
-      .run(title, content, priority || 'normal', req.user.id);
+      .run(title.trim(), content.trim(), priority || 'normal', req.user.id);
 
     res.status(201).json({ id: result.lastInsertRowid, message: 'Announcement created' });
   } catch (err) {

@@ -3,6 +3,7 @@ import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { CalendarDays, Plus, Check, X as XIcon, Clock, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { StatusBadge, Modal, EmptyState } from '../components/common';
 
 export default function Leaves() {
   const { user, isAdmin, isManager } = useAuth();
@@ -41,6 +42,18 @@ export default function Leaves() {
   };
 
   const handleApply = async () => {
+    if (!form.leaveTypeId || !form.fromDate || !form.toDate) {
+      return toast.error('Please fill in all required fields');
+    }
+    if (new Date(form.fromDate) < new Date(new Date().toISOString().split('T')[0])) {
+      return toast.error('Leave start date cannot be in the past');
+    }
+    if (new Date(form.toDate) < new Date(form.fromDate)) {
+      return toast.error('End date must be after start date');
+    }
+    if (!form.days || form.days <= 0) {
+      return toast.error('No working days in selected range');
+    }
     try {
       await api.post('/leaves/apply', { ...form, days: Number(form.days) });
       toast.success('Leave applied! Sent to manager for approval.');
@@ -94,20 +107,7 @@ export default function Leaves() {
     }
   };
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'pending_manager':
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"><Clock size={12} /> Pending Manager</span>;
-      case 'pending_hr':
-        return <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"><Clock size={12} /> Pending HR</span>;
-      case 'approved':
-        return <span className="badge badge-success">Approved</span>;
-      case 'rejected':
-        return <span className="badge badge-danger">Rejected</span>;
-      default:
-        return <span className="badge badge-warning">{status}</span>;
-    }
-  };
+  const getStatusBadge = (status) => <StatusBadge status={status} />;
 
   // Filter applications by role and approval level
   const managerPendingApps = allApps.filter(a => a.status === 'pending_manager');

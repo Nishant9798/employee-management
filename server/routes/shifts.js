@@ -86,7 +86,8 @@ router.post('/', adminOnly, (req, res) => {
 router.post('/overtime', (req, res) => {
   try {
     const { date, hours, reason } = req.body;
-    if (!date || !hours || hours <= 0) return res.status(400).json({ error: 'Valid date and hours required' });
+    if (!date || !hours || isNaN(hours) || hours <= 0) return res.status(400).json({ error: 'Valid date and hours required' });
+    if (hours > 24) return res.status(400).json({ error: 'Overtime hours cannot exceed 24' });
     const result = db.prepare('INSERT INTO overtime_requests (employeeId, date, hours, reason) VALUES (?,?,?,?)')
       .run(req.user.id, date, hours, reason);
     res.status(201).json({ id: result.lastInsertRowid });
@@ -135,6 +136,19 @@ router.put('/overtime/:id', managerOrAdmin, (req, res) => {
   try {
     const { status } = req.body;
     if (!['approved', 'rejected'].includes(status)) return res.status(400).json({ error: 'Invalid status' });
+
+    const overtime = db.prepare('SELECT * FROM overtime_requests WHERE id = ?').get(req.params.id);
+    if (!overtime) return res.status(404).json({ error: 'Overtime request not found' });
+    if (overtime.status !== 'pending') return res.status(400).json({ error: 'This request has already been processed' });
+
+    // Managers can only approve overtime for their team members
+    if (req.user.role === 'manager') {
+      const emp = db.prepare('SELECT managerId FROM employees WHERE id = ?').get(overtime.employeeId);
+      if (!emp || emp.managerId !== req.user.id) {
+        return res.status(403).json({ error: 'You can only approve overtime for your own team members' });
+      }
+    }
+
     db.prepare('UPDATE overtime_requests SET status = ?, approvedBy = ? WHERE id = ?').run(status, req.user.id, req.params.id);
     res.json({ message: `Overtime ${status}` });
   } catch (err) {

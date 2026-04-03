@@ -1,5 +1,15 @@
 const jwt = require('jsonwebtoken');
-const SECRET = process.env.JWT_SECRET || 'emp-mgmt-secret-key-2026';
+const crypto = require('crypto');
+
+// Use environment variable in production; generate a random secret for development
+const SECRET = process.env.JWT_SECRET || (() => {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('[SECURITY] JWT_SECRET environment variable is required in production!');
+    process.exit(1);
+  }
+  console.warn('[WARNING] No JWT_SECRET set. Using auto-generated secret (tokens will not persist across restarts).');
+  return crypto.randomBytes(64).toString('hex');
+})();
 
 function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1];

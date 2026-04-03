@@ -8,5 +8,21 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:5000'
     }
-  }
+  },
+  build: {
+    // Enable code splitting for lazy-loaded routes
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['framer-motion', 'recharts', 'lucide-react'],
+          'vendor-utils': ['axios', 'react-hot-toast'],
+        },
+      },
+    },
+    // Generate source maps for production debugging
+    sourcemap: true,
+    // Chunk size warning threshold
+    chunkSizeWarningLimit: 500,
+  },
 });

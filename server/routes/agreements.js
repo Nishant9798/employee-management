@@ -77,7 +77,10 @@ router.get('/download/:id', (req, res) => {
     const agreement = db.prepare('SELECT * FROM nda_agreements WHERE id = ?').get(req.params.id);
     if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
 
-    const filePath = path.join(templatesDir, agreement.templatePath);
+    const filePath = path.resolve(templatesDir, agreement.templatePath);
+    if (!filePath.startsWith(path.resolve(templatesDir))) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
     res.download(filePath, agreement.templateName);
   } catch (err) {
@@ -95,7 +98,10 @@ router.get('/submission/:submissionId/download', (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    const filePath = path.join(submissionsDir, submission.filePath);
+    const filePath = path.resolve(submissionsDir, submission.filePath);
+    if (!filePath.startsWith(path.resolve(submissionsDir))) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
     res.download(filePath, submission.fileName);
   } catch (err) {
@@ -145,8 +151,8 @@ router.put('/:id', adminOnly, templateUpload.single('file'), (req, res) => {
     const { title, description } = req.body;
 
     if (req.file) {
-      const oldPath = path.join(templatesDir, agreement.templatePath);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      const oldPath = path.resolve(templatesDir, agreement.templatePath);
+      if (oldPath.startsWith(path.resolve(templatesDir)) && fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
 
       db.prepare(
         `UPDATE nda_agreements SET title=?, description=?, templatePath=?, templateName=?, templateSize=?, updatedAt=datetime('now') WHERE id=?`
@@ -174,8 +180,8 @@ router.post('/:id/submit', submissionUpload.single('file'), (req, res) => {
     // Upsert: delete old submission file if re-uploading
     const existing = db.prepare('SELECT * FROM employee_agreements WHERE agreementId = ? AND employeeId = ?').get(req.params.id, req.user.id);
     if (existing) {
-      const oldPath = path.join(submissionsDir, existing.filePath);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      const oldPath = path.resolve(submissionsDir, existing.filePath);
+      if (oldPath.startsWith(path.resolve(submissionsDir)) && fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
       db.prepare(
         `UPDATE employee_agreements SET filePath=?, fileName=?, fileSize=?, uploadedAt=datetime('now') WHERE id=?`
       ).run(req.file.filename, req.file.originalname, req.file.size, existing.id);
@@ -198,14 +204,14 @@ router.delete('/:id', adminOnly, (req, res) => {
     if (!agreement) return res.status(404).json({ error: 'Agreement not found' });
 
     // Delete template file
-    const templateFile = path.join(templatesDir, agreement.templatePath);
-    if (fs.existsSync(templateFile)) fs.unlinkSync(templateFile);
+    const templateFile = path.resolve(templatesDir, agreement.templatePath);
+    if (templateFile.startsWith(path.resolve(templatesDir)) && fs.existsSync(templateFile)) fs.unlinkSync(templateFile);
 
     // Delete all submissions
     const submissions = db.prepare('SELECT * FROM employee_agreements WHERE agreementId = ?').all(req.params.id);
     submissions.forEach(s => {
-      const subFile = path.join(submissionsDir, s.filePath);
-      if (fs.existsSync(subFile)) fs.unlinkSync(subFile);
+      const subFile = path.resolve(submissionsDir, s.filePath);
+      if (subFile.startsWith(path.resolve(submissionsDir)) && fs.existsSync(subFile)) fs.unlinkSync(subFile);
     });
     db.prepare('DELETE FROM employee_agreements WHERE agreementId = ?').run(req.params.id);
     db.prepare('DELETE FROM nda_agreements WHERE id = ?').run(req.params.id);

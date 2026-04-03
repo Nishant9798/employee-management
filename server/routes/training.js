@@ -88,6 +88,17 @@ router.post('/programs', adminOnly, (req, res) => {
 // Enroll in program
 router.post('/enroll/:programId', (req, res) => {
   try {
+    const program = db.prepare('SELECT * FROM training_programs WHERE id = ?').get(req.params.programId);
+    if (!program) return res.status(404).json({ error: 'Training program not found' });
+    if (program.status === 'cancelled') return res.status(400).json({ error: 'This program has been cancelled' });
+    if (program.status === 'completed') return res.status(400).json({ error: 'This program has already completed' });
+
+    // Check max participants
+    if (program.maxParticipants) {
+      const enrolled = db.prepare("SELECT COUNT(*) as c FROM training_enrollments WHERE programId = ? AND status != 'dropped'").get(req.params.programId).c;
+      if (enrolled >= program.maxParticipants) return res.status(400).json({ error: 'Program is full' });
+    }
+
     db.prepare('INSERT INTO training_enrollments (programId, employeeId) VALUES (?,?)').run(req.params.programId, req.user.id);
     res.json({ message: 'Enrolled successfully' });
   } catch (e) {
@@ -109,7 +120,7 @@ router.put('/complete-enrollment/:id', adminOnly, (req, res) => {
 });
 
 // Get enrollments for a program (admin)
-router.get('/program-enrollments/:programId', (req, res) => {
+router.get('/program-enrollments/:programId', adminOnly, (req, res) => {
   try {
     const enrollments = db.prepare(`
       SELECT te.*, e.name, e.department, e.employeeId as empCode

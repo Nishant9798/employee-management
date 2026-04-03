@@ -24,7 +24,10 @@ router.get('/', (req, res) => {
 router.put('/:key', adminOnly, (req, res) => {
   try {
     const { value } = req.body;
-    db.prepare('UPDATE company_settings SET value = ? WHERE key = ?').run(value, req.params.key);
+    // Only update existing keys
+    const existing = db.prepare('SELECT id FROM company_settings WHERE key = ?').get(req.params.key);
+    if (!existing) return res.status(404).json({ error: 'Setting not found' });
+    db.prepare('UPDATE company_settings SET value = ? WHERE key = ?').run(String(value).slice(0, 1000), req.params.key);
     res.json({ message: 'Setting updated' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -35,9 +38,21 @@ router.put('/:key', adminOnly, (req, res) => {
 router.put('/', adminOnly, (req, res) => {
   try {
     const settings = req.body;
+    if (typeof settings !== 'object' || Array.isArray(settings)) {
+      return res.status(400).json({ error: 'Invalid settings format' });
+    }
+
+    // Only update keys that already exist in the database
+    const existingKeys = new Set(db.prepare('SELECT key FROM company_settings').all().map(s => s.key));
     const stmt = db.prepare('UPDATE company_settings SET value = ? WHERE key = ?');
-    Object.entries(settings).forEach(([key, value]) => stmt.run(value, key));
-    res.json({ message: 'Settings updated' });
+    let updated = 0;
+    Object.entries(settings).forEach(([key, value]) => {
+      if (existingKeys.has(key)) {
+        stmt.run(String(value).slice(0, 1000), key);
+        updated++;
+      }
+    });
+    res.json({ message: `${updated} settings updated` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

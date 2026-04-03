@@ -15,7 +15,12 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_'))
 });
-const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } });
+const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 }, fileFilter: (req, file, cb) => {
+  const allowed = ['.pdf', '.doc', '.docx', '.odt', '.txt'];
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (allowed.includes(ext)) cb(null, true);
+  else cb(new Error('Only PDF, Word, ODT, and TXT files are allowed'));
+}});
 
 const CATEGORIES = ['General', 'HR', 'IT', 'Finance', 'Security', 'Compliance', 'Leave', 'Travel', 'Other'];
 
@@ -50,7 +55,10 @@ router.get('/download/:id', (req, res) => {
     const policy = db.prepare('SELECT * FROM company_policies WHERE id = ?').get(req.params.id);
     if (!policy) return res.status(404).json({ error: 'Policy not found' });
 
-    const filePath = path.join(uploadsDir, policy.filePath);
+    const filePath = path.resolve(uploadsDir, policy.filePath);
+    if (!filePath.startsWith(path.resolve(uploadsDir))) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
     res.download(filePath, policy.fileName);
   } catch (err) {
@@ -85,8 +93,8 @@ router.put('/:id', adminOnly, upload.single('file'), (req, res) => {
 
     if (req.file) {
       // Delete old file
-      const oldPath = path.join(uploadsDir, policy.filePath);
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      const oldPath = path.resolve(uploadsDir, policy.filePath);
+      if (oldPath.startsWith(path.resolve(uploadsDir)) && fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
 
       db.prepare(
         `UPDATE company_policies SET title=?, description=?, category=?, filePath=?, fileName=?, fileSize=?, updatedBy=?, updatedAt=datetime('now') WHERE id=?`
@@ -109,8 +117,8 @@ router.delete('/:id', adminOnly, (req, res) => {
     const policy = db.prepare('SELECT * FROM company_policies WHERE id = ?').get(req.params.id);
     if (!policy) return res.status(404).json({ error: 'Policy not found' });
 
-    const filePath = path.join(uploadsDir, policy.filePath);
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    const filePath = path.resolve(uploadsDir, policy.filePath);
+    if (filePath.startsWith(path.resolve(uploadsDir)) && fs.existsSync(filePath)) fs.unlinkSync(filePath);
     db.prepare('DELETE FROM company_policies WHERE id = ?').run(req.params.id);
     res.json({ message: 'Policy deleted successfully' });
   } catch (err) {

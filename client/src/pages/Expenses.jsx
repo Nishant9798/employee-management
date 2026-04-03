@@ -3,6 +3,7 @@ import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { Receipt, Plus, Check, X as XIcon, Clock, ArrowRight, IndianRupee, TrendingUp, AlertCircle, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { StatusBadge, EmptyState } from '../components/common';
 
 // Categories loaded from API
 

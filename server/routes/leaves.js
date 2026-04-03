@@ -63,28 +63,46 @@ router.get('/my-applications', (req, res) => {
   }
 });
 
-// Get all leave applications (admin/manager view)
+// Get all leave applications (admin/manager view, supports pagination via ?page=1&limit=20)
 router.get('/all-applications', managerOrAdmin, (req, res) => {
   try {
-    let query = `
-      SELECT la.*, lt.name as leaveType, e.name as employeeName, e.employeeId as empCode,
-             e.department, m.name as managerApprovedByName, h.name as hrApprovedByName
+    const { page, limit: limitParam, status: statusFilter } = req.query;
+
+    let whereClause = '';
+    const params = [];
+    if (req.user.role === 'manager') {
+      whereClause += ` WHERE la.employeeId IN (SELECT id FROM employees WHERE managerId = ?)`;
+      params.push(req.user.id);
+    }
+    if (statusFilter) {
+      whereClause += whereClause ? ` AND la.status = ?` : ` WHERE la.status = ?`;
+      params.push(statusFilter);
+    }
+
+    const baseQuery = `
       FROM leave_applications la
       JOIN leave_types lt ON la.leaveTypeId = lt.id
       JOIN employees e ON la.employeeId = e.id
       LEFT JOIN employees m ON la.managerApprovedBy = m.id
       LEFT JOIN employees h ON la.hrApprovedBy = h.id
+      ${whereClause}
     `;
 
-    const params = [];
-    if (req.user.role === 'manager') {
-      query += ` WHERE la.employeeId IN (SELECT id FROM employees WHERE managerId = ?)`;
-      params.push(req.user.id);
-    }
+    const selectFields = `la.*, lt.name as leaveType, e.name as employeeName, e.employeeId as empCode,
+             e.department, m.name as managerApprovedByName, h.name as hrApprovedByName`;
 
-    query += ' ORDER BY la.appliedOn DESC';
-    const apps = db.prepare(query).all(...params);
-    res.json(apps);
+    if (page) {
+      const pageNum = Math.max(1, parseInt(page) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(limitParam) || 20));
+      const offset = (pageNum - 1) * limit;
+
+      const { total } = db.prepare(`SELECT COUNT(*) as total ${baseQuery}`).get(...params);
+      const apps = db.prepare(`SELECT ${selectFields} ${baseQuery} ORDER BY la.appliedOn DESC LIMIT ? OFFSET ?`).all(...params, limit, offset);
+      res.json({ data: apps, pagination: { page: pageNum, limit, total, totalPages: Math.ceil(total / limit) } });
+    } else {
+      const apps = db.prepare(`SELECT ${selectFields} ${baseQuery} ORDER BY la.appliedOn DESC`).all(...params);
+      res.json(apps);
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -207,6 +225,22 @@ router.put('/hr-action/:id', adminOnly, (req, res) => {
 
       res.json({ message: 'Leave approved by HR' });
     }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Cancel leave application (employee can cancel own pending leave)
+router.put('/cancel/:id', (req, res) => {
+  try {
+    const app = db.prepare('SELECT * FROM leave_applications WHERE id = ? AND employeeId = ?').get(req.params.id, req.user.id);
+    if (!app) return res.status(404).json({ error: 'Leave application not found' });
+    if (!['pending_manager', 'pending_hr'].includes(app.status)) {
+      return res.status(400).json({ error: 'Only pending leave applications can be cancelled' });
+    }
+
+    db.prepare('DELETE FROM leave_applications WHERE id = ?').run(req.params.id);
+    res.json({ message: 'Leave application cancelled' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

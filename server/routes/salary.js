@@ -217,7 +217,11 @@ router.get('/download-payslip/:id', (req, res) => {
 
     if (!payslip.pdfPath) return res.status(404).json({ error: 'No PDF uploaded for this payslip' });
 
-    const filePath = path.join(payslipDir, payslip.pdfPath);
+    const filePath = path.resolve(payslipDir, payslip.pdfPath);
+    // Prevent path traversal
+    if (!filePath.startsWith(path.resolve(payslipDir))) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found on server' });
 
     const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];

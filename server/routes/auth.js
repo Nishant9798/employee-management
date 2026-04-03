@@ -32,7 +32,8 @@ router.post('/login', (req, res) => {
     const { password: _, ...userData } = user;
     res.json({ token, user: userData });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Login error:', err.message);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -54,8 +55,11 @@ router.put('/change-password', authMiddleware, (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Both current and new password required' });
-    if (newPassword.length < 6) return res.status(400).json({ error: 'New password must be at least 6 characters' });
+    if (newPassword.length < 8) return res.status(400).json({ error: 'New password must be at least 8 characters' });
     if (newPassword.length > 128) return res.status(400).json({ error: 'Password too long' });
+    if (!/[A-Z]/.test(newPassword) || !/[a-z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      return res.status(400).json({ error: 'Password must contain at least one uppercase letter, one lowercase letter, and one number' });
+    }
     const user = db.prepare('SELECT password FROM employees WHERE id = ?').get(req.user.id);
     if (!user) return res.status(404).json({ error: 'User not found' });
 

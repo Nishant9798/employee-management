@@ -21,16 +21,49 @@ const avatarUpload = multer({ storage: avatarStorage, limits: { fileSize: 5 * 10
 const router = express.Router();
 router.use(authMiddleware);
 
-// Get all employees
+// Get all employees (supports pagination via ?page=1&limit=20, returns all if no page param)
 router.get('/', (req, res) => {
   try {
-    const employees = db.prepare(`
-      SELECT e.id, e.employeeId, e.name, e.email, e.phone, e.department, e.designation,
-             e.joiningDate, e.managerId, e.role, e.avatar, e.status, e.dateOfBirth, e.bloodGroup, e.gender,
-             m.name as managerName
+    const { page, limit: limitParam, search, department, status: statusFilter } = req.query;
+
+    let baseQuery = `
       FROM employees e LEFT JOIN employees m ON e.managerId = m.id
-      ORDER BY e.id
-    `).all();
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (search) {
+      baseQuery += ` AND (e.name LIKE ? OR e.email LIKE ? OR e.employeeId LIKE ?)`;
+      const searchTerm = `%${search}%`;
+      params.push(searchTerm, searchTerm, searchTerm);
+    }
+    if (department) {
+      baseQuery += ` AND e.department = ?`;
+      params.push(department);
+    }
+    if (statusFilter) {
+      baseQuery += ` AND e.status = ?`;
+      params.push(statusFilter);
+    }
+
+    const selectFields = `e.id, e.employeeId, e.name, e.email, e.phone, e.department, e.designation,
+             e.joiningDate, e.managerId, e.role, e.avatar, e.status, e.dateOfBirth, e.bloodGroup, e.gender,
+             m.name as managerName`;
+
+    let employees;
+    let pagination = null;
+
+    if (page) {
+      const pageNum = Math.max(1, parseInt(page) || 1);
+      const limit = Math.min(100, Math.max(1, parseInt(limitParam) || 20));
+      const offset = (pageNum - 1) * limit;
+
+      const { total } = db.prepare(`SELECT COUNT(*) as total ${baseQuery}`).get(...params);
+      employees = db.prepare(`SELECT ${selectFields} ${baseQuery} ORDER BY e.id LIMIT ? OFFSET ?`).all(...params, limit, offset);
+      pagination = { page: pageNum, limit, total, totalPages: Math.ceil(total / limit) };
+    } else {
+      employees = db.prepare(`SELECT ${selectFields} ${baseQuery} ORDER BY e.id`).all(...params);
+    }
 
     // Non-admin users can only see their own phone number
     if (req.user.role !== 'admin') {
@@ -41,7 +74,11 @@ router.get('/', (req, res) => {
       });
     }
 
-    res.json(employees);
+    if (pagination) {
+      res.json({ data: employees, pagination });
+    } else {
+      res.json(employees);
+    }
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -89,6 +126,20 @@ router.post('/', adminOnly, (req, res) => {
   const { employeeId, name, email, password, phone, department, designation, joiningDate, managerId, role, dateOfBirth, bloodGroup, gender, address, emergencyContactName, emergencyContactPhone } = req.body;
   if (!employeeId || !name || !email || !password) {
     return res.status(400).json({ error: 'Required fields: employeeId, name, email, password' });
+  }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Invalid email format' });
+  }
+
+  // Validate password strength
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  }
+  if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
+    return res.status(400).json({ error: 'Password must contain at least one uppercase letter, one lowercase letter, and one number' });
   }
 
   const hash = bcrypt.hashSync(password, 10);
@@ -341,9 +392,19 @@ router.get('/export/csv', adminOnly, (req, res) => {
       ORDER BY e.id
     `).all();
 
+    // Escape CSV values to prevent CSV injection
+    const csvEscape = (val) => {
+      if (val == null) return '';
+      const str = String(val);
+      if (str.match(/[,"\n\r]/) || str.match(/^[=+\-@\t\r]/)) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    };
+
     const headers = 'Employee ID,Name,Email,Phone,Department,Designation,Joining Date,Role,Gender,DOB,Blood Group,Manager\n';
     const csv = headers + employees.map(e =>
-      `${e.employeeId},${e.name},${e.email},${e.phone || ''},${e.department || ''},${e.designation || ''},${e.joiningDate || ''},${e.role},${e.gender || ''},${e.dateOfBirth || ''},${e.bloodGroup || ''},${e.managerName || ''}`
+      [e.employeeId, e.name, e.email, e.phone || '', e.department || '', e.designation || '', e.joiningDate || '', e.role, e.gender || '', e.dateOfBirth || '', e.bloodGroup || '', e.managerName || ''].map(csvEscape).join(',')
     ).join('\n');
 
     res.setHeader('Content-Type', 'text/csv');

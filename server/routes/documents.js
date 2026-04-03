@@ -105,7 +105,11 @@ router.get('/download/:id', (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    const filePath = path.join(uploadsDir, doc.filePath);
+    const filePath = path.resolve(uploadsDir, doc.filePath);
+    // Prevent path traversal
+    if (!filePath.startsWith(path.resolve(uploadsDir))) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
     res.download(filePath, doc.name);
   } catch (err) {
@@ -122,8 +126,11 @@ router.delete('/:id', (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Delete file
-    const filePath = path.join(uploadsDir, doc.filePath);
+    // Delete file (with path traversal protection)
+    const filePath = path.resolve(uploadsDir, doc.filePath);
+    if (!filePath.startsWith(path.resolve(uploadsDir))) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     db.prepare('DELETE FROM documents WHERE id = ?').run(req.params.id);
     res.json({ message: 'Document deleted' });

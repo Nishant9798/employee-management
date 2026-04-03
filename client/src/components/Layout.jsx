@@ -51,7 +51,7 @@ export default function Layout() {
 
   useEffect(() => {
     loadNotifications();
-    const interval = setInterval(loadNotifications, 15000);
+    const interval = setInterval(loadNotifications, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -163,6 +163,9 @@ export default function Layout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
+      {/* Skip to content link for accessibility */}
+      <a href="#main-content" className="skip-to-content">Skip to main content</a>
+
       {/* Mobile overlay */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -191,7 +194,7 @@ export default function Layout() {
         {/* Top header bar - frosted glass */}
         <div className="flex items-center justify-between gap-3 px-4 py-3 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/60 dark:border-slate-700/40 sticky top-0 z-20">
           <div className="flex items-center gap-3">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Open sidebar menu">
               <Menu size={22} className="text-slate-600 dark:text-slate-300" />
             </button>
 
@@ -222,7 +225,7 @@ export default function Layout() {
 
             {/* Notifications Bell */}
             <div ref={notifRef} className="relative">
-              <button onClick={() => setShowNotifs(!showNotifs)} className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+              <button onClick={() => setShowNotifs(!showNotifs)} className="relative p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`} aria-expanded={showNotifs}>
                 <Bell size={20} className={`text-slate-600 dark:text-slate-300 transition-transform ${showNotifs ? 'scale-110' : ''}`} />
                 {unreadCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 min-w-[20px] h-5 px-1 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-bounce-in shadow-lg shadow-rose-500/30">
@@ -312,7 +315,7 @@ export default function Layout() {
           </div>
         </div>
 
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
+        <main id="main-content" className="flex-1 overflow-y-auto p-4 lg:p-8" role="main">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

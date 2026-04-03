@@ -1,37 +1,52 @@
+import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import Layout from './components/Layout';
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Employees from './pages/Employees';
-import Leaves from './pages/Leaves';
-import Attendance from './pages/Attendance';
-import Holidays from './pages/Holidays';
-import Hierarchy from './pages/Hierarchy';
-import MyProfile from './pages/MyProfile';
-import Reports from './pages/Reports';
-import Announcements from './pages/Announcements';
-import Expenses from './pages/Expenses';
-import Payslips from './pages/Payslips';
-import Performance from './pages/Performance';
-import Training from './pages/Training';
-import Documents from './pages/Documents';
-import Shifts from './pages/Shifts';
-import Messages from './pages/Messages';
-import Onboarding from './pages/Onboarding';
-import ExitManagement from './pages/ExitManagement';
-import Settings from './pages/Settings';
-import CompanyPolicies from './pages/CompanyPolicies';
-import NDAAgreements from './pages/NDAAgreements';
-import AssetManagement from './pages/AssetManagement';
-import LoanManagement from './pages/LoanManagement';
-import LetterGeneration from './pages/LetterGeneration';
-import LeaveCalendar from './pages/LeaveCalendar';
-import KanbanApprovals from './pages/KanbanApprovals';
-import TeamCalendar from './pages/TeamCalendar';
-import MySpace from './pages/MySpace';
-import SmartAnalytics from './pages/SmartAnalytics';
-import Tickets from './pages/Tickets';
+
+// Lazy-loaded pages — each becomes a separate chunk
+const Login = lazy(() => import('./pages/Login'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Employees = lazy(() => import('./pages/Employees'));
+const Leaves = lazy(() => import('./pages/Leaves'));
+const Attendance = lazy(() => import('./pages/Attendance'));
+const Holidays = lazy(() => import('./pages/Holidays'));
+const Hierarchy = lazy(() => import('./pages/Hierarchy'));
+const MyProfile = lazy(() => import('./pages/MyProfile'));
+const Reports = lazy(() => import('./pages/Reports'));
+const Announcements = lazy(() => import('./pages/Announcements'));
+const Expenses = lazy(() => import('./pages/Expenses'));
+const Payslips = lazy(() => import('./pages/Payslips'));
+const Performance = lazy(() => import('./pages/Performance'));
+const Training = lazy(() => import('./pages/Training'));
+const Documents = lazy(() => import('./pages/Documents'));
+const Shifts = lazy(() => import('./pages/Shifts'));
+const Messages = lazy(() => import('./pages/Messages'));
+const Onboarding = lazy(() => import('./pages/Onboarding'));
+const ExitManagement = lazy(() => import('./pages/ExitManagement'));
+const Settings = lazy(() => import('./pages/Settings'));
+const CompanyPolicies = lazy(() => import('./pages/CompanyPolicies'));
+const NDAAgreements = lazy(() => import('./pages/NDAAgreements'));
+const AssetManagement = lazy(() => import('./pages/AssetManagement'));
+const LoanManagement = lazy(() => import('./pages/LoanManagement'));
+const LetterGeneration = lazy(() => import('./pages/LetterGeneration'));
+const LeaveCalendar = lazy(() => import('./pages/LeaveCalendar'));
+const KanbanApprovals = lazy(() => import('./pages/KanbanApprovals'));
+const TeamCalendar = lazy(() => import('./pages/TeamCalendar'));
+const MySpace = lazy(() => import('./pages/MySpace'));
+const SmartAnalytics = lazy(() => import('./pages/SmartAnalytics'));
+const Tickets = lazy(() => import('./pages/Tickets'));
+
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center h-[60vh]">
+      <div className="flex flex-col items-center gap-3">
+        <div className="animate-spin h-8 w-8 border-3 border-indigo-600 border-t-transparent rounded-full" />
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading...</p>
+      </div>
+    </div>
+  );
+}
 
 function ProtectedRoute({ children }) {
   const { token, loading } = useAuth();
@@ -46,14 +61,12 @@ function ProtectedRoute({ children }) {
   return token ? children : <Navigate to="/login" />;
 }
 
-// Role-based route guard: requires manager or admin
 function ManagerRoute({ children }) {
   const { user } = useAuth();
   if (user?.role === 'admin' || user?.role === 'manager') return children;
   return <Navigate to="/" />;
 }
 
-// Role-based route guard: requires admin only
 function AdminRoute({ children }) {
   const { user } = useAuth();
   if (user?.role === 'admin') return children;
@@ -62,41 +75,45 @@ function AdminRoute({ children }) {
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route index element={<Dashboard />} />
-        <Route path="employees" element={<Employees />} />
-        <Route path="attendance" element={<Attendance />} />
-        <Route path="leaves" element={<Leaves />} />
-        <Route path="holidays" element={<Holidays />} />
-        <Route path="expenses" element={<Expenses />} />
-        <Route path="payslips" element={<Payslips />} />
-        <Route path="performance" element={<Performance />} />
-        <Route path="training" element={<Training />} />
-        <Route path="shifts" element={<ManagerRoute><Shifts /></ManagerRoute>} />
-        <Route path="documents" element={<Documents />} />
-        <Route path="messages" element={<Messages />} />
-        <Route path="hierarchy" element={<Hierarchy />} />
-        <Route path="reports" element={<ManagerRoute><Reports /></ManagerRoute>} />
-        <Route path="announcements" element={<Announcements />} />
-        <Route path="onboarding" element={<AdminRoute><Onboarding /></AdminRoute>} />
-        <Route path="exit" element={<AdminRoute><ExitManagement /></AdminRoute>} />
-        <Route path="company-policies" element={<CompanyPolicies />} />
-        <Route path="nda-agreements" element={<NDAAgreements />} />
-        <Route path="leave-calendar" element={<LeaveCalendar />} />
-        <Route path="assets" element={<ManagerRoute><AssetManagement /></ManagerRoute>} />
-        <Route path="loans" element={<LoanManagement />} />
-        <Route path="letters" element={<AdminRoute><LetterGeneration /></AdminRoute>} />
-        <Route path="settings" element={<AdminRoute><Settings /></AdminRoute>} />
-        <Route path="profile" element={<MyProfile />} />
-        <Route path="approvals" element={<ManagerRoute><KanbanApprovals /></ManagerRoute>} />
-        <Route path="team-calendar" element={<ManagerRoute><TeamCalendar /></ManagerRoute>} />
-        <Route path="my-space" element={<MySpace />} />
-        <Route path="smart-analytics" element={<ManagerRoute><SmartAnalytics /></ManagerRoute>} />
-        <Route path="tickets" element={<Tickets />} />
-      </Route>
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+    <ErrorBoundary>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+            <Route index element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
+            <Route path="employees" element={<ErrorBoundary><Employees /></ErrorBoundary>} />
+            <Route path="attendance" element={<ErrorBoundary><Attendance /></ErrorBoundary>} />
+            <Route path="leaves" element={<ErrorBoundary><Leaves /></ErrorBoundary>} />
+            <Route path="holidays" element={<ErrorBoundary><Holidays /></ErrorBoundary>} />
+            <Route path="expenses" element={<ErrorBoundary><Expenses /></ErrorBoundary>} />
+            <Route path="payslips" element={<ErrorBoundary><Payslips /></ErrorBoundary>} />
+            <Route path="performance" element={<ErrorBoundary><Performance /></ErrorBoundary>} />
+            <Route path="training" element={<ErrorBoundary><Training /></ErrorBoundary>} />
+            <Route path="shifts" element={<ManagerRoute><ErrorBoundary><Shifts /></ErrorBoundary></ManagerRoute>} />
+            <Route path="documents" element={<ErrorBoundary><Documents /></ErrorBoundary>} />
+            <Route path="messages" element={<ErrorBoundary><Messages /></ErrorBoundary>} />
+            <Route path="hierarchy" element={<ErrorBoundary><Hierarchy /></ErrorBoundary>} />
+            <Route path="reports" element={<ManagerRoute><ErrorBoundary><Reports /></ErrorBoundary></ManagerRoute>} />
+            <Route path="announcements" element={<ErrorBoundary><Announcements /></ErrorBoundary>} />
+            <Route path="onboarding" element={<AdminRoute><ErrorBoundary><Onboarding /></ErrorBoundary></AdminRoute>} />
+            <Route path="exit" element={<AdminRoute><ErrorBoundary><ExitManagement /></ErrorBoundary></AdminRoute>} />
+            <Route path="company-policies" element={<ErrorBoundary><CompanyPolicies /></ErrorBoundary>} />
+            <Route path="nda-agreements" element={<ErrorBoundary><NDAAgreements /></ErrorBoundary>} />
+            <Route path="leave-calendar" element={<ErrorBoundary><LeaveCalendar /></ErrorBoundary>} />
+            <Route path="assets" element={<ManagerRoute><ErrorBoundary><AssetManagement /></ErrorBoundary></ManagerRoute>} />
+            <Route path="loans" element={<ErrorBoundary><LoanManagement /></ErrorBoundary>} />
+            <Route path="letters" element={<AdminRoute><ErrorBoundary><LetterGeneration /></ErrorBoundary></AdminRoute>} />
+            <Route path="settings" element={<AdminRoute><ErrorBoundary><Settings /></ErrorBoundary></AdminRoute>} />
+            <Route path="profile" element={<ErrorBoundary><MyProfile /></ErrorBoundary>} />
+            <Route path="approvals" element={<ManagerRoute><ErrorBoundary><KanbanApprovals /></ErrorBoundary></ManagerRoute>} />
+            <Route path="team-calendar" element={<ManagerRoute><ErrorBoundary><TeamCalendar /></ErrorBoundary></ManagerRoute>} />
+            <Route path="my-space" element={<ErrorBoundary><MySpace /></ErrorBoundary>} />
+            <Route path="smart-analytics" element={<ManagerRoute><ErrorBoundary><SmartAnalytics /></ErrorBoundary></ManagerRoute>} />
+            <Route path="tickets" element={<ErrorBoundary><Tickets /></ErrorBoundary>} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Suspense>
+    </ErrorBoundary>
   );
 }

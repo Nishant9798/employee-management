@@ -65,8 +65,9 @@ router.get('/channel/:channelName', (req, res) => {
 router.post('/send', (req, res) => {
   try {
     const { receiverId, channel, content } = req.body;
-    if (!content) return res.status(400).json({ error: 'Content required' });
+    if (!content || !content.trim()) return res.status(400).json({ error: 'Content required' });
     if (!receiverId && !channel) return res.status(400).json({ error: 'Receiver or channel required' });
+    if (content.length > 5000) return res.status(400).json({ error: 'Message too long (max 5000 characters)' });
 
     const result = db.prepare('INSERT INTO messages (senderId, receiverId, channel, content) VALUES (?,?,?,?)')
       .run(req.user.id, receiverId || null, channel || null, content);

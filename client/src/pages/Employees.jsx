@@ -3,6 +3,8 @@ import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { Search, Edit2, Trash2, X, UserPlus, Download, Users, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ConfirmDialog, EmptyState, StatusBadge } from '../components/common';
+import { SkeletonTable } from '../components/common/LoadingSkeleton';
 
 const DEPARTMENTS = ['Management', 'Engineering', 'HR', 'Finance', 'Marketing', 'Operations', 'Sales'];
 const ROLES = ['employee', 'manager', 'admin'];
@@ -11,6 +13,7 @@ const BLOOD_GROUPS = ['A+','A-','B+','B-','AB+','AB-','O+','O-'];
 export default function Employees() {
   const { isAdmin, user } = useAuth();
   const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [deptFilter, setDeptFilter] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
@@ -18,11 +21,17 @@ export default function Employees() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ employeeId: '', name: '', email: '', password: '', phone: '', department: '', designation: '', joiningDate: '', managerId: '', role: 'employee', dateOfBirth: '', bloodGroup: '', gender: '', address: '', emergencyContactName: '', emergencyContactPhone: '' });
   const [page, setPage] = useState(1);
+  const [saving, setSaving] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [exporting, setExporting] = useState(false);
   const pageSize = 10;
 
   useEffect(() => { loadEmployees(); }, []);
 
-  const loadEmployees = () => api.get('/employees').then(r => setEmployees(r.data));
+  const loadEmployees = () => {
+    setLoading(true);
+    api.get('/employees').then(r => setEmployees(r.data)).catch(() => toast.error('Failed to load employees')).finally(() => setLoading(false));
+  };
 
   const filtered = employees.filter(e => {
     const matchSearch = !search || e.name.toLowerCase().includes(search.toLowerCase()) || e.employeeId.toLowerCase().includes(search.toLowerCase()) || e.email.toLowerCase().includes(search.toLowerCase());
@@ -47,6 +56,21 @@ export default function Employees() {
   };
 
   const handleSave = async () => {
+    // Client-side validation
+    if (!editing) {
+      if (!form.employeeId || !form.name || !form.email || !form.password) {
+        return toast.error('Employee ID, Name, Email, and Password are required');
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        return toast.error('Please enter a valid email address');
+      }
+      if (form.password.length < 8) {
+        return toast.error('Password must be at least 8 characters');
+      }
+    }
+
+    setSaving(true);
     try {
       if (editing) {
         await api.put(`/employees/${editing.id}`, form);
@@ -59,14 +83,17 @@ export default function Employees() {
       loadEmployees();
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed');
+    } finally {
+      setSaving(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm('Deactivate this employee?')) return;
+  const handleDelete = async () => {
+    if (!confirmDelete) return;
     try {
-      await api.delete(`/employees/${id}`);
+      await api.delete(`/employees/${confirmDelete}`);
       toast.success('Employee deactivated');
+      setConfirmDelete(null);
       loadEmployees();
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to deactivate');
@@ -74,6 +101,7 @@ export default function Employees() {
   };
 
   const handleExportCSV = async () => {
+    setExporting(true);
     try {
       const res = await api.get('/employees/export/csv', { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
@@ -84,8 +112,11 @@ export default function Employees() {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+      toast.success('CSV exported successfully');
     } catch (err) {
       toast.error('Failed to export CSV');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -103,8 +134,8 @@ export default function Employees() {
           <div className="flex gap-2">
             {isAdmin && (
               <>
-                <button onClick={handleExportCSV} className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-sm font-medium transition backdrop-blur-sm">
-                  <Download size={16} /> Export CSV
+                <button onClick={handleExportCSV} disabled={exporting} className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl text-sm font-medium transition backdrop-blur-sm disabled:opacity-50">
+                  <Download size={16} /> {exporting ? 'Exporting...' : 'Export CSV'}
                 </button>
                 <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl text-sm font-medium hover:bg-white/90 transition shadow-lg">
                   <UserPlus size={16} /> Add Employee
@@ -122,7 +153,7 @@ export default function Employees() {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3 top-2.5 text-slate-400" />
-          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search by name, ID, or email..." className="input pl-9" />
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search by name, ID, or email..." className="input pl-9" aria-label="Search employees" />
         </div>
         <select value={deptFilter} onChange={e => { setDeptFilter(e.target.value); setPage(1); }} className="input w-auto">
           <option value="">All Departments</option>
@@ -135,13 +166,17 @@ export default function Employees() {
       </div>
 
       {/* Table */}
-      {filtered.length === 0 ? (
+      {loading ? (
+        <SkeletonTable rows={6} cols={5} />
+      ) : filtered.length === 0 ? (
         <div className="card">
-          <div className="empty-state">
-            <Users size={64} />
-            <p className="text-lg font-medium mt-2">No employees found</p>
-            <p className="text-sm">Try adjusting your search or filter</p>
-          </div>
+          <EmptyState
+            icon={Users}
+            title="No employees found"
+            description="Try adjusting your search or filter criteria"
+            action={isAdmin ? openAdd : undefined}
+            actionLabel={isAdmin ? 'Add Employee' : undefined}
+          />
         </div>
       ) : (
         <>
@@ -190,7 +225,7 @@ export default function Employees() {
                             <button onClick={() => openEdit(emp)} className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition">
                               <Edit2 size={15} />
                             </button>
-                            <button onClick={() => handleDelete(emp.id)} className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition">
+                            <button onClick={() => setConfirmDelete(emp.id)} className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition" aria-label={`Deactivate ${emp.name}`}>
                               <Trash2 size={15} />
                             </button>
                           </div>
@@ -335,12 +370,23 @@ export default function Employees() {
               </div>
             </div>
             <div className="flex justify-end gap-3 p-5 border-t dark:border-slate-700">
-              <button onClick={() => setShowModal(false)} className="btn-secondary">Cancel</button>
-              <button onClick={handleSave} className="btn-primary">{editing ? 'Update' : 'Create'}</button>
+              <button onClick={() => setShowModal(false)} className="btn-secondary" disabled={saving}>Cancel</button>
+              <button onClick={handleSave} className="btn-primary" disabled={saving}>{saving ? 'Saving...' : editing ? 'Update' : 'Create'}</button>
             </div>
           </div>
         </>
       )}
+
+      {/* Confirm Delete Dialog */}
+      <ConfirmDialog
+        isOpen={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={handleDelete}
+        title="Deactivate Employee?"
+        message="This employee will be deactivated and will no longer be able to log in. This action can be reversed by an admin."
+        confirmLabel="Deactivate"
+        variant="danger"
+      />
     </div>
   );
 }

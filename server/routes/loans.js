@@ -96,8 +96,15 @@ router.post('/:id/repay', adminOnly, (req, res) => {
     if (!amount || !month || !year || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ error: 'Valid amount, month, and year are required' });
     }
+    if (isNaN(month) || month < 1 || month > 12) return res.status(400).json({ error: 'Month must be between 1 and 12' });
+    if (isNaN(year) || year < 2020 || year > 2100) return res.status(400).json({ error: 'Invalid year' });
+
     const loan = db.prepare('SELECT * FROM loans WHERE id = ?').get(req.params.id);
     if (!loan) return res.status(404).json({ error: 'Loan not found' });
+    if (loan.status !== 'active') return res.status(400).json({ error: 'Can only record repayments for active loans' });
+
+    const remaining = loan.amount - (loan.totalRepaid || 0);
+    if (amount > remaining) return res.status(400).json({ error: `Repayment amount exceeds remaining balance of ₹${remaining}` });
 
     db.prepare('INSERT INTO loan_repayments (loanId, amount, month, year) VALUES (?,?,?,?)')
       .run(req.params.id, amount, month, year);

@@ -69,6 +69,9 @@ router.post('/review', managerOrAdmin, (req, res) => {
 router.put('/self-review/:id', (req, res) => {
   try {
     const { selfRating, selfComments } = req.body;
+    if (selfRating && (isNaN(selfRating) || selfRating < 1 || selfRating > 5)) {
+      return res.status(400).json({ error: 'Self-rating must be between 1 and 5' });
+    }
     const review = db.prepare('SELECT * FROM performance_reviews WHERE id = ? AND employeeId = ?').get(req.params.id, req.user.id);
     if (!review) return res.status(404).json({ error: 'Review not found' });
 
@@ -86,8 +89,20 @@ router.put('/self-review/:id', (req, res) => {
 router.put('/complete-review/:id', managerOrAdmin, (req, res) => {
   try {
     const { rating, strengths, improvements, goals, comments } = req.body;
+    if (!rating || isNaN(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+    }
+
     const review = db.prepare('SELECT * FROM performance_reviews WHERE id = ?').get(req.params.id);
     if (!review) return res.status(404).json({ error: 'Not found' });
+
+    // Managers can only review their own team members
+    if (req.user.role === 'manager') {
+      const emp = db.prepare('SELECT managerId FROM employees WHERE id = ?').get(review.employeeId);
+      if (!emp || emp.managerId !== req.user.id) {
+        return res.status(403).json({ error: 'You can only review your own team members' });
+      }
+    }
 
     db.prepare('UPDATE performance_reviews SET rating = ?, strengths = ?, improvements = ?, goals = ?, comments = ?, status = ? WHERE id = ?')
       .run(rating, strengths, improvements, goals, comments, 'completed', req.params.id);

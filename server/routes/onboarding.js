@@ -14,9 +14,20 @@ router.get('/tasks', (req, res) => {
   }
 });
 
-// Get onboarding progress for an employee
+// Get onboarding progress for an employee (self, manager, or admin)
 router.get('/progress/:employeeId', (req, res) => {
   try {
+    // Only allow viewing own progress, team member's progress (manager), or any (admin)
+    if (req.user.role === 'employee' && String(req.params.employeeId) !== String(req.user.id)) {
+      return res.status(403).json({ error: 'You can only view your own onboarding progress' });
+    }
+    if (req.user.role === 'manager' && String(req.params.employeeId) !== String(req.user.id)) {
+      const emp = db.prepare('SELECT managerId FROM employees WHERE id = ?').get(req.params.employeeId);
+      if (!emp || emp.managerId !== req.user.id) {
+        return res.status(403).json({ error: 'You can only view onboarding progress for your team members' });
+      }
+    }
+
     const progress = db.prepare(`
       SELECT ot.*, COALESCE(op.status, 'pending') as progressStatus, op.completedAt, op.notes
       FROM onboarding_tasks ot

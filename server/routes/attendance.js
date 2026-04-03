@@ -201,9 +201,18 @@ router.get('/export/csv', adminOnly, (req, res) => {
       ORDER BY e.name, a.date
     `).all(startDate, endDate);
 
+    const csvEscape = (val) => {
+      if (val == null) return '';
+      const str = String(val);
+      if (str.match(/[,"\n\r]/) || str.match(/^[=+\-@\t\r]/)) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    };
+
     const headers = 'Employee ID,Name,Department,Date,Check In,Check Out,Status,Work Hours\n';
     const csv = headers + records.map(r =>
-      `${r.employeeId},${r.name},${r.department || ''},${r.date},${r.checkIn || ''},${r.checkOut || ''},${r.status},${r.workHours || ''}`
+      [r.employeeId, r.name, r.department || '', r.date, r.checkIn || '', r.checkOut || '', r.status, r.workHours || ''].map(csvEscape).join(',')
     ).join('\n');
 
     res.setHeader('Content-Type', 'text/csv');
